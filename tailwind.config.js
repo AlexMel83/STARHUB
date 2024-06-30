@@ -14,19 +14,42 @@ module.exports = {
         "2xl": "1400px",
       },
     },
+    fontSize: {
+      xs: '1.08rem',
+      sm: '1.28rem',
+      base: '1.42rem',
+      lg: '1.49rem',
+      xl: '1.66rem',
+      '1.5xl': '1.8rem',
+      '2xl': '2.18rem',
+      '3xl': '2.66rem',
+      '4xl': '3.19rem',
+      '5xl': '4.27rem',
+      '6xl': '5.33rem',
+      '7xl': '6.4rem',
+      '8xl': '8.52rem',
+      '9xl': '11.4rem',
+    },
     extend: {
+      transitionDuration: {
+        DEFAULT: '333ms'
+      },
+      transitionTimingFunction: {
+        DEFAULT: 'ease-in-out'
+      },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        background: "var(--background)",
+        sidebar: "var(--sidebar)",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "var(--secondary)",
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
@@ -34,7 +57,7 @@ module.exports = {
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
+          DEFAULT: "var(--muted)",
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
@@ -46,7 +69,7 @@ module.exports = {
           foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
+          DEFAULT: "var(--card)",
           foreground: "hsl(var(--card-foreground))",
         },
       },
