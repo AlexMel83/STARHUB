@@ -43,14 +43,14 @@ module.exports = {
         ring: "var(--ring)",
         background: "var(--background)",
         sidebar: "var(--sidebar)",
-        foreground: "hsl(var(--foreground))",
+        foreground: "var(--foreground)",
         primary: {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
         },
         secondary: {
           DEFAULT: "var(--secondary)",
-          foreground: "hsl(var(--secondary-foreground))",
+          foreground: "var(--secondary-foreground)",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
