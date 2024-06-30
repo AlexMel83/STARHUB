@@ -8,6 +8,7 @@
             <Icon name="line-md:logout" size="20"/>
             Logout
         </button>
+        <LayoutMenu class="text-white"/>
     </aside>
 </template>
 <script setup lang="ts">
