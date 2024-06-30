@@ -8,7 +8,7 @@
     
 </template>
 <script setup lang="ts">
-console.log('loaded')
+
 </script>
 <style scoped>
     .grid{
