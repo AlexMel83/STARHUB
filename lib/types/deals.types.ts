@@ -1,16 +1,16 @@
-export interface IBaseFields {
+export interface IBaseField {
     $createdAt: string
     $id: string
 }
 
-export interface ICustomer extends IBaseFields {
+export interface ICustomer extends IBaseField {
     name: string
     email: string
     avatar_url: string
     froum_source?: string
 }
 
-export interface IComment extends IBaseFields {
+export interface IComment extends IBaseField {
     text: string
 }
 
@@ -22,9 +22,9 @@ export enum EnumStatus {
     'done' = 'done',
 }
 
-export interface IDeal extends IBaseFields {
+export interface IDeal extends IBaseField {
     comments: IComment[]
-    customers: ICustomer
+    customer: ICustomer
     name: string
     price: number
     status: EnumStatus
