@@ -1,4 +1,5 @@
 export default defineNuxtConfig({
+  components: true,
   devtools: { enabled: false },
   modules: [
     '@nuxt/image',
