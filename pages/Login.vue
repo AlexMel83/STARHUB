@@ -35,62 +35,74 @@
 import { APP_WRITE_ID } from '@/app.constants'
 import { useAuthStore, useIsLoadingStore } from '~/stores/auth.store';
 import { Client, Account, ID } from 'appwrite';
-import { v4 as uuidv4 } from 'uuid';
+
 const client = new Client();
-client
-  .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-  .setProject(APP_WRITE_ID);               // Your project ID
+client.setEndpoint('https://cloud.appwrite.io/v1').setProject(APP_WRITE_ID);
 
 const account = new Account(client);
+const result = account.get();
+console.log(result)
 
-    useSeoMeta({
-        title: 'Login',
-    });
+useSeoMeta({
+    title: 'Login',
+});
 
-    const emailRef = ref('');
-    const passwordRef = ref('');
-    const nameRef = ref('');
-	
-	const isLoadingStore = useIsLoadingStore();
-	const authStore = useAuthStore();
-	const router = useRouter();
+const emailRef = ref('');
+const passwordRef = ref('');
+const nameRef = ref('');
 
-	const clearData = async ()=>{
-		emailRef.value = '';
-		passwordRef.value = '';
-		nameRef.value = '';
-		await router.push('/');
-		isLoadingStore.set(false);
-	}
+const isLoadingStore = useIsLoadingStore();
+const authStore = useAuthStore();
+const router = useRouter();
 
-	const login = async ()=>{
-		try {
-			isLoadingStore.set(true);
-			await account.createSession(emailRef.value, passwordRef.value);
-			const response = await account.get();
-			if (response) {
-			authStore.set({
-				email: response.email,
-				name: response.name,
-				status: response.status,
-			});
-			}
-			await clearData();
-		} catch (error) {
-			console.error(error);
-			isLoadingStore.set(false);
-		}
-	};
-	const register = async ()=>{
-		try {
-		await account.create(uuidv4(), emailRef.value, passwordRef.value, nameRef.value);
-		await login();
-	} catch (error) {
-		console.error(error);
-	}
-	};
-    
+const clearData = async () => {
+    emailRef.value = '';
+    passwordRef.value = '';
+    nameRef.value = '';
+    await router.push('/');
+    isLoadingStore.set(false);
+};
+
+const login = async () => {
+	console.log('+')
+    try {
+        isLoadingStore.set(true);
+		await account.createEmailPasswordSession(emailRef.value, passwordRef.value);
+        const response = await account.get();
+        if (response) {
+            authStore.set({
+                email: response.email,
+                name: response.name,
+                status: response.status,
+            });
+        }
+		console.log(response, authStore)
+        await clearData();
+    } catch (error) {
+        console.error('Login error:', error);
+        isLoadingStore.set(false);
+    }
+};
+
+const register = async () => {
+    try {
+        const userId = ID.unique();
+        if (userId.length > 36 || !/^[a-zA-Z0-9._-]+$/.test(userId) || /^[._-]/.test(userId)) {
+            throw new Error('Generated userId is invalid');
+        }
+        console.log('Generated User ID:', userId);
+        console.log('Email:', emailRef.value);
+        console.log('Password:', passwordRef.value);
+        console.log('Name:', nameRef.value);
+		const result = await account.create(userId, emailRef.value, passwordRef.value, nameRef.value);
+        console.log('User created successfully', result);
+        await login();
+    } catch (error) {
+        console.error('Registration error:', error);
+    }
+};
 </script>
+
 <style scoped>
     
 </style>
