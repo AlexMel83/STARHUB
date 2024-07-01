@@ -6,7 +6,7 @@
           <slot />  
         </div>
     </section>
-    
+    <NuxtPage />
 </template>
 <script setup lang="ts">
 import {account} from '@/lib/appwrite'
