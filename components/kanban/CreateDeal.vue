@@ -83,7 +83,7 @@ const onSubmit = handleSubmit((values) => {
         placeholder="summ" 
         v-model="price" 
         v-bind="priceAttrs" 
-        type="text" 
+        type="number" 
         class="input" />
         <UiInput 
         placeholder="email" 
