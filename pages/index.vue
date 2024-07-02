@@ -8,6 +8,7 @@ import type { EnumStatus } from '~/lib/types/deals.types';
 import { useMutation } from '@tanstack/vue-query';
 import { COLLECTION_DEALS, DB_ID } from '~/app.constants';
 import { DB } from '~/lib/appwrite';
+import { useDealSlideStore } from '~/stores/deal-slide.store';
 
 useSeoMeta({
     title: 'Home',
@@ -16,6 +17,7 @@ useSeoMeta({
 const dragCardRef = ref<ICard | null>(null);
 const sourceColumnRef = ref<IColumn | null>(null);
 const {data, isLoading, refetch} = useKanbanQuery();
+const store = useDealSlideStore();
 
 type TypeMutationVariables = {
     docId: string
@@ -27,7 +29,7 @@ const {mutate} = useMutation({
     mutationFn: ({docId, status}: TypeMutationVariables) => DB.updateDocument(DB_ID, COLLECTION_DEALS, docId, {
         status,
     }),
-    onSuccess: ()=>{
+    onSuccess: () =>{
         refetch();
     }
 });
@@ -74,7 +76,7 @@ function handleDrop(targetColumn: IColumn){
                         draggable="true"
                         @dragstart="()=>handleDragStart(card, column)"
                         >
-                            <UiCardHeader role="button"> 
+                            <UiCardHeader role="button" @click="store.set(card)"> 
                                 <UiCardTitle>{{card.name}}</UiCardTitle>
                                 <UiCardDescription class="mt-2 block">{{convertCurrency(card.price)}}</UiCardDescription>
                             </UiCardHeader>
@@ -84,6 +86,7 @@ function handleDrop(targetColumn: IColumn){
                     </div>
                 </div>
             </div>
+            <KanbanSlideover />
         </div>
     </div>
 </template>
