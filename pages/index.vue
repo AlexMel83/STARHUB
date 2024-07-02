@@ -58,6 +58,7 @@ function handleDrop(targetColumn: IColumn){
                 <div v-for="(column, index) in data" :key="column.id"
                 @dragover="handleDragOver"
                 @drop="()=>handleDrop(column)"
+                class="min-h-screen"
                 >
                     <div 
                     class="rounded bg-slate-700 py-1 px-5 mb-2 text-center"
