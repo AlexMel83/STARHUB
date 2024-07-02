@@ -2,6 +2,7 @@
 import type { ICard, IColumn } from '~/components/kanban/kanban.types';
 import { useKanbanQuery } from '~/components/kanban/useKanbanQuery';
 import {convertCurrency} from '~/lib/convertCurrency';
+import {generateColumnStyle} from '@/components/kanban/generate-gradient.ts';
 import dayjs from 'dayjs';
 import type { EnumStatus } from '~/lib/types/deals.types';
 import { useMutation } from '@tanstack/vue-query';
@@ -58,7 +59,9 @@ function handleDrop(targetColumn: IColumn){
                 @dragover="handleDragOver"
                 @drop="()=>handleDrop(column)"
                 >
-                    <div class="rounded bg-slate-700 py-1 px-5 mb-2 text-center">
+                    <div 
+                    class="rounded bg-slate-700 py-1 px-5 mb-2 text-center"
+                    :style="generateColumnStyle(index, data?.length)">
                         {{column.name}}
                     </div>
                     <div>
