@@ -7,6 +7,12 @@ export default defineNuxtConfig({
     "shadcn-nuxt",
     'shadcn-nuxt',
     '@pinia/nuxt',
+    [
+      '@vee-validate/nuxt',
+      {
+        autoImports: true,
+      },
+    ],
     ['@nuxtjs/google-fonts', {
       families: {
         Lato: {
