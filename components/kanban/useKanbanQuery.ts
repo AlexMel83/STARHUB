@@ -10,9 +10,7 @@ export function useKanbanQuery() {
 		queryFn: () => DB.listDocuments(DB_ID, COLLECTION_DEALS),
 		select(data) {
 			const newBoard = [...KANBAN_DATA];
-
 			const deals = data.documents as unknown as IDeal[];
-
 			for (const deal of deals) {
 				let column = newBoard.find(col => col.id === deal.status)
 				if (column) {
@@ -21,7 +19,7 @@ export function useKanbanQuery() {
 						id: deal.$id,
 						name: deal.name,
 						price: deal.price,
-						companyName: deal.custommer.name,
+						companyName: deal.custommer[0].name,
 						status: column.name,
 					})
 				}   
