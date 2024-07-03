@@ -44,7 +44,7 @@ class SocialLoginService {
   async handleCallback(provider, code, codeVerifier, res) {
     const strategy = this.strategies[provider];
     if (!strategy) {
-      return json(ApiError.BadRequest(`Unsupported provider: ${provider}`));
+      return res.json(ApiError.BadRequest(`Unsupported provider: ${provider}`));
     }
     try {
       const user = await strategy.handleCallback(code, codeVerifier);

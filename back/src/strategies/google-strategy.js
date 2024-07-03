@@ -50,22 +50,18 @@ class GoogleStrategy {
         activationlink: authLink,
       });
     } else {
-      try {
-        [user] = await UserModel.insertUser({
-          email: userInfo.email ? userInfo.email : "",
-          role: "user",
-          name: userInfo.given_name || userInfo.name.split(" ")[0],
-          surname: userInfo.family_name || userInfo.name.split(" ")[1],
-          phone: userInfo.phone_number,
-          picture: userInfo.picture,
-          activationlink: authLink,
-          isactivated: true,
-          social_login: true,
-          google_id: userInfo.sub,
-        });
-      } catch (error) {
-        throw error;
-      }
+      [user] = await UserModel.insertUser({
+        email: userInfo.email ? userInfo.email : "",
+        role: "user",
+        name: userInfo.given_name || userInfo.name.split(" ")[0],
+        surname: userInfo.family_name || userInfo.name.split(" ")[1],
+        phone: userInfo.phone_number,
+        picture: userInfo.picture,
+        activationlink: authLink,
+        isactivated: true,
+        social_login: true,
+        google_id: userInfo.sub,
+      });
     }
     return user;
   }
