@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {useQuery} from '@tanstack/vue-query';
 import {COLLECTION_CUSTOMERS, DB_ID} from '@/app.constants';
-import type { ICustomer } from '~/lib/types/deals.types';
-import { DB } from '~/lib/appwrite';
+import type { ICustomer } from '@/lib/types/deals.types';
+import { DB } from '@/lib/appwrite';
 
 useSeoMeta({
     title: 'Customers'

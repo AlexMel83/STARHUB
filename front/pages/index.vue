@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { ICard, IColumn } from '~/components/kanban/kanban.types';
-import { useKanbanQuery } from '~/components/kanban/useKanbanQuery';
-import {convertCurrency} from '~/lib/convertCurrency';
-import {generateColumnStyle} from '~/components/kanban/generate-gradient';
+import type { ICard, IColumn } from '@/components/kanban/kanban.types';
+import { useKanbanQuery } from '@/components/kanban/useKanbanQuery';
+import {convertCurrency} from '@/lib/convertCurrency';
+import {generateColumnStyle} from '@/components/kanban/generate-gradient';
 import dayjs from 'dayjs';
-import type { EnumStatus } from '~/lib/types/deals.types';
+import type { EnumStatus } from '@/lib/types/deals.types';
 import { useMutation } from '@tanstack/vue-query';
-import { COLLECTION_DEALS, DB_ID } from '~/app.constants';
-import { DB } from '~/lib/appwrite';
-import { useDealSlideStore } from '~/stores/deal-slide.store';
+import { COLLECTION_DEALS, DB_ID } from '@/app.constants';
+import { DB } from '@/lib/appwrite';
+import { useDealSlideStore } from '@/stores/deal-slide.store';
 
 useSeoMeta({
     title: 'Home',
