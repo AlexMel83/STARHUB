@@ -1,6 +1,7 @@
 export default defineNuxtConfig({
   components: true,
   devtools: { enabled: false },
+
   modules: [
     "@nuxt/ui",
     '@nuxt/image',
@@ -22,11 +23,15 @@ export default defineNuxtConfig({
       }
     }],
   ],
+
   shadcn: {
     prefix: 'Ui',
     componentDir: './components/ui'
   },
+
   pinia: {
     storesDirs: ['./stores/**'],
   },
+
+  compatibilityDate: '2024-07-03',
 })

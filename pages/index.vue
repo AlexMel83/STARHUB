@@ -2,7 +2,7 @@
 import type { ICard, IColumn } from '~/components/kanban/kanban.types';
 import { useKanbanQuery } from '~/components/kanban/useKanbanQuery';
 import {convertCurrency} from '~/lib/convertCurrency';
-import {generateColumnStyle} from '@/components/kanban/generate-gradient.ts';
+import {generateColumnStyle} from '~/components/kanban/generate-gradient';
 import dayjs from 'dayjs';
 import type { EnumStatus } from '~/lib/types/deals.types';
 import { useMutation } from '@tanstack/vue-query';
@@ -13,6 +13,10 @@ import { useDealSlideStore } from '~/stores/deal-slide.store';
 useSeoMeta({
     title: 'Home',
 });
+
+function cheakClick(){
+    console.log('click')
+}
 
 const dragCardRef = ref<ICard | null>(null);
 const sourceColumnRef = ref<IColumn | null>(null);
@@ -76,7 +80,7 @@ function handleDrop(targetColumn: IColumn){
                         draggable="true"
                         @dragstart="()=>handleDragStart(card, column)"
                         >
-                            <UiCardHeader role="button" @click="store.set(card)"> 
+                            <UiCardHeader role="button"  @click="store.set(card)"> 
                                 <UiCardTitle>{{card.name}}</UiCardTitle>
                                 <UiCardDescription class="mt-2 block">{{convertCurrency(card.price)}}</UiCardDescription>
                             </UiCardHeader>

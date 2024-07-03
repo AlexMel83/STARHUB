@@ -1,31 +1,37 @@
-<script setup lang="ts">
-import { useDealSlideStore } from '~/stores/deal-slide.store';
+<script lang="ts" setup>
+import dayjs from 'dayjs'
+import type { IDeal } from '~/lib/types/deals.types'
+import { useComments } from './useComments'
+import { useCreateComment } from './useCreateComment'
 
-const store = useDealSlideStore();
+const { data, refetch, isLoading } = useComments()
+const { commentRef, writeComment } = useCreateComment({ refetch })
 
-const isLocalOpen = computed({
-    get: ()=>store.isOpen,
-    set: value => {
-        store.isOpen = value;
-    },
-});
+const card = data as unknown as IDeal
 </script>
 
 <template>
-    <div>
-        <UiSlideover v-model="isLocalOpen">
-            <UCard class="flex flex-col lfex-1 overflow-y-auto"
-            :ui="{
-                body: {base: 'flex-1'},
-                ring: '',
-                divide: 'divide-y divide-border',
-            }"
-            >
-                <template #header>
-                    <KanbanSlideoverTop />
-                </template>
-                <KanbanSlideoverComments />
-            </UCard>
-        </UiSlideover>
-    </div>
+	<UiInput
+		placeholder="Оставьте комментарий"
+		v-model="commentRef"
+		@keyup.enter="writeComment"
+		tabindex="0"
+	/>
+
+	<UiSkeleton v-if="isLoading" class="w-full h-[76px] rounded mt-5" />
+	<div v-else-if="card">
+		<div
+			v-for="comment in card?.comments"
+			:key="comment.$id"
+			class="flex items-start mt-5"
+		>
+			<Icon name="radix-icons:chat-bubble" class="mr-3 mt-1" size="20" />
+			<div class="border-border bg-black/20 rounded p-3 w-full">
+				<div class="mb-2 text-sm">
+					Комментарий {{ dayjs(comment.$createdAt).format('HH:mm') }}
+				</div>
+				<p>{{ comment.text }}</p>
+			</div>
+		</div>
+	</div>
 </template>
