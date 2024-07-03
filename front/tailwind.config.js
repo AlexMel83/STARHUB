@@ -5,7 +5,7 @@ const config = {
   darkMode: ["class"],
   safelist: ["dark"],
   prefix: "",
-  
+
   theme: {
     container: {
       center: true,
@@ -15,27 +15,27 @@ const config = {
       },
     },
     fontSize: {
-      xs: '1.05rem',
-      sm: '1.2rem',
-      base: '1.38rem',
-      lg: '1.46rem',
-      xl: '1.6rem',
-      '1.5xl': '1.7rem',
-      '2xl': '2.18rem',
-      '3xl': '2.66rem',
-      '4xl': '3.19rem',
-      '5xl': '4.27rem',
-      '6xl': '5.33rem',
-      '7xl': '6.4rem',
-      '8xl': '8.52rem',
-      '9xl': '11.4rem',
+      xs: "1.05rem",
+      sm: "1.2rem",
+      base: "1.38rem",
+      lg: "1.46rem",
+      xl: "1.6rem",
+      "1.5xl": "1.7rem",
+      "2xl": "2.18rem",
+      "3xl": "2.66rem",
+      "4xl": "3.19rem",
+      "5xl": "4.27rem",
+      "6xl": "5.33rem",
+      "7xl": "6.4rem",
+      "8xl": "8.52rem",
+      "9xl": "11.4rem",
     },
     extend: {
       transitionDuration: {
-        DEFAULT: '333ms'
+        DEFAULT: "333ms",
       },
       transitionTimingFunction: {
-        DEFAULT: 'ease-in-out'
+        DEFAULT: "ease-in-out",
       },
       colors: {
         border: "var(--border)",
@@ -74,7 +74,7 @@ const config = {
         },
       },
       borderRadius: {
-      	xl: "calc(var(--radius) + 4px)",
+        xl: "calc(var(--radius) + 4px)",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
@@ -90,10 +90,10 @@ const config = {
         },
         "collapsible-down": {
           from: { height: 0 },
-          to: { height: 'var(--radix-collapsible-content-height)' },
+          to: { height: "var(--radix-collapsible-content-height)" },
         },
         "collapsible-up": {
-          from: { height: 'var(--radix-collapsible-content-height)' },
+          from: { height: "var(--radix-collapsible-content-height)" },
           to: { height: 0 },
         },
       },
@@ -106,6 +106,6 @@ const config = {
     },
   },
   plugins: [animate],
-}
+};
 
 export default config;

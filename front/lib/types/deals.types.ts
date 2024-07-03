@@ -1,32 +1,32 @@
 export interface IBaseField {
-    $createdAt: string
-    $id: string
+  $createdAt: string;
+  $id: string;
 }
 
 export interface ICustomer extends IBaseField {
-    name: string
-    email: string
-    avatar_url: string
-    from_source?: string
-    documents?: string | null
+  name: string;
+  email: string;
+  avatar_url: string;
+  from_source?: string;
+  documents?: string | null;
 }
 
 export interface IComment extends IBaseField {
-    text: string
+  text: string;
 }
 
 export enum EnumStatus {
-    'todo' = 'todo',
-    'to-be-agreed' = 'to-be-agreed',
-    'in-progress' = 'in-progress',
-    'produced' = 'produced',
-    'done' = 'done',
+  "todo" = "todo",
+  "to-be-agreed" = "to-be-agreed",
+  "in-progress" = "in-progress",
+  "produced" = "produced",
+  "done" = "done",
 }
 
 export interface IDeal extends IBaseField {
-    comments: IComment[]
-    customer: ICustomer
-    name: string
-    price: number
-    status: EnumStatus
+  comments: IComment[];
+  customer: ICustomer;
+  name: string;
+  price: number;
+  status: EnumStatus;
 }

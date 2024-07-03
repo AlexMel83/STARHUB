@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 import type { ICard } from "~/front/components/kanban/kanban.types";
 
 const defaultValue: { card: ICard | null; isOpen: boolean } = {
@@ -6,7 +6,7 @@ const defaultValue: { card: ICard | null; isOpen: boolean } = {
   isOpen: false,
 };
 
-export const useDealSlideStore = defineStore('deal-slide', {
+export const useDealSlideStore = defineStore("deal-slide", {
   state: () => defaultValue,
   actions: {
     clear() {

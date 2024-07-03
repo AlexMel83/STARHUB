@@ -1,33 +1,33 @@
 <script lang="ts" setup>
-import { useDealSlideStore } from '~/stores/deal-slide.store'
+import { useDealSlideStore } from "~/stores/deal-slide.store";
 
-const store = useDealSlideStore()
+const store = useDealSlideStore();
 
 const isLocalOpen = computed({
-	get: () => store.isOpen,
-	set: value => {
-		store.isOpen = value
-	},
-})
+  get: () => store.isOpen,
+  set: (value) => {
+    store.isOpen = value;
+  },
+});
 </script>
 
 <template>
-	<div>
-		<USlideover v-model="isLocalOpen" tabindex="0">
-			<UCard
-				class="flex flex-col flex-1 overflow-y-auto"
-				:ui="{
-					body: { base: 'flex-1' },
-					ring: '',
-					divide: 'divide-y divide-border',
-				}"
-			>
-				<template #header>
-					<KanbanSlideoverTop />
-				</template>
+  <div>
+    <USlideover v-model="isLocalOpen" tabindex="0">
+      <UCard
+        class="flex flex-col flex-1 overflow-y-auto"
+        :ui="{
+          body: { base: 'flex-1' },
+          ring: '',
+          divide: 'divide-y divide-border',
+        }"
+      >
+        <template #header>
+          <KanbanSlideoverTop />
+        </template>
 
-				<KanbanSlideoverComments />
-			</UCard>
-		</USlideover>
-	</div>
+        <KanbanSlideoverComments />
+      </UCard>
+    </USlideover>
+  </div>
 </template>
