@@ -7,7 +7,8 @@ export interface ICustomer extends IBaseField {
     name: string
     email: string
     avatar_url: string
-    froum_source?: string
+    from_source?: string
+    documents?: string | null
 }
 
 export interface IComment extends IBaseField {

@@ -8,12 +8,11 @@ useSeoMeta({
     title: 'Customers'
 });
 
-const {data, isLoading} = useQuery({
+const {data: customers, isLoading} = useQuery({
     queryKey: ['customers'],
-    queryFn: ()=>DB.listDocuments(DB_ID, COLLECTION_CUSTOMERS)
+    queryFn: ()=>DB.listDocuments(DB_ID, COLLECTION_CUSTOMERS) as unknown as ICustomer[],
 });
 
-const customers = (data?.value?.documents as unknown as ICustomer[]);
 </script>
 
 <template>
@@ -26,12 +25,12 @@ const customers = (data?.value?.documents as unknown as ICustomer[]);
                     <UiTableHead class="w-[80px]">Image</UiTableHead>
                     <UiTableHead class="w-[200px]">Name</UiTableHead>
                     <UiTableHead class="w-[200px]">email</UiTableHead>
-                    <UiTableHead ></UiTableHead>
+                    <UiTableHead >Where from</UiTableHead>
                 </UiTableRow>
             </UiTableHeader>
             <UiTableBody>
                 <UiTableRow 
-                v-for="customer in customers"
+                v-for="customer in (customers?.documents as unknown as ICustomer[])"
                 :key="customer.$id"
                 >
                     <UiTableCell>
@@ -44,9 +43,9 @@ const customers = (data?.value?.documents as unknown as ICustomer[]);
                             class="rounded-full" />
                         </NuxtLink>
                     </UiTableCell>
-                <UiTableCell class="font-medium">{{customer.name}}</UiTableCell>
-                <UiTableCell>{{customer.email}}</UiTableCell>
-                <UiTableCell>{{customer.froum_source}}</UiTableCell>
+                    <UiTableCell class="font-medium">{{customer.name}}</UiTableCell>
+                    <UiTableCell>{{customer.email}}</UiTableCell>
+                    <UiTableCell>{{customer.from_source}}</UiTableCell>
                 </UiTableRow>
 
             </UiTableBody>
