@@ -1,21 +1,21 @@
 version: "3.8"
 
 services:
-  api:
-    container_name: starhub_api
-    build:
-      context: ./back
-    env_file:
-      - .env
-    volumes:
-      - ./back:/app
-      - /app/node_modules
-    ports:
-      - ${PORT}:4040
-    command: sh -c "npm run db:setup && npm run start"
-    depends_on:
-      - postgres
-    restart: always
+  # api:
+  #   container_name: starhub_api
+  #   build:
+  #     context: ./back
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./back:/app
+  #     - /app/node_modules
+  #   ports:
+  #     - ${PORT}:4040
+  #   command: sh -c "npm run db:setup && npm run start"
+  #   depends_on:
+  #     - postgres
+  #   restart: always
 
   postgres:
     container_name: starhub_bd
@@ -35,21 +35,21 @@ services:
       - ./pgdata:/var/lib/postgresql/data
     restart: always
 
-  nuxt:
-    container_name: nuxt_app
-    build:
-      context: ./front
-    env_file:
-      - .env
-    volumes:
-      - ./front:/app
-      - /app/node_modules
-    ports:
-      - ${NUXT_PORT}:3000
-    command: npm run dev
-    depends_on:
-      - api
-    restart: always
+  # nuxt:
+  #   container_name: starhub_app
+  #   build:
+  #     context: ./front
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./front:/app
+  #     - /app/node_modules
+  #   ports:
+  #     - ${NUXT_PORT}:3000
+  #   command: npm run dev
+  #   depends_on:
+  #     - api
+  #   restart: always
 
 volumes:
   pgdata:
