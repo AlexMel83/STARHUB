@@ -1,0 +1,10 @@
+/node_modules
+/back/node_modules
+/front/node_modules
+/.vscode
+/back/uploads
+!/back/uploads/public/**
+/pgdata
+.env
+.development.env
+.production.env
