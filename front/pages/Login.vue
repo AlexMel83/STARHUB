@@ -24,7 +24,6 @@
         />
         <div class="grid grid-cols-2 gap-5 mt-4">
           <UiButton type="button" @click="login">Login</UiButton>
-          <UiButton type="button" @click="register">Register</UiButton>
         </div>
       </form>
     </div>
@@ -32,16 +31,30 @@
 </template>
 
 <script setup lang="ts">
-import { APP_WRITE_ID } from "@/app.constants";
+import { useRouter } from "vue-router";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-import { Client, Account, ID } from "appwrite";
 
-const client = new Client();
-client.setEndpoint("https://cloud.appwrite.io/v1").setProject(APP_WRITE_ID);
+interface User {
+  id: number;
+  email: string;
+  name: string | null;
+  surname: string | null;
+  phone: string | null;
+  role: string;
+  isactivated: boolean;
+  social_login: boolean;
+  facebook_id: string | null;
+  google_id: string | null;
+  picture: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-const account = new Account(client);
-const result = account.get();
-console.log(result);
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
 
 useSeoMeta({
   title: "Login",
@@ -64,52 +77,70 @@ const clearData = async () => {
 };
 
 const login = async () => {
-  console.log("+");
   try {
     isLoadingStore.set(true);
-    await account.createEmailPasswordSession(emailRef.value, passwordRef.value);
-    const response = await account.get();
-    if (response) {
+    const response: Response = await fetch("http://localhost:4041/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailRef.value,
+        password: passwordRef.value,
+      }),
+    });
+    if(!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    };
+    const responseData: LoginResponse = await response.json();
+    if(responseData.accessToken) {
+      const {accessToken, refreshToken, user} = responseData;
       authStore.set({
-        email: response.email,
-        name: response.name,
-        status: response.status,
+        email: user.email,
+        name: user.name || '',
+        role: user.role || '',
+        status: user.isactivated ? true : false, 
       });
+
+      document.cookie = `accessToken=${accessToken}; Secure; HttpOnly; SameSite=Strict`;
+      document.cookie = `refreshToken=${refreshToken}; Secure; HttpOnly; SameSite=Strict`;
+
+      await clearData();
+    } else {
+      console.error("Not getting accessToken from server");
     }
-    console.log(response, authStore);
-    await clearData();
   } catch (error) {
     console.error("Login error:", error);
     isLoadingStore.set(false);
   }
 };
 
-const register = async () => {
-  try {
-    const userId = ID.unique();
-    if (
-      userId.length > 36 ||
-      !/^[a-zA-Z0-9._-]+$/.test(userId) ||
-      /^[._-]/.test(userId)
-    ) {
-      throw new Error("Generated userId is invalid");
-    }
-    console.log("Generated User ID:", userId);
-    console.log("Email:", emailRef.value);
-    console.log("Password:", passwordRef.value);
-    console.log("Name:", nameRef.value);
-    const result = await account.create(
-      userId,
-      emailRef.value,
-      passwordRef.value,
-      nameRef.value,
-    );
-    console.log("User created successfully", result);
-    await login();
-  } catch (error) {
-    console.error("Registration error:", error);
-  }
-};
+// const register = async () => {
+//   try {
+//     const userId = ID.unique();
+//     if (
+//       userId.length > 36 ||
+//       !/^[a-zA-Z0-9._-]+$/.test(userId) ||
+//       /^[._-]/.test(userId)
+//     ) {
+//       throw new Error("Generated userId is invalid");
+//     }
+//     console.log("Generated User ID:", userId);
+//     console.log("Email:", emailRef.value);
+//     console.log("Password:", passwordRef.value);
+//     console.log("Name:", nameRef.value);
+//     const result = await account.create(
+//       userId,
+//       emailRef.value,
+//       passwordRef.value,
+//       nameRef.value,
+//     );
+//     console.log("User created successfully", result);
+//     await login();
+//   } catch (error) {
+//     console.error("Registration error:", error);
+//   }
+// };
 </script>
 
 <style scoped></style>
