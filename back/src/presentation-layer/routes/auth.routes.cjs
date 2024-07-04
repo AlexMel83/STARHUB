@@ -1,10 +1,10 @@
 const userController = require("../controllers/user-controller.cjs");
-const socialLoginService = require("../../services/social-login-service.cjs");
+const socialLoginService = require("../../service-layer/services/social-login-service.cjs");
 const { body, param, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const phoneRegex = /^380\d{9}$/;
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
-const ApiError = require("../../exceptions/api-errors.cjs");
+const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 const validateUser = [
   body("email")

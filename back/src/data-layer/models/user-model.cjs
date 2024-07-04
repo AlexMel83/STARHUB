@@ -1,4 +1,4 @@
-const knex = require("./../../config/knex.config.cjs");
+const knex = require("./../../../config/knex.config.cjs");
 
 const UsersTable = "users";
 const userFields = [

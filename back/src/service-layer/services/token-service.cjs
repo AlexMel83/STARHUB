@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { JWT_AC_SECRET, JWT_AC_EXP, JWT_RF_SECRET, JWT_RF_EXP } = process.env;
-const tokenModel = require("../models/token-model.cjs");
-const userModel = require("../models/user-model.cjs");
-const knex = require("../../config/knex.config.cjs");
-const ApiError = require("../exceptions/api-errors.cjs");
+const tokenModel = require("../../data-layer/models/token-model.cjs");
+const userModel = require("../../data-layer/models/user-model.cjs");
+const knex = require("../../../config/knex.config.cjs");
+const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 const allowedRoles = ["user", "manager", "admin"];
 

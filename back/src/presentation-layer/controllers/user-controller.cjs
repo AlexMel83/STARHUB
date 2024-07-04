@@ -1,9 +1,9 @@
 const config = require("../../../config/config.cjs");
 const { CLIENT_URL } = process.env;
 const knex = require("./../../../config/knex.config.cjs");
-const userService = require("../../services/user-service.cjs");
-const userModel = require("../../models/user-model.cjs");
-const ApiError = require("../../exceptions/api-errors.cjs");
+const userService = require("../../service-layer/services/user-service.cjs");
+const userModel = require("../../data-layer/models/user-model.cjs");
+const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class UserController {
   async registration(req, res) {
@@ -25,10 +25,9 @@ class UserController {
       console.error(error.code);
       if (error.status === 400) {
         return res.json(ApiError.BadRequest(error));
-      } else if (error.code === 'ESOCKET') {
-        return res.json(ApiError.IntServError('mail-server error'));
-      }
-      else {
+      } else if (error.code === "ESOCKET") {
+        return res.json(ApiError.IntServError("mail-server error"));
+      } else {
         return res.json(ApiError.IntServError(error));
       }
     }
@@ -46,8 +45,8 @@ class UserController {
       userData.accessToken = "";
       return res.json(userData);
     } catch (error) {
-      if(error.code === 'ECONNREFUSED') { 
-        res.json(ApiError.IntServError('Connection refused'));
+      if (error.code === "ECONNREFUSED") {
+        res.json(ApiError.IntServError("Connection refused"));
       }
       trx.rollback();
       console.error(error);
@@ -67,10 +66,10 @@ class UserController {
       const token = await userService.logout(refreshToken, trx);
       res.clearCookie("refreshToken");
       await trx.commit();
-      if(token === null) {
-        return res.json(ApiError.BadRequest('User has already logged out'));
+      if (token === null) {
+        return res.json(ApiError.BadRequest("User has already logged out"));
       } else if (token === 1) {
-        return res.json('User logout completed successfully');
+        return res.json("User logout completed successfully");
       }
       return res.json(token);
     } catch (error) {
@@ -107,9 +106,11 @@ class UserController {
     let trx;
     try {
       trx = await knex.transaction();
-      const { refreshToken } = req.cookies;  
+      const { refreshToken } = req.cookies;
       if (!refreshToken) {
-        return res.json(ApiError.BadRequest('User not authorized, refreToken not found'));
+        return res.json(
+          ApiError.BadRequest("User not authorized, refreToken not found"),
+        );
       }
       const userData = await userService.refresh(refreshToken, trx);
       res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
@@ -119,15 +120,14 @@ class UserController {
       if (trx) {
         await trx.rollback();
       }
-      console.error('Error:', error);
-     if (error.status === 400) {
+      console.error("Error:", error);
+      if (error.status === 400) {
         return res.json(ApiError.BadRequest(error));
       } else {
         return res.json(ApiError.IntServError(error));
       }
     }
   }
-  
 
   async getUser(req, res) {
     const user = req.user;
@@ -141,7 +141,7 @@ class UserController {
           return res.send(ApiError.AccessDeniedForRole("User not owner"));
         }
       } else {
-        return res.json(ApiError.BadRequest('parametr not found'))
+        return res.json(ApiError.BadRequest("parametr not found"));
       }
     } catch (error) {
       console.error(error);

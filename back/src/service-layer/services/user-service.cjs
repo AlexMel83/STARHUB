@@ -1,15 +1,14 @@
-const UserModel = require("../models/user-model.cjs");
+const UserModel = require("../../data-layer/models/user-model.cjs");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
 const mailService = require("./mail-service.cjs");
 const tokenService = require("./token-service.cjs");
-const UserDto = require("../dtos/user-dto.cjs");
+const UserDto = require("../../data-layer/dtos/user-dto.cjs");
 const { API_URL } = process.env;
-const ApiError = require("../exceptions/api-errors.cjs");
+const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class UserService {
   async registration(email, password, role, trx) {
-
     const candidate = await UserModel.findUserByEmail(email);
 
     if (candidate) {

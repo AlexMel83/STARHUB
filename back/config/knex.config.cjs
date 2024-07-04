@@ -22,20 +22,20 @@ try {
   });
 
   // check connection to DB
-  db.raw('SELECT 1')
+  db.raw("SELECT 1")
     .then(() => {
-      console.log('Connected to the database successfully!');
+      console.log("Connected to the database successfully!");
     })
     .catch((err) => {
-      console.error('Failed to connect to the database:', err.message);
-      if (err.code === 'ECONNREFUSED') {
-        console.error('Connection refused. Please check your database server.');
+      console.error("Failed to connect to the database:", err.message);
+      if (err.code === "ECONNREFUSED") {
+        console.error("Connection refused. Please check your database server.");
       }
       // close connection
       db.destroy();
     });
 } catch (error) {
-  console.error('Error initializing database connection:', error.message);
+  console.error("Error initializing database connection:", error.message);
   throw error;
 }
 

@@ -4,7 +4,7 @@ const utc = require("dayjs/plugin/utc");
 const fs = require("fs");
 const path = require("path");
 const { createHash } = require("crypto");
-const ApiError = require("../exceptions/api-errors.cjs");
+const ApiError = require("../middlewares/exceptions/api-errors.cjs");
 
 dayjs.extend(utc);
 
