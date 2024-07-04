@@ -1,10 +1,10 @@
-const userController = require("../controllers/user-controller");
-const socialLoginService = require("../../services/social-login-service");
+const userController = require("../controllers/user-controller.cjs");
+const socialLoginService = require("../../services/social-login-service.cjs");
 const { body, param, query } = require("express-validator");
-const authMiddleware = require("../../middlewares/auth-middleware");
+const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const phoneRegex = /^380\d{9}$/;
-const validateMiddleware = require("../../middlewares/validate-middleware");
-const ApiError = require("./../../exceptions/api-errors");
+const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
+const ApiError = require("../../exceptions/api-errors.cjs");
 
 const validateUser = [
   body("email")
@@ -49,7 +49,7 @@ module.exports = function (app) {
   app.get("/refresh", userController.refresh);
   app.get(
     "/users",
-    // authMiddleware,
+    authMiddleware,
     query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
     userController.getUser,

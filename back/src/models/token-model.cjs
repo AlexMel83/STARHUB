@@ -35,10 +35,10 @@ module.exports = {
       const data = await trx(TokensTable)
         .where("refreshtoken", refreshToken)
         .del();
-      return "logout " + data;
-    } catch (e) {
-      console.error("Помилка транзакції:", e);
-      throw e;
+      return data;
+    } catch (error) {
+      console.error("Помилка транзакції:", error);
+      throw error;
     }
   },
 

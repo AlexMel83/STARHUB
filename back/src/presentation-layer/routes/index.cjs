@@ -1,4 +1,4 @@
-const authRouteInit = require("./auth.routes");
+const authRouteInit = require("./auth.routes.cjs");
 
 const routeInit = (app, express) => {
   app.use(express.urlencoded({ extended: true }));

@@ -1,16 +1,16 @@
-const config = require("./../../../config/config");
+const config = require("../../../config/config.cjs");
 const { CLIENT_URL } = process.env;
-const knex = require("./../../../config/knex.config");
-const userService = require("./../../services/user-service");
-const userModel = require("./../../models/user-model");
-const ApiError = require("./../../exceptions/api-errors");
+const knex = require("./../../../config/knex.config.cjs");
+const userService = require("../../services/user-service.cjs");
+const userModel = require("../../models/user-model.cjs");
+const ApiError = require("../../exceptions/api-errors.cjs");
 
 class UserController {
   async registration(req, res) {
-    const trx = await knex.transaction();
+    let trx;
     try {
+      trx = await knex.transaction();
       const { email, password, role } = req.body;
-
       const userData = await userService.registration(
         email,
         password,
@@ -22,27 +22,33 @@ class UserController {
       return res.json(userData);
     } catch (error) {
       await trx.rollback();
-      console.error(error);
+      console.error(error.code);
       if (error.status === 400) {
         return res.json(ApiError.BadRequest(error));
-      } else {
+      } else if (error.code === 'ESOCKET') {
+        return res.json(ApiError.IntServError('mail-server error'));
+      }
+      else {
         return res.json(ApiError.IntServError(error));
       }
     }
   }
 
   async login(req, res) {
-    const trx = await knex.transaction();
+    let trx;
     try {
+      trx = await knex.transaction();
       const { email, password } = req.body;
       const userData = await userService.login(email, password, trx);
-
       res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
       trx.commit();
       userData.refreshToken = "";
       userData.accessToken = "";
       return res.json(userData);
     } catch (error) {
+      if(error.code === 'ECONNREFUSED') { 
+        res.json(ApiError.IntServError('Connection refused'));
+      }
       trx.rollback();
       console.error(error);
       if (error.status === 400) {
@@ -54,12 +60,18 @@ class UserController {
   }
 
   async logout(req, res) {
-    const trx = await knex.transaction();
+    let trx;
     try {
+      trx = await knex.transaction();
       let { refreshToken } = req.cookies;
       const token = await userService.logout(refreshToken, trx);
       res.clearCookie("refreshToken");
       await trx.commit();
+      if(token === null) {
+        return res.json(ApiError.BadRequest('User has already logged out'));
+      } else if (token === 1) {
+        return res.json('User logout completed successfully');
+      }
       return res.json(token);
     } catch (error) {
       await trx.rollback();
@@ -73,14 +85,12 @@ class UserController {
   }
 
   async activate(req, res) {
-    const trx = await knex.transaction();
+    let trx;
     try {
+      trx = await knex.transaction();
       const activationLink = req.params.link;
-
       const email = await userService.activate(activationLink, trx);
-
       trx.commit();
-
       return res.redirect(`${CLIENT_URL}/?email=${email}`);
     } catch (error) {
       trx.rollback();
@@ -94,23 +104,30 @@ class UserController {
   }
 
   async refresh(req, res) {
-    const trx = await knex.transaction();
+    let trx;
     try {
-      const { refreshToken } = req.cookies;
+      trx = await knex.transaction();
+      const { refreshToken } = req.cookies;  
+      if (!refreshToken) {
+        return res.json(ApiError.BadRequest('User not authorized, refreToken not found'));
+      }
       const userData = await userService.refresh(refreshToken, trx);
       res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
-      trx.commit();
+      await trx.commit();
       return res.json(userData);
     } catch (error) {
-      trx.rollback();
-      console.error(error);
-      if (error.status === 400) {
+      if (trx) {
+        await trx.rollback();
+      }
+      console.error('Error:', error);
+     if (error.status === 400) {
         return res.json(ApiError.BadRequest(error));
       } else {
         return res.json(ApiError.IntServError(error));
       }
     }
   }
+  
 
   async getUser(req, res) {
     const user = req.user;
@@ -138,14 +155,12 @@ class UserController {
 
   async editUser(req, res) {
     const fields = req.body;
-
     const userDataBase = await userModel.findUserByEmailWithHash(fields.email);
     if (!userDataBase) {
       return res.json(
         ApiError.NotFound(`user with email: ${fields.email} was not found`),
       );
     }
-
     let updatedUser = {};
     if (fields?.password) {
       fields.password = await userService.hashPassword(fields.password);

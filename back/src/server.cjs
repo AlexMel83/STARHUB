@@ -4,11 +4,11 @@ require("dotenv").config({
 const { PORT, CLIENT_URL, PAYMENT_DOMEN, JWT_AC_SECRET } = process.env;
 const http = require("http");
 const express = require("express");
-const { routeInit } = require("./presentation-layer/routes");
+const { routeInit } = require("./presentation-layer/routes/index.cjs");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const errorMiddleware = require("./middlewares/error-middleware.js");
+const errorMiddleware = require("./middlewares/error-middleware.cjs");
 
 const app = express();
 const server = http.createServer(app);

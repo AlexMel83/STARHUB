@@ -1,14 +1,15 @@
-const UserModel = require("../models/user-model");
+const UserModel = require("../models/user-model.cjs");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
-const mailService = require("./mail-service");
-const tokenService = require("./token-service");
-const UserDto = require("./../dtos/user-dto");
+const mailService = require("./mail-service.cjs");
+const tokenService = require("./token-service.cjs");
+const UserDto = require("../dtos/user-dto.cjs");
 const { API_URL } = process.env;
-const ApiError = require("./../exceptions/api-errors");
+const ApiError = require("../exceptions/api-errors.cjs");
 
 class UserService {
   async registration(email, password, role, trx) {
+
     const candidate = await UserModel.findUserByEmail(email);
 
     if (candidate) {
@@ -24,7 +25,6 @@ class UserService {
       { email, password: hashPassword, role, activationlink: activationLink },
       trx,
     );
-
     if (process.env.NODE_ENV === "development") {
       await mailService.sendActivationMail(
         email,
@@ -36,7 +36,6 @@ class UserService {
         `${API_URL}/activate/${activationLink}`,
       );
     }
-
     const userDto = new UserDto(user[0]);
 
     const tokens = tokenService.generateTokens({ ...userDto });
@@ -93,7 +92,6 @@ class UserService {
 
   async logout(refreshToken, trx) {
     const token = await tokenService.removeToken(refreshToken, trx);
-
     return token;
   }
 

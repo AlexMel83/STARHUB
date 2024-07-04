@@ -1,7 +1,7 @@
 const { generators } = require("openid-client");
 const crypto = require("crypto");
 const fetch = require("node-fetch");
-const UserModel = require("../models/user-model");
+const UserModel = require("../models/user-model.cjs");
 const uuid = require("uuid");
 
 class FacebookStrategy {

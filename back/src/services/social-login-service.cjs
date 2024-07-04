@@ -1,10 +1,10 @@
-const tokenService = require("./token-service");
-const UserDto = require("../dtos/user-dto");
-const GoogleStrategy = require("../strategies/google-strategy");
-const FacebookStrategy = require("../strategies/facebook-strategy");
-const ApiError = require("../exceptions/api-errors");
-const UserModel = require("../models/user-model");
-const config = require("./../../config/config");
+const tokenService = require("./token-service.cjs");
+const UserDto = require("../dtos/user-dto.cjs");
+const GoogleStrategy = require("../strategies/google-strategy.cjs");
+const FacebookStrategy = require("../strategies/facebook-strategy.cjs");
+const ApiError = require("../exceptions/api-errors.cjs");
+const UserModel = require("../models/user-model.cjs");
+const config = require("../../config/config.cjs");
 const uuidRegex =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 const emailRegex = /\(email\)=\(([^)]+)\)/;

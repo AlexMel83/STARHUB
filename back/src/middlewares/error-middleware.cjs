@@ -1,4 +1,4 @@
-const ApiError = require("../exceptions/api-errors");
+const ApiError = require("../exceptions/api-errors.cjs");
 
 // eslint-disable-next-line no-unused-vars
 module.exports = function (err, req, res, _) {

@@ -1,11 +1,12 @@
 {
   "name": "eduhub_back",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/server.cjs",
+  "type": "commonjs",
   "scripts": {
     "lint": "eslint --fix . && prettier -w .",
-    "dev": "cross-env NODE_ENV=development nodemon ./src/server.js",
-    "start": "cross-env NODE_ENV=production node ./src/server.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/server.cjs",
+    "start": "cross-env NODE_ENV=production node ./src/server.cjs",
     "db:clean": "cd ./sql/ && knex migrate:rollback",
     "db:setup": "cd ./sql/ && knex migrate:latest && knex seed:run",
     "devdb:clean": "cd ./sql/ && cross-env NODE_ENV=development knex migrate:rollback",

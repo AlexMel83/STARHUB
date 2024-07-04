@@ -1,5 +1,5 @@
 const { Issuer, generators } = require("openid-client");
-const UserModel = require("../models/user-model");
+const UserModel = require("../models/user-model.cjs");
 const uuid = require("uuid");
 
 class GoogleStrategy {
