@@ -42,7 +42,7 @@ class UserController {
       res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
       trx.commit();
       userData.refreshToken = "";
-      userData.accessToken = "";
+      // userData.accessToken = "";
       return res.json(userData);
     } catch (error) {
       if (error.code === "ECONNREFUSED") {

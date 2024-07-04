@@ -3,6 +3,8 @@ interface IAuthStore {
   name: string;
   role: string;
   status: boolean;
+  accessToken: string;
+  refreshToken: string;
 }
 
 const defaultValue: { user: IAuthStore } = {
@@ -11,6 +13,8 @@ const defaultValue: { user: IAuthStore } = {
     name: "",
     role: "",
     status: false,
+    accessToken: "",
+    refreshToken: "",
   },
 };
 
