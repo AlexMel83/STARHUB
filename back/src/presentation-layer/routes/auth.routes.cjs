@@ -50,7 +50,7 @@ module.exports = function (app) {
   app.get(
     "/users",
     authMiddleware,
-    query("id").notEmpty().withMessage("Id is required"),
+    // query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
     userController.getUser,
   );

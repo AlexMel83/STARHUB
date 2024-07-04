@@ -140,6 +140,8 @@ class UserController {
         } else {
           return res.send(ApiError.AccessDeniedForRole("User not owner"));
         }
+      } else {
+        return res.json(ApiError.BadRequest('parametr not found'))
       }
     } catch (error) {
       console.error(error);
