@@ -6,7 +6,7 @@
       <slot />
     </div>
   </section>
-  <NuxtPage />
+  <ModalLoginRegistration/>
 </template>
 <script setup lang="ts">
 import { account } from "@/lib/appwrite";
