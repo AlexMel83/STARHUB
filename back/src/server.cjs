@@ -27,6 +27,7 @@ app.use(
     secret: JWT_AC_SECRET,
     resave: false,
     saveUninitialized: true,
+    cookie: { secure: false }
   }),
 );
 
