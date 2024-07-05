@@ -2,6 +2,13 @@
 
 import { useRouter } from "vue-router";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
+import { useUserStore } from '~/stores/mainStore';
+
+const userStore = useUserStore();
+const { $api } = useNuxtApp();
+const baseURL = $api.defaults.baseURL;
+const textErrorLogin = ref('');
+const textPasswordError = ref('');
 
 interface User {
   id: number;
@@ -45,6 +52,9 @@ const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
 const router = useRouter();
 
+const config = useRuntimeConfig();
+const localhostApi = config.public.localhostApi;
+
 const clearData = async () => {
   loginForm.email = loginForm.password ="";
   registrationForm.email = registrationForm.password = registrationForm.passwordRepeat = "";
@@ -67,44 +77,79 @@ const clearData = async () => {
 // }
 
 
-const login = async () => {
+// const login = async () => {
+//   try {
+//     isLoadingStore.set(true);
+//     const response: Response = await fetch(`${localhostApi}/login`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         email:loginForm.email,
+//         password: loginForm.password,
+//       }),
+//     });
+//     if(!response.ok) {
+//       throw new Error(`HTTP error! Status: ${response.status}`);
+//     };
+//     const responseData: LoginResponse = await response.json();
+//     console.log(responseData)
+//     if(responseData.accessToken) {
+//       const {accessToken, refreshToken, user} = responseData;
+//       authStore.set({
+//         email: user.email,
+//         name: user.name || '',
+//         role: user.role || '',
+//         status: user.isactivated ? true : false, 
+//         accessToken: accessToken,
+//         refreshToken: refreshToken,
+//       });
+//       await clearData();
+//       isOpen.value = false;
+//     } else {
+//       console.error("Not getting accessToken from server");
+//     }
+//   } catch (error) {
+//     console.error("Login error:", error);
+//     isLoadingStore.set(false);
+//   }
+// };
+
+const login = async ()=>{
+  const postObject = {
+    email: loginForm.email,
+    password: loginForm.password,
+  };
   try {
-    isLoadingStore.set(true);
-    const response: Response = await fetch("http://localhost:4041/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email:loginForm.email,
-        password: loginForm.password,
-      }),
+    await $api.post("/login", postObject).then((response) => {
+      if (
+        response.data.status == 500 &&
+        response.data.message.includes("Користувач з email", "не знайдений")
+      ) {
+        textErrorLogin.value = "даний email незареєстрований";
+      } else if (
+        response.data.status == 400 &&
+        response.data.message.includes("Обліковий запис", "не активовано")
+      ) {
+        textErrorLogin.value = "обліковий запис не активовано, перевірте пошту";
+      } else if (
+        response.data.status == 400 &&
+        response.data.message.includes("Невірний пароль")
+      ) {
+        textPasswordError.value = "невірний пароль";
+      } else if (response.data.statusCode !== 401) {
+        userStore.getUserData(response.data.user);
+        localStorage.setItem("access_token", response.data.accessToken);
+        localStorage.setItem("userId", response.data.user.id);
+        userStore.setRole(response.data.user.role);
+        textErrorLogin.value = "";
+      }
     });
-    if(!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    };
-    const responseData: LoginResponse = await response.json();
-    console.log(responseData)
-    if(responseData.accessToken) {
-      const {accessToken, refreshToken, user} = responseData;
-      authStore.set({
-        email: user.email,
-        name: user.name || '',
-        role: user.role || '',
-        status: user.isactivated ? true : false, 
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      });
-      await clearData();
-      isOpen.value = false;
-    } else {
-      console.error("Not getting accessToken from server");
-    }
   } catch (error) {
-    console.error("Login error:", error);
-    isLoadingStore.set(false);
+    console.log(error);
   }
-};
+}
 
 const registration = () => {
     try {

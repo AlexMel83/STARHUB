@@ -3,8 +3,8 @@
     import LogosFacebook from './LogosFacebook.vue';
     
     const config = useRuntimeConfig();
-    const apiLocalhost = config.public.apiLocalhost;
-    console.log(apiLocalhost)
+    const localhostApi = config.public.localhostApi;
+    console.log(localhostApi)
     const error = ref('');
 
     // onMounted(() => {
@@ -16,7 +16,7 @@
 
     const handleSocialLogin = async (provider) => {
   try {
-    const response = await fetch(`${apiLocalhost}/social-login/${provider}`, {
+    const response = await fetch(`${localhostApi}/social-login/${provider}`, {
       method: 'GET',
       headers: {
         "Content-Type": "application/json",
