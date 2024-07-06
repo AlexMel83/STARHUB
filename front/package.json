@@ -22,7 +22,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.11",
-    "nuxt": "^3.12.2",
+    "nuxt": "^3.12.3",
     "pinia": "^2.1.7",
     "radix-vue": "^1.8.5",
     "shadcn-nuxt": "^0.10.4",
