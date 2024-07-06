@@ -1,7 +1,8 @@
 <script setup lang="ts">
-// modal features start
+import { object, string, ref as yupRef, type InferType } from 'yup'
+import type { FormSubmitEvent } from '#ui/types'  
+// modal features
 const isOpen = ref(false);
-
 defineShortcuts({
   escape: {
     usingInput: true,
@@ -9,82 +10,103 @@ defineShortcuts({
     handler: () => { isOpen.value = false }
   }
 });
-// modal features end
-// tab features start
+// tab features
 const items = [{
-  key: 'account',
-  label: 'Account',
-  description: 'Make changes to your account here. Click save when you\'re done.'
+  key: 'login',
+  label: 'Login',
+  description: ''
 }, {
-  key: 'password',
-  label: 'Password',
-  description: 'Change your password here. After saving, you\'ll be logged out.'
-}]
+  key: 'registration',
+  label: 'Registration',
+  description: ''
+}];
 
-const accountForm = reactive({ name: 'Benjamin', username: 'benjamincanac' })
-const passwordForm = reactive({ currentPassword: '', newPassword: '' })
+const loginForm = reactive({ email: 'admin@test.com', password: '12345678' });
+const regForm = reactive({ email: '', firstPassword: '', retypePassword: '' });
+// input validation
+const minPwd = 4;
 
-function onSubmit (form) {
-  console.log('Submitted form:', form)
+const loginSchema = object({
+  email: string().email('Invalid email').required('Required'),
+  password: string()
+    .min(minPwd, `Must be at least ${minPwd} characters`)
+    .required('Required'),
+});
+
+const registrationSchema = object({
+  email: string().email('Invalid email').required('Required'),
+  firstPassword: string()
+    .min(minPwd, `Must be at least ${minPwd} characters`)
+    .required('Required'),
+  retypePassword: string()
+    .oneOf([yupRef('firstPassword'), null], 'Passwords must match')
+    .required('Required')
+});
+
+type LoginSchema = InferType<typeof loginSchema>;
+  type RegistrationSchema = InferType<typeof registrationSchema>;
+
+const state = reactive({
+  email: loginForm.email,
+  password: loginForm.password,
+  firstPassword: regForm.firstPassword,
+  retypePassword: regForm.retypePassword,
+});
+//input validation end
+async function onSubmitLogin(event: FormSubmitEvent<LoginSchema>) {
+  console.log(event.data);
 }
-// tab features end
 
+async function onSubmitRegistration(event: FormSubmitEvent<RegistrationSchema>) {
+  console.log(event.data);
+}
 </script>
 
 <template>
-    <div>
-        <UButton label="Open" @click="isOpen = true" />
-    
-        <UModal v-model="isOpen" prevent-close>
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-              <template #header>
-                  <div class="flex items-center justify-between">
-                  <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                    Modal
-                  </h3>
-                  <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isOpen = false" />
-                  </div>
-              </template>
-    
-                <UTabs :items="items" class="w-full">
-                  <template #item="{ item }">
-                    <UCard @submit.prevent="() => onSubmit(item.key === 'account' ? accountForm : passwordForm)">
-                      <template #header>
-                        <p class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                          {{ item.label }}
-                        </p>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                          {{ item.description }}
-                        </p>
-                      </template>
+  <div>
+    <UButton label="Open" @click="isOpen = true" />
 
-                      <div v-if="item.key === 'account'" class="space-y-3">
-                        <UFormGroup label="Name" name="name">
-                          <UInput v-model="accountForm.name" />
-                        </UFormGroup>
-                        <UFormGroup label="Username" name="username">
-                          <UInput v-model="accountForm.username" />
-                        </UFormGroup>
-                      </div>
-                      <div v-else-if="item.key === 'password'" class="space-y-3">
-                        <UFormGroup label="Current Password" name="current" required>
-                          <UInput v-model="passwordForm.currentPassword" type="password" required />
-                        </UFormGroup>
-                        <UFormGroup label="New Password" name="new" required>
-                          <UInput v-model="passwordForm.newPassword" type="password" required />
-                        </UFormGroup>
-                      </div>
+    <UModal v-model="isOpen" prevent-close>
+      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+              Login
+            </h3>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isOpen = false" />
+          </div>
+          <ModalSocial />
+        </template>
 
-                      <template #footer>
-                        <UButton type="submit" color="black">
-                          Save {{ item.key === 'account' ? 'account' : 'password' }}
-                        </UButton>
-                      </template>
-                    </UCard>
-                  </template>
-                </UTabs>
-
-            </UCard>
-        </UModal>
-    </div>
-  </template>
+        <UTabs :items="items" class="w-full">
+          <template #item="{ item }">
+            <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit.prevent="item.key === 'login' ? onSubmitLogin : onSubmitRegistration">
+              <div v-if="item.key === 'login'" class="space-y-3">
+                <UFormGroup label="Email" name="email">
+                  <UInput v-model="state.email" />
+                </UFormGroup>
+                <UFormGroup label="Password" name="password">
+                  <UInput v-model="state.password" type="password" />
+                </UFormGroup>
+              </div>
+              <div v-else-if="item.key === 'registration'" class="space-y-3">
+                <UFormGroup label="Email" name="email">
+                  <UInput v-model="state.email" />
+                </UFormGroup>
+                <UFormGroup label="Password" name="firstPassword" required>
+                  <UInput v-model="state.firstPassword" type="password" required />
+                </UFormGroup>
+                <UFormGroup label="Retype Password" name="retypePassword" required>
+                  <UInput v-model="state.retypePassword" type="password" required />
+                </UFormGroup>
+              </div>
+              <UButton type="submit" color="black">
+                {{ item.key === 'login' ? 'login' : 'registration' }}
+              </UButton>
+            </UForm>
+          </template>
+        </UTabs>
+      </UCard>
+    </UModal>
+  </div>
+</template>
