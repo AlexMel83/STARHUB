@@ -60,6 +60,34 @@ async function onSubmitLogin(event: FormSubmitEvent<LoginSchema>) {
 async function onSubmitRegistration(event: FormSubmitEvent<RegistrationSchema>) {
   console.log(event.data);
 }
+// input label features
+import { reactive, ref } from 'vue';
+
+const formData = reactive({
+  email: '',
+  password: '',
+  passConfirm: ''
+});
+
+const emailActive = ref(false);
+const passwordActive = ref(false);
+const passConfirmActive = ref(false);
+
+const handleFocus = (field: string) => {
+  if (field === 'email') emailActive.value = true;
+  if (field === 'password') passwordActive.value = true;
+  if (field === 'passConfirm') passConfirmActive.value = true;
+};
+
+const handleBlur = (field: string) => {
+  if (field === 'email' && !formData.email) emailActive.value = false;
+  if (field === 'password' && !formData.password) passwordActive.value = false;
+  if (field === 'passConfirm' && !formData.passConfirm) passConfirmActive.value = false;
+};
+
+const validateForm = () => {
+  console.log('Form data:', formData);
+};
 </script>
 
 <template>
@@ -82,6 +110,12 @@ async function onSubmitRegistration(event: FormSubmitEvent<RegistrationSchema>) 
           <template #item="{ item }">
             <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit.prevent="item.key === 'login' ? onSubmitLogin : onSubmitRegistration">
               <div v-if="item.key === 'login'" class="space-y-3">
+
+                <UFormGroup name="email" :class="{ 'has-value': formData.email !== '' || emailActive, 'form-group': true }">
+                  <UInput v-model="formData.email" @focus="handleFocus('email')" @blur="handleBlur('email')" />
+                  <label>Email</label>
+                </UFormGroup>
+
                 <UFormGroup label="Email" name="email">
                   <UInput v-model="state.email" />
                 </UFormGroup>
@@ -110,3 +144,47 @@ async function onSubmitRegistration(event: FormSubmitEvent<RegistrationSchema>) 
     </UModal>
   </div>
 </template>
+
+<style scoped>
+.form-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  transition: all 0.2s;
+  pointer-events: none;
+  color: #999;
+}
+
+.form-group.has-value label,
+.form-group input:focus + label {
+  top: -10px;
+  left: 0;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+.u-input {
+  width: 100%;
+  padding: 10px 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.u-input:focus {
+  border-color: #007bff;
+}
+
+.u-input:focus + label {
+  top: -10px;
+  left: 0;
+  font-size: 0.75rem;
+  color: #007bff;
+}
+</style>
