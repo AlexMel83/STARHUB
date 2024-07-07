@@ -75,6 +75,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: "Lato", "sans-serif";
+    font-family: Inter, sans-serif;
   }
 }

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { APP_WRITE_ID } from "@/app.constants";
+import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
+import { Client, Account } from "appwrite";
 import { object, string, ref as yupRef, type InferType } from 'yup'
 import type { FormSubmitEvent } from '#ui/types'  
 // modal features
@@ -13,62 +16,56 @@ defineShortcuts({
 // tab features
 const items = [{
   key: 'login',
-  label: 'Login',
+  label: 'Увійти',
   description: ''
 }, {
   key: 'registration',
-  label: 'Registration',
+  label: 'Реєстрація',
   description: ''
 }];
-
-const loginForm = reactive({ email: '', password: '' });
-const regForm = reactive({ email: '', firstPassword: '', retypePassword: '' });
-// input validation
-const minPwd = 4;
-
-const loginSchema = object({
-  email: string().email('Invalid email').required('Email required'),
-  password: string()
-    .min(minPwd, `Must be at least ${minPwd} characters`)
-    .required('Password required'),
-});
-
-const registrationSchema = object({
-  email: string().email('Invalid email').required('Required'),
-  firstPassword: string()
-    .min(minPwd, `Must be at least ${minPwd} characters`)
-    .required('Required'),
-  retypePassword: string()
-    .oneOf([yupRef('firstPassword'), null], 'Passwords must match')
-    .required('Required')
-});
-
-type LoginSchema = InferType<typeof loginSchema>;
-  type RegistrationSchema = InferType<typeof registrationSchema>;
-
-const state = reactive({
-  email: loginForm.email,
-  password: loginForm.password,
-  firstPassword: regForm.firstPassword,
-  retypePassword: regForm.retypePassword,
-});
-//input validation end
-async function onSubmitLogin(event: FormSubmitEvent<LoginSchema>) {
-  console.log(event.data);
-}
-
-async function onSubmitRegistration(event: FormSubmitEvent<RegistrationSchema>) {
-  console.log(event.data);
-}
-// input label features
-import { reactive, ref } from 'vue';
 
 const formData = reactive({
   email: '',
   password: '',
   passConfirm: ''
 });
+// input validation
+const minPwd = 4;
 
+const loginSchema = object({
+  email: string().email('Невірний email').required('Потрібен Email'),
+  password: string()
+    .min(minPwd, `Пароль має бути не менше ${minPwd} симовлів`)
+    .required('Потрібен пароль'),
+});
+
+const registrationSchema = object({
+  email: string().email('Невірний email').required('Потрібен Email'),
+  password: string()
+    .min(minPwd, `Пароль не менше ${minPwd} символів`)
+    .required('Потрібен пароль'),
+  passConfirm: string()
+    .oneOf([yupRef('password'), null], 'Паролі не співпадають')
+});
+
+type LoginSchema = InferType<typeof loginSchema>;
+type RegistrationSchema = InferType<typeof registrationSchema>;
+
+const state = reactive({
+  email: formData.email,
+  password: formData.password,
+  passConfirm: formData.passConfirm,
+});
+
+async function onSubmitLogin() {
+  await login();
+}
+
+async function onSubmitRegistration() {
+  console.log(formData);
+}
+
+// input label features
 const emailActive = ref(false);
 const passwordActive = ref(false);
 const passConfirmActive = ref(false);
@@ -88,6 +85,44 @@ const handleBlur = (field: string) => {
 const validateForm = () => {
   console.log('Form data:', formData);
 };
+
+const client = new Client();
+client.setEndpoint("https://cloud.appwrite.io/v1").setProject(APP_WRITE_ID);
+const account = new Account(client);
+const result = account.get();
+
+const isLoadingStore = useIsLoadingStore();
+const authStore = useAuthStore();
+const router = useRouter();
+
+const clearData = async () => {
+  formData.email = "";
+  formData.password = "";
+  formData.passConfirm = "";
+  await router.push("/");
+  isLoadingStore.set(false);
+};
+
+const login = async () => {
+  try {
+    isLoadingStore.set(true);
+    console.log(state.email, state.password)
+    await account.createEmailPasswordSession(state.email, state.password);
+    const response = await account.get();
+    if (response) {
+      authStore.set({
+        email: response.email,
+        name: response.name,
+        status: response.status,
+      });
+    }
+    console.log(response, authStore);
+    await clearData();
+  } catch (error) {
+    console.error("Login error:", error);
+    isLoadingStore.set(false);
+  }
+};
 </script>
 
 <template>
@@ -99,19 +134,18 @@ const validateForm = () => {
         <template #header>
           <div class="flex items-center justify-between">
             <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Login
+              StarHub login
             </h3>
             <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="isOpen = false" />
           </div>
-          <ModalSocial />
+          <!-- <ModalSocial /> -->
         </template>
 
         <UTabs :items="items" class="w-full">
           <template #item="{ item }">
-            <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit.prevent="item.key === 'login' ? onSubmitLogin : onSubmitRegistration">
-              <div v-if="item.key === 'login'" class="space-y-3">
-
-                <UFormGroup name="email" :class="{ 'has-value': state.email !== '' || emailActive, 'form-group': true }">
+            <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit="onSubmitLogin">
+              <div class="space-y-3 mt-5">
+                <UFormGroup name="email" :class="{ 'has-value': state.email !== '' || emailActive, 'form-group': true, 'text-right': true }">
                   <UInput 
                     variant="none" 
                     color="primary"
@@ -126,9 +160,9 @@ const validateForm = () => {
                     <label>Email</label>
                   </UInput>
                 </UFormGroup>
-
-                <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true }">
+                <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true, 'text-right': true }">
                   <UInput
+                  type="password"
                   variant="none" 
                   color="primary"
                   v-model="state.password"
@@ -139,23 +173,28 @@ const validateForm = () => {
                       input: 'bg-transparent'
                     }"
                   >
-                    <label>Password</label>
+                    <label>Пароль</label>
                   </UInput>
                 </UFormGroup>
               </div>
-              <div v-else-if="item.key === 'registration'" class="space-y-3">
-                <UFormGroup label="Email" name="email">
-                  <UInput v-model="state.email" />
-                </UFormGroup>
-                <UFormGroup label="Password" name="firstPassword" required>
-                  <UInput v-model="state.firstPassword" type="password" required />
-                </UFormGroup>
-                <UFormGroup label="Retype Password" name="retypePassword" required>
-                  <UInput v-model="state.retypePassword" type="password" required />
-                </UFormGroup>
-              </div>
+              <UFormGroup v-if="item.key === 'registration'" name="passConfirm" :class="{ 'has-value': state.passConfirm !== '' || passConfirmActive, 'form-group': true, 'text-right': true }">
+                <UInput
+                type="password"
+                variant="none" 
+                color="primary"
+                v-model="state.passConfirm"
+                @focus="handleFocus('passConfirm')" 
+                @blur="handleBlur('passConfirm')" 
+                :ui="{ 
+                    base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                    input: 'bg-transparent'
+                  }"
+                >
+                  <label>Підтвердіть пароль</label>
+                </UInput>
+              </UFormGroup>
               <UButton type="submit" color="black">
-                {{ item.key === 'login' ? 'login' : 'registration' }}
+                {{ item.label }}
               </UButton>
             </UForm>
           </template>
@@ -168,7 +207,7 @@ const validateForm = () => {
 <style scoped>
 .form-group {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -185,7 +224,7 @@ const validateForm = () => {
 
 .form-group.has-value label,
 .form-group input:focus + label {
-  top: -10px;
+  top: 3px;
   left: 0;
   /* font-size: 0.75rem; */
   /* color: #333; */
