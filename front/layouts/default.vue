@@ -1,12 +1,9 @@
 <template>
-  <LayoutLoader v-if="isLoadingStore.isLoading" />
-  <section v-else :class="{ grid: store.isAuth }">
-    <LayoutSidebar v-if="store.isAuth" />
-    <div>
-      <slot />
-    </div>
-  </section>
-  <NuxtPage />
+    <LayoutLoader v-if="isLoadingStore.isLoading" />
+    <section v-else class="flex-shrink-0 w-auto max-w-xs">
+      <ModalLoginRegistration />
+      <LayoutSidebar v-if="store.isAuth" />
+    </section>
 </template>
 <script setup lang="ts">
 import { account } from "@/lib/appwrite";
