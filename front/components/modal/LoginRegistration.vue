@@ -57,13 +57,30 @@ const state = reactive({
   passConfirm: formData.passConfirm,
 });
 
-async function onSubmitLogin() {
-  await login();
-}
-
-async function onSubmitRegistration() {
-  console.log(formData);
-}
+async function onSubmit(submit: 'login' | 'registration') {
+  if (submit === 'login') {
+    try {
+    isLoadingStore.set(true);
+    console.log(state.email, state.password)
+    await account.createEmailPasswordSession(state.email, state.password);
+    const response = await account.get();
+    if (response) {
+      authStore.set({
+        email: response.email,
+        name: response.name,
+        status: response.status,
+      });
+    }
+    console.log(response, authStore);
+    await clearData();
+    } catch (error) {
+      console.error("Login error:", error);
+      isLoadingStore.set(false);
+    }
+  } else if (submit === 'registration') {
+    console.log(state);
+  }
+};
 
 // input label features
 const emailActive = ref(false);
@@ -102,27 +119,6 @@ const clearData = async () => {
   await router.push("/");
   isLoadingStore.set(false);
 };
-
-const login = async () => {
-  try {
-    isLoadingStore.set(true);
-    console.log(state.email, state.password)
-    await account.createEmailPasswordSession(state.email, state.password);
-    const response = await account.get();
-    if (response) {
-      authStore.set({
-        email: response.email,
-        name: response.name,
-        status: response.status,
-      });
-    }
-    console.log(response, authStore);
-    await clearData();
-  } catch (error) {
-    console.error("Login error:", error);
-    isLoadingStore.set(false);
-  }
-};
 </script>
 
 <template>
@@ -143,7 +139,12 @@ const login = async () => {
 
         <UTabs :items="items" class="w-full">
           <template #item="{ item }">
-            <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit="onSubmitLogin">
+            <UForm 
+              :schema="item.key === 'login' ? loginSchema : registrationSchema"
+              :state="state" 
+              class="space-y-4"
+              @submit="onSubmit(item.key)"
+              >
               <div class="space-y-3 mt-5">
                 <UFormGroup name="email" :class="{ 'has-value': state.email !== '' || emailActive, 'form-group': true, 'text-right': true }">
                   <UInput 
