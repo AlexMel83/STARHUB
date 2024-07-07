@@ -21,16 +21,16 @@ const items = [{
   description: ''
 }];
 
-const loginForm = reactive({ email: 'admin@test.com', password: '12345678' });
+const loginForm = reactive({ email: '', password: '' });
 const regForm = reactive({ email: '', firstPassword: '', retypePassword: '' });
 // input validation
 const minPwd = 4;
 
 const loginSchema = object({
-  email: string().email('Invalid email').required('Required'),
+  email: string().email('Invalid email').required('Email required'),
   password: string()
     .min(minPwd, `Must be at least ${minPwd} characters`)
-    .required('Required'),
+    .required('Password required'),
 });
 
 const registrationSchema = object({
@@ -111,16 +111,36 @@ const validateForm = () => {
             <UForm :schema="item.key === 'login' ? loginSchema : registrationSchema" :state="state" class="space-y-4" @submit.prevent="item.key === 'login' ? onSubmitLogin : onSubmitRegistration">
               <div v-if="item.key === 'login'" class="space-y-3">
 
-                <UFormGroup name="email" :class="{ 'has-value': formData.email !== '' || emailActive, 'form-group': true }">
-                  <UInput v-model="formData.email" @focus="handleFocus('email')" @blur="handleBlur('email')" />
-                  <label>Email</label>
+                <UFormGroup name="email" :class="{ 'has-value': state.email !== '' || emailActive, 'form-group': true }">
+                  <UInput 
+                    variant="none" 
+                    color="primary"
+                    v-model="state.email" 
+                    @focus="handleFocus('email')" 
+                    @blur="handleBlur('email')"
+                    :ui="{ 
+                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                      input: 'bg-transparent'
+                    }"
+                  >
+                    <label>Email</label>
+                  </UInput>
                 </UFormGroup>
 
-                <UFormGroup label="Email" name="email">
-                  <UInput v-model="state.email" />
-                </UFormGroup>
-                <UFormGroup label="Password" name="password">
-                  <UInput v-model="state.password" type="password" />
+                <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true }">
+                  <UInput
+                  variant="none" 
+                  color="primary"
+                  v-model="state.password"
+                  @focus="handleFocus('password')" 
+                  @blur="handleBlur('password')" 
+                  :ui="{ 
+                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                      input: 'bg-transparent'
+                    }"
+                  >
+                    <label>Password</label>
+                  </UInput>
                 </UFormGroup>
               </div>
               <div v-else-if="item.key === 'registration'" class="space-y-3">
@@ -153,38 +173,21 @@ const validateForm = () => {
 
 .form-group label {
   position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
+  top: 70%;
+  left: 10px;
+  transform: translateY(-70%);
   transition: all 0.2s;
   pointer-events: none;
   color: #999;
+  z-index: 10;
+  font-size: 125%;
 }
 
 .form-group.has-value label,
 .form-group input:focus + label {
   top: -10px;
   left: 0;
-  font-size: 0.75rem;
-  color: #333;
-}
-
-.u-input {
-  width: 100%;
-  padding: 10px 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-}
-
-.u-input:focus {
-  border-color: #007bff;
-}
-
-.u-input:focus + label {
-  top: -10px;
-  left: 0;
-  font-size: 0.75rem;
-  color: #007bff;
+  /* font-size: 0.75rem; */
+  /* color: #333; */
 }
 </style>
