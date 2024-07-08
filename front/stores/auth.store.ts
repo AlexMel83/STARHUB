@@ -1,6 +1,7 @@
 interface IAuthStore {
   email: string;
   name: string;
+  role: string,
   status: boolean;
 }
 
@@ -8,6 +9,7 @@ const defaultValue: { user: IAuthStore } = {
   user: {
     email: "",
     name: "",
+    role: "",
     status: false,
   },
 };

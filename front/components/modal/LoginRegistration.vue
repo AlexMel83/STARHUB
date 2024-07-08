@@ -151,18 +151,37 @@ const clearData = async () => {
 
 //axios fetch
 const signIn = async function (){
-  const res = await fetch('http://localhost:4041/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    credentials: 'include',
-    body: JSON.stringify({
-      email: state.email,
-      password: state.password,
-    }),
-  });
-  console.log('from signin',res)
+  try{
+    const res = await fetch('http://localhost:4041/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        email: state.email,
+        password: state.password,
+      }),
+    });
+    const data = await res.json();
+    console.log('from signin',data)
+    if(res.status === 200 || res.status === 201) {
+      localStorage.setItem('user', JSON.stringify(data));
+      authStore.set({
+        email: data.user.email,
+        name: data.user.name,
+        role: data.user.role,
+        status: true
+      })
+      isOpen.value = false;
+    } else {
+      this.errors = data;
+      console.error(data);
+    }
+  }catch(error){
+    console.error(error);
+    throw(error);
+  }
 }
 
 </script>

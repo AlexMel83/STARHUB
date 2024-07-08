@@ -17,8 +17,9 @@ class UserController {
         role,
         trx,
       );
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
       await trx.commit();
+      delete userData.refreshToken;
       return res.json(userData);
     } catch (error) {
       await trx.rollback();
@@ -33,31 +34,30 @@ class UserController {
     }
   }
 
-  async login(req, res) {
+  async login(req, res, next) {
     let trx;
     try {
       trx = await knex.transaction();
       const { email, password } = req.body;
       const userData = await userService.login(email, password, trx);
       res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
-      res.cookie("accessToken", userData.accessToken, config.aCcookieOptions);
-      trx.commit();
-      userData.refreshToken = "";
-      userData.accessToken = "";
+      await trx.commit();
+      delete userData.refreshToken; // Удаление токена из данных
       return res.json(userData);
     } catch (error) {
+      if (trx) {
+        await trx.rollback();
+      }
       if (error.code === "ECONNREFUSED") {
-        res.json(ApiError.IntServError("Connection refused"));
+        return next(ApiError.IntServError("Connection refused"));
       }
-      trx.rollback();
-      console.error(error);
       if (error.status === 400) {
-        return res.json(ApiError.BadRequest(error));
-      } else {
-        return res.json(ApiError.IntServError(error));
+        return next(ApiError.BadRequest(error.message));
       }
+      return next(ApiError.IntServError(error.message));
     }
   }
+  
 
   async logout(req, res) {
     let trx;
@@ -114,8 +114,9 @@ class UserController {
         );
       }
       const userData = await userService.refresh(refreshToken, trx);
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
       await trx.commit();
+      delete userData.refreshToken;
       return res.json(userData);
     } catch (error) {
       if (trx) {
