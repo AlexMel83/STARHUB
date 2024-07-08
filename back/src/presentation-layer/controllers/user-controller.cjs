@@ -53,8 +53,11 @@ class UserController {
       }
       if (error.status === 400) {
         return next(ApiError.BadRequest(error.message));
+      } else if (error.status === 404) {
+        return next(ApiError.NotFound(error.message));
+      } else {
+        return next(ApiError.IntServError(error.message));
       }
-      return next(ApiError.IntServError(error.message));
     }
   }
   

@@ -1,10 +1,6 @@
 <script setup lang="ts">
-// import { APP_WRITE_ID } from "@/app.constants";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-// import { Client, Account } from "appwrite";
 import { object, string, ref as yupRef, type InferType } from 'yup'
-// import type { FormSubmitEvent } from '#ui/types'  
-// modal features
 const isOpen = ref(false);
 defineShortcuts({
   escape: {
@@ -61,56 +57,6 @@ const { $api } = useNuxtApp();
 const textLoginError = ref('');
 const textPasswordError = ref('');
 
-async function onSubmit(submit: 'login' | 'registration') {
-    if (submit === 'login') {
-      const postObject = {
-        email: state.email,
-        password: state.password,
-      };
-      try {
-  const response = await $api.post("/login", postObject);
-  if(!response.data){
-    textLoginError.value = 'Error connection to server';
-  }
-  
-  if (response.status === 200) {
-    if (response.data) {
-      authStore.set({
-        email: response.data.email,
-        name: response.data.name,
-        status: true,
-      });
-    }
-  } else {
-    const errorMessage = response.data?.message || 'Неизвестная ошибка';
-    if (errorMessage.includes("Користувач з email") && errorMessage.includes("не знайдений")) {
-      textLoginError.value = "даний email незареєстрований";
-    } else if (errorMessage.includes("Обліковий запис") && errorMessage.includes("не активовано")) {
-      textLoginError.value = "обліковий запис не активовано, перевірте пошту";
-    } else if (errorMessage.includes("Невірний пароль")) {
-      textPasswordError.value = "невірний пароль";
-    }
-  }
-} catch (error: any) {
-  console.error('Ошибка при выполнении запроса:', error);
-  if (error.response) {
-    // Ошибка от сервера
-    console.error('Ответ сервера:', error.response.data);
-  } else if (error.request) {
-    // Запрос был сделан, но ответ не получен
-    console.error('Нет ответа от сервера');
-  } else {
-    // Что-то пошло не так при настройке запроса
-    console.error('Ошибка настройки запроса:', error.message);
-  }
-}
-
-  } else if (submit === 'registration') {
-    console.log(state);
-  }
-  isOpen.value = false;
-};
-
 // input label features
 const emailActive = ref(false);
 const passwordActive = ref(false);
@@ -149,9 +95,22 @@ const clearData = async () => {
   isLoadingStore.set(false);
 };
 
+async function onSubmit(event: Event, submit: 'login' | 'registration') {
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+  if (submit === 'login') {
+    await signIn(event);
+  } else if (submit === 'registration') {
+    console.log(state);
+  }
+}
 //axios fetch
-const signIn = async function (){
-  try{
+const signIn = async function (event: Event) {
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+  try {
     const res = await fetch('http://localhost:4041/login', {
       method: 'POST',
       headers: {
@@ -163,26 +122,32 @@ const signIn = async function (){
         password: state.password,
       }),
     });
+
     const data = await res.json();
-    console.log('from signin',data)
-    if(res.status === 200 || res.status === 201) {
+    console.log('from signin', data);
+    if (res.status === 200 || res.status === 201) {
       localStorage.setItem('user', JSON.stringify(data));
       authStore.set({
         email: data.user.email,
         name: data.user.name,
         role: data.user.role,
         status: true
-      })
+      });
       isOpen.value = false;
     } else {
-      this.errors = data;
+      if (data.message === 'Невірний пароль') {
+        textPasswordError.value = data.message;
+      } else {
+        textLoginError.value = data.message || "Ошибка авторизации";
+      }
       console.error(data);
     }
-  }catch(error){
+  } catch (error) {
     console.error(error);
-    throw(error);
+    textLoginError.value = "Произошла ошибка при выполнении запроса";
+    throw error;
   }
-}
+};
 
 </script>
 
@@ -214,7 +179,7 @@ const signIn = async function (){
               :schema="item.key === 'login' ? loginSchema : registrationSchema"
               :state="state" 
               class="space-y-4"
-              @submit="signIn"
+              @submit="(event) => onSubmit(event, item.key)"
               >
               <div class="space-y-3 mt-5">
                 <UFormGroup 
@@ -237,8 +202,9 @@ const signIn = async function (){
                   >
                     <label>Email</label>
                   </UInput>
-                  <p v-if="textLoginError">{{ textLoginError }}</p>
+                  <p class="input-error" v-if="textLoginError">{{ textLoginError }}</p>
                 </UFormGroup>
+                
                 <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true, 'text-right': true }">
                   <UInput
                   type="password"
@@ -254,7 +220,7 @@ const signIn = async function (){
                   >
                     <label>Пароль</label>
                   </UInput>
-                  <p v-if="textPasswordError">{{ textPasswordError }}</p>
+                  <p class="input-error" v-if="textPasswordError">{{ textPasswordError }}</p>
                 </UFormGroup>
               </div>
               <UFormGroup v-if="item.key === 'registration'" name="passConfirm" :class="{ 'has-value': state.passConfirm !== '' || passConfirmActive, 'form-group': true, 'text-right': true }">
@@ -285,6 +251,9 @@ const signIn = async function (){
 </template>
 
 <style scoped>
+.input-error {
+  color: red;
+}
 .form-group {
   position: relative;
   margin-bottom: 1rem;
