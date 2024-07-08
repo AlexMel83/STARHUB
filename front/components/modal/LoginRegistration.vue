@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-import { object, string, ref as yupRef, type InferType } from 'yup'
+import { object, string, ref as yupRef } from 'yup'
 const isOpen = ref(false);
 defineShortcuts({
   escape: {
     usingInput: true,
     whenever: [isOpen],
-    handler: () => { isOpen.value = false }
+    handler: () => { 
+      console.log("Escape key pressed");
+      isOpen.value = false; 
+    }
   }
 });
 // tab features
@@ -44,18 +47,22 @@ const registrationSchema = object({
     .oneOf([yupRef('password'), null], 'Паролі не співпадають')
 });
 
-type LoginSchema = InferType<typeof loginSchema>;
-type RegistrationSchema = InferType<typeof registrationSchema>;
-
 const state = reactive({
   email: formData.email,
   password: formData.password,
   passConfirm: formData.passConfirm,
 });
 
-const { $api } = useNuxtApp();
-const textLoginError = ref('');
-const textPasswordError = ref('');
+const errors = reactive({
+  email: '',
+  password: '',
+  form: '',
+  clear() {
+    this.email = '';
+    this.password = '';
+    this.form = '';
+  }
+});
 
 // input label features
 const emailActive = ref(false);
@@ -73,15 +80,6 @@ const handleBlur = (field: string) => {
   if (field === 'password' && !formData.password) passwordActive.value = false;
   if (field === 'passConfirm' && !formData.passConfirm) passConfirmActive.value = false;
 };
-
-const validateForm = () => {
-  console.log('Form data:', formData);
-};
-
-// const client = new Client();
-// client.setEndpoint("https://cloud.appwrite.io/v1").setProject(APP_WRITE_ID);
-// const account = new Account(client);
-// const result = account.get();
 
 const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
@@ -107,6 +105,7 @@ async function onSubmit(event: Event, submit: 'login' | 'registration') {
 }
 //axios fetch
 const signIn = async function (event: Event) {
+  errors.clear();
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
@@ -136,16 +135,15 @@ const signIn = async function (event: Event) {
       isOpen.value = false;
     } else {
       if (data.message === 'Невірний пароль') {
-        textPasswordError.value = data.message;
+        errors.password = data.message;
       } else {
-        textLoginError.value = data.message || "Ошибка авторизации";
+        errors.email = data.message;
       }
       console.error(data);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
-    textLoginError.value = "Произошла ошибка при выполнении запроса";
-    throw error;
+    errors.form = "Произошла ошибка при выполнении запроса";
   }
 };
 
@@ -169,13 +167,8 @@ const signIn = async function (event: Event) {
 
         <UTabs :items="items" class="w-full">
           <template #item="{ item }">
-            <!-- <UForm 
-              :schema="item.key === 'login' ? loginSchema : registrationSchema"
-              :state="state" 
-              class="space-y-4"
-              @submit="onSubmit(item.key)"
-              > -->
               <UForm 
+              ref="form"
               :schema="item.key === 'login' ? loginSchema : registrationSchema"
               :state="state" 
               class="space-y-4"
@@ -184,6 +177,7 @@ const signIn = async function (event: Event) {
               <div class="space-y-3 mt-5">
                 <UFormGroup 
                   name="email" 
+                  :error="errors.email"
                   :class="{ 
                     'has-value': state.email !== '' || emailActive, 
                     'form-group': true, 'text-right': true 
@@ -202,10 +196,17 @@ const signIn = async function (event: Event) {
                   >
                     <label>Email</label>
                   </UInput>
-                  <p class="input-error" v-if="textLoginError">{{ textLoginError }}</p>
                 </UFormGroup>
                 
-                <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true, 'text-right': true }">
+                <UFormGroup 
+                  name="password" 
+                  :error="errors.password"
+                  :class="{ 
+                    'has-value': state.password !== '' || passwordActive, 
+                    'form-group': true, 
+                    'text-right': true,
+                    }"
+                  >
                   <UInput
                   type="password"
                   variant="none" 
@@ -220,7 +221,6 @@ const signIn = async function (event: Event) {
                   >
                     <label>Пароль</label>
                   </UInput>
-                  <p class="input-error" v-if="textPasswordError">{{ textPasswordError }}</p>
                 </UFormGroup>
               </div>
               <UFormGroup v-if="item.key === 'registration'" name="passConfirm" :class="{ 'has-value': state.passConfirm !== '' || passConfirmActive, 'form-group': true, 'text-right': true }">
