@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   components: true,
-  devtools: { enabled: false },
+  devtools: { enabled: true },
   plugins: [
     '~/plugins/axios',
 ],
