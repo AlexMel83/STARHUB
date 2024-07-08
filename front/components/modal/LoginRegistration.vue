@@ -57,26 +57,54 @@ const state = reactive({
   passConfirm: formData.passConfirm,
 });
 
+const { $api } = useNuxtApp();
+const textLoginError = ref('');
+const textPasswordError = ref('');
+
 async function onSubmit(submit: 'login' | 'registration') {
-  if (submit === 'login') {
-    try {
-    isLoadingStore.set(true);
-    console.log(state.email, state.password)
-    await account.createEmailPasswordSession(state.email, state.password);
-    const response = await account.get();
-    if (response) {
+    if (submit === 'login') {
+      const postObject = {
+        email: state.email,
+        password: state.password,
+      };
+      try {
+  const response = await $api.post("/login", postObject);
+  if(!response.data){
+    textLoginError.value = 'Error connection to server';
+  }
+  
+  if (response.status === 200) {
+    if (response.data) {
       authStore.set({
-        email: response.email,
-        name: response.name,
-        status: response.status,
+        email: response.data.email,
+        name: response.data.name,
+        status: true,
       });
     }
-    console.log(response, authStore);
-    await clearData();
-    } catch (error) {
-      console.error("Login error:", error);
-      isLoadingStore.set(false);
+  } else {
+    const errorMessage = response.data?.message || 'Неизвестная ошибка';
+    if (errorMessage.includes("Користувач з email") && errorMessage.includes("не знайдений")) {
+      textLoginError.value = "даний email незареєстрований";
+    } else if (errorMessage.includes("Обліковий запис") && errorMessage.includes("не активовано")) {
+      textLoginError.value = "обліковий запис не активовано, перевірте пошту";
+    } else if (errorMessage.includes("Невірний пароль")) {
+      textPasswordError.value = "невірний пароль";
     }
+  }
+} catch (error: any) {
+  console.error('Ошибка при выполнении запроса:', error);
+  if (error.response) {
+    // Ошибка от сервера
+    console.error('Ответ сервера:', error.response.data);
+  } else if (error.request) {
+    // Запрос был сделан, но ответ не получен
+    console.error('Нет ответа от сервера');
+  } else {
+    // Что-то пошло не так при настройке запроса
+    console.error('Ошибка настройки запроса:', error.message);
+  }
+}
+
   } else if (submit === 'registration') {
     console.log(state);
   }
@@ -146,7 +174,13 @@ const clearData = async () => {
               @submit="onSubmit(item.key)"
               >
               <div class="space-y-3 mt-5">
-                <UFormGroup name="email" :class="{ 'has-value': state.email !== '' || emailActive, 'form-group': true, 'text-right': true }">
+                <UFormGroup 
+                  name="email" 
+                  :class="{ 
+                    'has-value': state.email !== '' || emailActive, 
+                    'form-group': true, 'text-right': true 
+                    }"
+                >
                   <UInput 
                     variant="none" 
                     color="primary"
@@ -160,6 +194,7 @@ const clearData = async () => {
                   >
                     <label>Email</label>
                   </UInput>
+                  <p v-if="textLoginError">{{ textLoginError }}</p>
                 </UFormGroup>
                 <UFormGroup name="password" :class="{ 'has-value': state.password !== '' || passwordActive, 'form-group': true, 'text-right': true }">
                   <UInput
@@ -176,6 +211,7 @@ const clearData = async () => {
                   >
                     <label>Пароль</label>
                   </UInput>
+                  <p v-if="textPasswordError">{{ textPasswordError }}</p>
                 </UFormGroup>
               </div>
               <UFormGroup v-if="item.key === 'registration'" name="passConfirm" :class="{ 'has-value': state.passConfirm !== '' || passConfirmActive, 'form-group': true, 'text-right': true }">
@@ -191,10 +227,10 @@ const clearData = async () => {
                     input: 'bg-transparent'
                   }"
                 >
-                  <label>Підтвердіть пароль</label>
+                  <label>Повторіть пароль</label>
                 </UInput>
               </UFormGroup>
-              <UButton type="submit" color="black">
+              <UButton type="submit" color="black" >
                 {{ item.label }}
               </UButton>
             </UForm>

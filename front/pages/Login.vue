@@ -23,7 +23,7 @@
           v-model="nameRef"
         />
         <div class="grid grid-cols-2 gap-5 mt-4">
-          <UiButton type="button" @click="login">Login</UiButton>
+          <UiButton type="button" @click="">Login</UiButton>
           <UiButton type="button" @click="register">Register</UiButton>
         </div>
       </form>
@@ -104,7 +104,7 @@ const register = async () => {
       nameRef.value,
     );
     console.log("User created successfully", result);
-    await login();
+    // await login();
   } catch (error) {
     console.error("Registration error:", error);
   }

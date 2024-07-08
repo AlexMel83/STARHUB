@@ -1,6 +1,9 @@
 export default defineNuxtConfig({
   components: true,
   devtools: { enabled: false },
+  plugins: [
+    '~/plugins/axios',
+],
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
