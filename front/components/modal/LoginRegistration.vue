@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { APP_WRITE_ID } from "@/app.constants";
+// import { APP_WRITE_ID } from "@/app.constants";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-import { Client, Account } from "appwrite";
+// import { Client, Account } from "appwrite";
 import { object, string, ref as yupRef, type InferType } from 'yup'
-import type { FormSubmitEvent } from '#ui/types'  
+// import type { FormSubmitEvent } from '#ui/types'  
 // modal features
 const isOpen = ref(false);
 defineShortcuts({
@@ -108,6 +108,7 @@ async function onSubmit(submit: 'login' | 'registration') {
   } else if (submit === 'registration') {
     console.log(state);
   }
+  isOpen.value = false;
 };
 
 // input label features
@@ -131,10 +132,10 @@ const validateForm = () => {
   console.log('Form data:', formData);
 };
 
-const client = new Client();
-client.setEndpoint("https://cloud.appwrite.io/v1").setProject(APP_WRITE_ID);
-const account = new Account(client);
-const result = account.get();
+// const client = new Client();
+// client.setEndpoint("https://cloud.appwrite.io/v1").setProject(APP_WRITE_ID);
+// const account = new Account(client);
+// const result = account.get();
 
 const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
@@ -147,6 +148,23 @@ const clearData = async () => {
   await router.push("/");
   isLoadingStore.set(false);
 };
+
+//axios fetch
+const signIn = async function (){
+  const res = await fetch('http://localhost:4041/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    credentials: 'include',
+    body: JSON.stringify({
+      email: state.email,
+      password: state.password,
+    }),
+  });
+  console.log('from signin',res)
+}
+
 </script>
 
 <template>
@@ -167,11 +185,17 @@ const clearData = async () => {
 
         <UTabs :items="items" class="w-full">
           <template #item="{ item }">
-            <UForm 
+            <!-- <UForm 
               :schema="item.key === 'login' ? loginSchema : registrationSchema"
               :state="state" 
               class="space-y-4"
               @submit="onSubmit(item.key)"
+              > -->
+              <UForm 
+              :schema="item.key === 'login' ? loginSchema : registrationSchema"
+              :state="state" 
+              class="space-y-4"
+              @submit="signIn"
               >
               <div class="space-y-3 mt-5">
                 <UFormGroup 

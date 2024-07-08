@@ -22,9 +22,10 @@ const isLoadingStore = useIsLoadingStore();
 const router = useRouter();
 const logout = async () => {
   isLoadingStore.set(true);
-  await account.deleteSession("current");
+  // await account.deleteSession("current");
   store.clear();
-  await router.push("/login");
+  // await router.push("/login");
+  await router.push("/");
   isLoadingStore.set(false);
 };
 </script>

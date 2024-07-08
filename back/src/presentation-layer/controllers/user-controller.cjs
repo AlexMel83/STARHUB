@@ -39,7 +39,8 @@ class UserController {
       trx = await knex.transaction();
       const { email, password } = req.body;
       const userData = await userService.login(email, password, trx);
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
+      res.cookie("accessToken", userData.accessToken, config.aCcookieOptions);
       trx.commit();
       userData.refreshToken = "";
       userData.accessToken = "";
