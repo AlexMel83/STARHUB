@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-import { object, string, ref as yupRef } from 'yup'
+import { object, string, ref as yupRef } from 'yup';
+import { defineShortcuts } from '#imports';
 const isOpen = ref(false);
 defineShortcuts({
   escape: {
     usingInput: true,
     whenever: [isOpen],
     handler: () => { 
-      console.log("Escape key pressed");
       isOpen.value = false; 
     }
   }
