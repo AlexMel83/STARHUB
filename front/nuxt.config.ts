@@ -2,7 +2,7 @@ export default defineNuxtConfig({
   components: true,
   devtools: { enabled: true },
   plugins: [
-    '~/plugins/axios',
+    '~/plugins/api.js',
 ],
   modules: [
     "@nuxt/ui",

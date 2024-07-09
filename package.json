@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "^7.24.6",
+    "@vee-validate/yup": "^4.13.2",
     "eslint-plugin-prettier": "^5.1.3"
   }
 }

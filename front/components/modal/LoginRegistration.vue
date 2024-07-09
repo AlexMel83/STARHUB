@@ -2,6 +2,7 @@
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from 'yup';
 import { defineShortcuts } from '#imports';
+const { $api } = useNuxtApp();
 const isOpen = ref(false);
 defineShortcuts({
   escape: {
@@ -110,20 +111,12 @@ const signIn = async function (event: Event) {
     event.preventDefault();
   }
   try {
-    const res = await fetch('http://localhost:4041/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify({
-        email: state.email,
-        password: state.password,
-      }),
+    const res = await $api.auth.signIn({
+      email: state.email,
+      password: state.password,
     });
-
-    const data = await res.json();
-    console.log('from signin', data);
+    const data = await res.data;
+    console.log('from signin', res);
     if (res.status === 200 || res.status === 201) {
       localStorage.setItem('user', JSON.stringify(data));
       authStore.set({
@@ -133,18 +126,38 @@ const signIn = async function (event: Event) {
         status: true
       });
       isOpen.value = false;
-    } else {
-      if (data.message === 'Невірний пароль') {
-        errors.password = data.message;
-      } else {
-        errors.email = data.message;
-      }
-      console.error(data);
     }
-  } catch (error: any) {
-    console.error(error);
-    errors.form = "Произошла ошибка при выполнении запроса";
+  } catch(error){
+    if (error.response.data.message === 'Невірний пароль') {
+        errors.password = error.response.data.message;
+      } else {
+        errors.email = error.response.data.message;
+      }
   }
+
+  // try {
+  //   const res = await fetch('http://localhost:4041/login', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     credentials: 'include',
+  //     body: JSON.stringify({
+  //       email: state.email,
+  //       password: state.password,
+  //     }),
+  //   });
+
+  //   const data = await res.json();
+    
+  //   } else {
+      
+  //     console.error(data);
+  //   }
+  // } catch (error: any) {
+  //   console.error(error);
+  //   errors.form = "Произошла ошибка при выполнении запроса";
+  // }
 };
 
 </script>
