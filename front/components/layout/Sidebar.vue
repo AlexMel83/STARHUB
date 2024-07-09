@@ -23,7 +23,7 @@ const isLoadingStore = useIsLoadingStore();
 const router = useRouter();
 const logout = async () => {
   isLoadingStore.set(true);
-  $load(async()=>{
+  $load(async () => {
     const res = await $api.auth.logout();
   });
   store.clear();

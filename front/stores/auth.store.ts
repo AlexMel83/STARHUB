@@ -1,7 +1,7 @@
 interface IAuthStore {
   email: string;
   name: string;
-  role: string,
+  role: string;
   status: boolean;
 }
 

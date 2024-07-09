@@ -1,3 +1,5 @@
+import { defineNuxtConfig } from 'nuxt/config';
+
 export default defineNuxtConfig({
   components: true,
   devtools: { enabled: true },
@@ -21,7 +23,7 @@ export default defineNuxtConfig({
       "@nuxtjs/google-fonts",
       {
         families: {
-          Lato: {
+          Inter: {
             wght: [300, 400, 700],
             ital: [300],
           },

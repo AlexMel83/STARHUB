@@ -1,10 +1,9 @@
 <template>
-    <LayoutLoader v-if="isLoadingStore.isLoading" />
-    <section v-else class="flex-shrink-0 w-auto max-w-xs">
-      
-      <LayoutSidebar v-if="store.isAuth" />
-      <ModalLoginRegistration v-else />
-    </section>
+  <LayoutLoader v-if="isLoadingStore.isLoading" />
+  <section v-else class="flex-shrink-0 w-auto max-w-xs">
+    <LayoutSidebar v-if="store.isAuth" />
+    <ModalLoginRegistration v-else />
+  </section>
 </template>
 <script setup lang="ts">
 import { account } from "@/lib/appwrite";
@@ -20,7 +19,7 @@ onMounted(async () => {
   // } catch (error) {
   //   router.push("/login");
   // } finally {
-    isLoadingStore.set(false);
+  isLoadingStore.set(false);
   // }
 });
 </script>

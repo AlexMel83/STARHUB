@@ -60,7 +60,6 @@ class UserController {
       }
     }
   }
-  
 
   async logout(req, res) {
     let trx;

@@ -1,5 +1,5 @@
-import api from '../api/index';
+import api from "../api/index";
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.provide('api', api);
+  nuxtApp.provide("api", api);
 });

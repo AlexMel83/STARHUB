@@ -1,7 +1,8 @@
 require("dotenv").config({
   path: __dirname + `/../.${process.env.NODE_ENV}.env`,
 });
-const { PORT, CLIENT_URL, PAYMENT_DOMEN, JWT_AC_SECRET, JWT_RF_MA } = process.env;
+const { PORT, CLIENT_URL, PAYMENT_DOMEN, JWT_AC_SECRET, JWT_RF_MA } =
+  process.env;
 const http = require("http");
 const express = require("express");
 const { routeInit } = require("./presentation-layer/routes/index.cjs");
