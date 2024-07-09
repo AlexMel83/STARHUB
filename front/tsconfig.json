@@ -4,6 +4,4 @@
   },
   "types": ["@nuxt/types", "@types/node", "./types/nuxt.d.ts"],
   "extends": "./.nuxt/tsconfig.json",
-  "include": ["**/*.ts", "types/**/*.d.ts"],
-  "exclude": ["node_modules"]
 }
