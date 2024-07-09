@@ -6,7 +6,7 @@ const userModel = require("../../data-layer/models/user-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class UserController {
-  async registration(req, res) {
+  async registration(req, res, next) {
     let trx;
     try {
       trx = await knex.transaction();
@@ -25,11 +25,11 @@ class UserController {
       await trx.rollback();
       console.error(error.code);
       if (error.status === 400) {
-        return res.json(ApiError.BadRequest(error));
+        return next(ApiError.BadRequest(error));
       } else if (error.code === "ESOCKET") {
-        return res.json(ApiError.IntServError("mail-server error"));
+        return next(ApiError.IntServError("mail-server error"));
       } else {
-        return res.json(ApiError.IntServError(error));
+        return next(ApiError.IntServError(error));
       }
     }
   }
