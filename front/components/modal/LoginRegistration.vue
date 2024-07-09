@@ -2,7 +2,7 @@
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from 'yup';
 import { defineShortcuts } from '#imports';
-const { $api } = useNuxtApp();
+const { $api, $load } = useNuxtApp();
 const isOpen = ref(false);
 defineShortcuts({
   escape: {
@@ -110,7 +110,7 @@ const signIn = async function (event: Event) {
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
-  try {
+  $load(async()=>{
     const res = await $api.auth.signIn({
       email: state.email,
       password: state.password,
@@ -127,44 +127,14 @@ const signIn = async function (event: Event) {
       });
       isOpen.value = false;
     }
-  } catch(error){
-    if (error.response.data.message === 'Невірний пароль') {
-        errors.password = error.response.data.message;
-      } else {
-        errors.email = error.response.data.message;
-      }
-  }
-
-  // try {
-  //   const res = await fetch('http://localhost:4041/login', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     credentials: 'include',
-  //     body: JSON.stringify({
-  //       email: state.email,
-  //       password: state.password,
-  //     }),
-  //   });
-
-  //   const data = await res.json();
-    
-  //   } else {
-      
-  //     console.error(data);
-  //   }
-  // } catch (error: any) {
-  //   console.error(error);
-  //   errors.form = "Произошла ошибка при выполнении запроса";
-  // }
+  }, errors);
 };
 
 </script>
 
 <template>
   <div>
-    <UButton label="Open" @click="isOpen = true" />
+    <UButton label="Login" @click="isOpen = true" />
 
     <UModal v-model="isOpen" prevent-close>
       <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">

@@ -7,7 +7,7 @@ export default function(instance) {
             return instance.post('/registration', payload);
         },
         logout(){
-            return instance.post('/logaut');
+            return instance.post('/logout');
         }
     };
 };

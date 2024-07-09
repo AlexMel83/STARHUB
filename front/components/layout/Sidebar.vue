@@ -16,15 +16,17 @@
 <script setup lang="ts">
 import { account } from "~/lib/appwrite";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
+const { $api, $load } = useNuxtApp();
 
 const store = useAuthStore();
 const isLoadingStore = useIsLoadingStore();
 const router = useRouter();
 const logout = async () => {
   isLoadingStore.set(true);
-  // await account.deleteSession("current");
+  $load(async()=>{
+    const res = await $api.auth.logout();
+  });
   store.clear();
-  // await router.push("/login");
   await router.push("/");
   isLoadingStore.set(false);
 };

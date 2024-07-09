@@ -1,8 +1,9 @@
 <template>
     <LayoutLoader v-if="isLoadingStore.isLoading" />
     <section v-else class="flex-shrink-0 w-auto max-w-xs">
-      <ModalLoginRegistration />
+      
       <LayoutSidebar v-if="store.isAuth" />
+      <ModalLoginRegistration v-else />
     </section>
 </template>
 <script setup lang="ts">
@@ -13,14 +14,14 @@ const store = useAuthStore();
 const router = useRouter();
 
 onMounted(async () => {
-  try {
-    const user = await account.get();
-    if (user) store.set(user);
-  } catch (error) {
-    router.push("/login");
-  } finally {
+  // try {
+  //   const user = await account.get();
+  //   if (user) store.set(user);
+  // } catch (error) {
+  //   router.push("/login");
+  // } finally {
     isLoadingStore.set(false);
-  }
+  // }
 });
 </script>
 <style scoped>
