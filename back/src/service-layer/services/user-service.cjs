@@ -12,10 +12,10 @@ class UserService {
     const candidate = await UserModel.findUserByEmail(email);
 
     if (candidate) {
-      throw ApiError.BadRequest(`User with some email ${email} already exist`);
+      throw ApiError.BadRequest(`Обліковий запис ${email} вже існує`);
     }
     if (role != "user" && role != "manager" && role != "admin") {
-      throw ApiError.BadRequest(`role ${role} not found`);
+      throw ApiError.BadRequest(`роль ${role} не знайдена`);
     }
 
     const activationLink = uuid.v4();

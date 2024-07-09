@@ -98,10 +98,32 @@ async function onSubmit(event: Event, submit: 'login' | 'registration') {
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
+  let res = null;
+  const payload = {
+        email: state.email,
+        password: state.password,
+      }
   if (submit === 'login') {
-    await signIn(event);
+    await $load(async()=>{
+      res = await $api.auth.signIn(payload);
+      console.log('from signin', res);
+    }, errors);
   } else if (submit === 'registration') {
-    console.log(state);
+    await $load(async()=>{
+      res = await $api.auth.signUp(payload);
+      console.log('from signUp', res);
+    }, errors);
+  }
+  if (res && (res.status === 200 || res.status === 201)) {
+    const data = res.data;
+    localStorage.setItem('user', JSON.stringify(data));
+    authStore.set({
+      email: data.user.email,
+      name: data.user.name,
+      role: data.user.role,
+      status: true
+    });
+    isOpen.value = false;
   }
 }
 //axios fetch
@@ -110,24 +132,7 @@ const signIn = async function (event: Event) {
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
-  $load(async()=>{
-    const res = await $api.auth.signIn({
-      email: state.email,
-      password: state.password,
-    });
-    const data = await res.data;
-    console.log('from signin', res);
-    if (res.status === 200 || res.status === 201) {
-      localStorage.setItem('user', JSON.stringify(data));
-      authStore.set({
-        email: data.user.email,
-        name: data.user.name,
-        role: data.user.role,
-        status: true
-      });
-      isOpen.value = false;
-    }
-  }, errors);
+  
 };
 
 </script>
