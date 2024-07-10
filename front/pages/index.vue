@@ -1,7 +1,12 @@
 <script setup lang="ts">
+import type { ICard, IColumn } from '~/components/kanban/kanban.types';
+
 useSeoMeta({
     title: 'Home | StarHub CRM'
 })
+
+const dragCardRef = ref<ICard | null>(null);
+const dragColumnRef = ref<IColumn | null>(null);
 
 </script>
 
