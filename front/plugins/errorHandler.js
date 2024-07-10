@@ -7,6 +7,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (errHandler) {
         if (error.response?.data?.message === "Невірний пароль") {
           errHandler.password = error.response.data.message;
+        } else if(error.response.data.message.includes('mail-server')) {
+          errHandler.email = "mail server is not responding, activation-email was not sent"
+        } else if(error.response.data.message.includes('вже існує')){
+          errHandler.password = error.response.data.message;
         } else {
           errHandler.email = error.response.data.message;
         }

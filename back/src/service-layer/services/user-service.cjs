@@ -12,7 +12,7 @@ class UserService {
     const candidate = await UserModel.findUserByEmail(email);
 
     if (candidate) {
-      throw ApiError.BadRequest(`Обліковий запис ${email} вже існує`);
+      throw ApiError.ConflictRequest(`Обліковий запис ${email} вже існує`);
     }
     if (role != "user" && role != "manager" && role != "admin") {
       throw ApiError.BadRequest(`роль ${role} не знайдена`);

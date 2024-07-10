@@ -23,11 +23,13 @@ class UserController {
       return res.json(userData);
     } catch (error) {
       await trx.rollback();
-      console.error(error.code);
+      console.error(error);
       if (error.status === 400) {
         return next(ApiError.BadRequest(error));
       } else if (error.code === "ESOCKET") {
         return next(ApiError.IntServError("mail-server error"));
+      } else if(error.status === 409) {
+        return next(error);
       } else {
         return next(ApiError.IntServError(error));
       }

@@ -32,6 +32,11 @@ module.exports = class ApiError extends Error {
     return new ApiError(404, message);
   }
 
+  static ConflictRequest(message) {
+    
+    return new ApiError(409, message);
+  }
+
   static AccessDeniedForRole(detail) {
     return new ApiError(403, `Access denied: ${detail}`);
   }
