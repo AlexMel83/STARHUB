@@ -21,6 +21,7 @@ const handleSocialLogin = async (provider) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: 'include',
     });
 
     const data = await response.json(); // Преобразование тела ответа в JSON

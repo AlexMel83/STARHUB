@@ -162,7 +162,7 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
               @click="isOpen = false"
             />
           </div>
-          <!-- <ModalSocial /> -->
+          <ModalSocial />
         </template>
 
         <UTabs :items="items" class="w-full">

@@ -8,8 +8,8 @@ const express = require("express");
 const { routeInit } = require("./presentation-layer/routes/index.cjs");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-// const session = require("express-session");
-// const sessionMaxAge = parseInt(JWT_RF_MA, 10);
+const session = require("express-session");
+const sessionMaxAge = parseInt(JWT_RF_MA, 10);
 const errorMiddleware = require("./middlewares/error-middleware.cjs");
 const app = express();
 const server = http.createServer(app);
@@ -23,16 +23,17 @@ app.use(
 );
 app.use("/uploads", express.static("uploads"));
 app.use(cookieParser());
-// app.use(
-//   session({
-//     secret: JWT_AC_SECRET,
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: {
-//       maxAge: sessionMaxAge
-//     }
-//   }),
-// );
+app.use(
+  session({
+    secret: JWT_AC_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: sessionMaxAge
+    }
+  }),
+);
 
 routeInit(app, express);
 
