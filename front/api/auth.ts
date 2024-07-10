@@ -6,6 +6,7 @@ export interface AuthResponse {
       name: string;
       role: string;
     };
+    url: string;
   };
 }
 
@@ -13,6 +14,7 @@ export interface AuthApi {
   signIn(payload: { email: string; password: string }): Promise<AuthResponse>;
   signUp(payload: { email: string; password: string }): Promise<AuthResponse>;
   logout(): Promise<any>;
+  socAuth(provider: string): Promise<AuthResponse>;
 }
 
 export default function (instance: any): AuthApi {
@@ -32,5 +34,8 @@ export default function (instance: any): AuthApi {
     logout() {
       return instance.post("/logout");
     },
+    socAuth(provider) {
+      return instance.get(`/social-login/${provider}`, {credentials: 'include'},);
+    }
   };
 }

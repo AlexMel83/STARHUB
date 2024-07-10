@@ -1,37 +1,32 @@
-<script setup>
+<script setup lang="ts">
 import LogosGoogleIcon from "./LogosGoogleIcon.vue";
 import LogosFacebook from "./LogosFacebook.vue";
 
+interface AuthResponse {
+  status: number;
+  data: {
+    user: {
+      email: string;
+      name: string;
+      role: string;
+    };
+    url: string;
+  };
+}
+
+const { $api, $load } = useNuxtApp();
 const config = useRuntimeConfig();
 const localhostApi = config.public.localhostApi;
-console.log(localhostApi);
-const error = ref("");
+const error = ref<string>("");
+  const errors = reactive({
+  textError: "",
+});
 
-// onMounted(() => {
-//     const errorParam = urlParams.get('error');
-//     if (errorParam) {
-//         error.value = errorParam;
-//     }
-// });
-
-const handleSocialLogin = async (provider) => {
-  try {
-    const response = await fetch(`${localhostApi}/social-login/${provider}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: 'include',
-    });
-
-    const data = await response.json(); // Преобразование тела ответа в JSON
-    console.log(data);
-
-    if (data.url) {
-      window.location.href = data.url;
-    }
-  } catch (error) {
-    console.log("Social Login Error:", error);
+const handleSocialLogin = async (provider: 'google' | 'facebook') => {
+  let res: AuthResponse | null = null;
+  res = await $load(async () => $api.auth.socAuth(provider), errors);
+  if (res.data.url) {
+    window.location.href = res.data.url;
   }
 };
 </script>
@@ -51,6 +46,7 @@ const handleSocialLogin = async (provider) => {
           <UButton color="black" label="Login with Facebook" icon="i-simple-icons-facebook" block />
           <UButton color="black" label="Login with Google" icon="i-simple-icons-google" block />
         </div> -->
+    <p v-if="errors.textError" class="text-eror">{{ errors.textError }}</p>
     <p class="social-title text-slate-600 mt-5 mb-0">
       Або продовжуйте вхід через:
     </p>
