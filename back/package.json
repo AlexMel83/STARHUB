@@ -1,5 +1,5 @@
 {
-  "name": "eduhub_back",
+  "name": "starhub_back",
   "version": "1.0.0",
   "main": "./src/server.cjs",
   "type": "commonjs",
@@ -8,7 +8,7 @@
     "dev": "cross-env NODE_ENV=development nodemon ./src/server.cjs",
     "start": "cross-env NODE_ENV=production node ./src/server.cjs",
     "db:clean": "cd ./sql/ && knex migrate:rollback",
-    "db:setup": "cd ./sql/ && knex migrate:latest && knex seed:run",
+    "db:setup": "knex --knexfile ./sql/knexfile.cjs migrate:latest && knex --knexfile ./sql/knexfile.cjs seed:run",
     "devdb:clean": "cd ./sql/ && cross-env NODE_ENV=development knex migrate:rollback",
     "devdb:setup": "cd ./sql/ && cross-env NODE_ENV=development knex migrate:latest && cross-env NODE_ENV=development knex seed:run",
     "knex": "knex --cwd ./sql",
@@ -25,7 +25,7 @@
     "prettier": "^3.2.5"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

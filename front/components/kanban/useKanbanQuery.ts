@@ -16,6 +16,7 @@ export function useKanbanQuery() {
       }));
 
       const deals = data.documents as unknown as IDeal[];
+      console.log(deals, newBoard);
       for (const deal of deals) {
         let column = newBoard.find((col) => col.id === deal.status);
         if (column) {

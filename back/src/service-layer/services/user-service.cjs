@@ -1,5 +1,5 @@
 const UserModel = require("../../data-layer/models/user-model.cjs");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const uuid = require("uuid");
 const mailService = require("./mail-service.cjs");
 const tokenService = require("./token-service.cjs");

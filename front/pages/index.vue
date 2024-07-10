@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ICard, IColumn } from '~/components/kanban/kanban.types';
+import {useKanbanQuery} from '@/components/kanban/useKanbanQuery.js'
 
 useSeoMeta({
     title: 'Home | StarHub CRM'
@@ -7,6 +8,8 @@ useSeoMeta({
 
 const dragCardRef = ref<ICard | null>(null);
 const dragColumnRef = ref<IColumn | null>(null);
+
+useKanbanQuery();
 
 </script>
 
