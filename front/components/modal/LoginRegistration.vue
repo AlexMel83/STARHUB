@@ -101,17 +101,7 @@ const handleBlur = (field: string) => {
     passConfirmActive.value = false;
 };
 
-const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
-const router = useRouter();
-
-const clearData = async () => {
-  formData.email = "";
-  formData.password = "";
-  formData.passConfirm = "";
-  await router.push("/");
-  isLoadingStore.set(false);
-};
 
 async function onSubmit(event: Event, submit: "login" | "registration") {
   if (event && typeof event.preventDefault === "function") {
@@ -131,7 +121,7 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
     payload.role = "user";
     res = await $load(async () => $api.auth.signUp(payload), errors);
   }
-  console.log(res);
+
   if (res && (res.status === 200 || res.status === 201)) {
     const data = res.data;
     localStorage.setItem("user", JSON.stringify(data));

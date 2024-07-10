@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   plugins: [
     '~/plugins/api.js',
-    '~/plugins/errorHandler.js'
+    '~/plugins/errorHandler.js',
 ],
   modules: [
     "@nuxt/ui",

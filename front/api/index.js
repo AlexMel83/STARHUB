@@ -1,6 +1,7 @@
-import instance from "./instance";
-import authModule from "./auth.ts";
+import authModule from './auth.ts';
 
-export default {
-  auth: authModule(instance),
-};
+export default function(instance) {
+  return {
+    auth: authModule(instance),
+  };
+}
