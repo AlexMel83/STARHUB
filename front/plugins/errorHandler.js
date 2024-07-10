@@ -5,17 +5,24 @@ export default defineNuxtPlugin((nuxtApp) => {
       return response;
     } catch (error) {
       if (errHandler) {
-        if (error.response?.data?.message === "Невірний пароль") {
-          errHandler.password = error.response.data.message;
-        } else if(error.response.data.message.includes('mail-server')) {
-          errHandler.email = "mail server is not responding, activation-email was not sent"
-        } else if(error.response.data.message.includes('вже існує')){
-          errHandler.password = error.response.data.message;
+        if (error.response) {
+          const message = error.response.data?.message || 'Unknown error occured';
+          if(message === "Невірний пароль") {
+            errHandler.password = message;
+          } else if(message.includes('mail-server')) {
+            errHandler.email = "mail server is not responding, activation-email was not sent";
+          } else if (message.includes('вже існує')){
+            errHandler.email = message;
+          } else {
+            errHandler.email = message;
+          }
+        } else if (error.request) {
+          errHandler.textError = "Server is not responding. Please try again later.";
         } else {
-          errHandler.email = error.response.data.message;
+          errHandler.textError = error.message || "An unknown error occurred.";
         }
       } else {
-        console.error("An error occured:", error);
+        console.error("An error occurred:", error);
       }
     }
   });

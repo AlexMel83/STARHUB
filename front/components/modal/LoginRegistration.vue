@@ -10,6 +10,7 @@ interface AuthResponse {
       email: string;
       name: string;
       role: string;
+      isactivated: boolean;
     };
   };
 }
@@ -129,7 +130,7 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
       email: data.user.email,
       name: data.user.name,
       role: data.user.role,
-      status: true,
+      isactivated: data.user.isactivated,
     });
     isOpen.value = false;
   }

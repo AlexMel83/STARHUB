@@ -15,10 +15,8 @@ interface AuthResponse {
 }
 
 const { $api, $load } = useNuxtApp();
-const config = useRuntimeConfig();
-const localhostApi = config.public.localhostApi;
-const error = ref<string>("");
-  const errors = reactive({
+
+const errors = reactive({
   textError: "",
 });
 
@@ -50,8 +48,8 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     <p class="social-title text-slate-600 mt-5 mb-0">
       Або продовжуйте вхід через:
     </p>
-    <div class="social-error" v-if="error">
-      {{ error }} <br />скористайтесь полями нижче для авторизації через email
+    <div class="social-error" v-if="errors.textError">
+      {{ errors.textError }} <br />скористайтесь полями нижче для авторизації через email
     </div>
   </div>
 </template>

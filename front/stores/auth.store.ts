@@ -2,7 +2,7 @@ interface IAuthStore {
   email: string;
   name: string;
   role: string;
-  status: boolean;
+  isactivated: boolean;
 }
 
 const defaultValue: { user: IAuthStore } = {
@@ -10,14 +10,14 @@ const defaultValue: { user: IAuthStore } = {
     email: "",
     name: "",
     role: "",
-    status: false,
+    isactivated: false,
   },
 };
 
 export const useAuthStore = defineStore("auth", {
   state: () => defaultValue,
   getters: {
-    isAuth: (state) => state.user.status,
+    isAuth: (state) => state.user.isactivated,
   },
   actions: {
     clear() {

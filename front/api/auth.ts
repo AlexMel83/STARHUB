@@ -5,16 +5,28 @@ export interface AuthResponse {
       email: string;
       name: string;
       role: string;
+      isactivated: boolean;
     };
     url: string;
   };
-}
+};
+
+interface AuthUser {
+  data: {
+    id: number;
+    email: string;
+    name: string;
+    role: string;
+    isactivated: boolean;
+  }
+};
 
 export interface AuthApi {
   signIn(payload: { email: string; password: string }): Promise<AuthResponse>;
   signUp(payload: { email: string; password: string }): Promise<AuthResponse>;
   logout(): Promise<any>;
   socAuth(provider: string): Promise<AuthResponse>;
+  getAuthUser(authLink: string): Promise<AuthUser>;
 }
 
 export default function (instance: any): AuthApi {
@@ -36,6 +48,9 @@ export default function (instance: any): AuthApi {
     },
     socAuth(provider) {
       return instance.get(`/social-login/${provider}`, {credentials: 'include'},);
-    }
+    },
+    getAuthUser(authLink) {
+      return instance.post(`/auth-user/${authLink}`)
+    },
   };
 }
