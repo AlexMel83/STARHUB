@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import type { IDeal } from "~/lib/types/deals.types";
+import type { IDeal } from "~/types/deals.types";
 import { useComments } from "./useComments";
 import { useCreateComment } from "./useCreateComment";
 

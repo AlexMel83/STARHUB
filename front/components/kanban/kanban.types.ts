@@ -1,4 +1,4 @@
-import type { EnumStatus } from "~/lib/types/deals.types";
+import type { EnumStatus } from "~/types/deals.types";
 
 export interface ICard {
   id: string;

@@ -2,7 +2,7 @@
 import { useMutation } from "@tanstack/vue-query";
 import { defineProps } from "vue";
 import { COLLECTION_DEALS, DB_ID } from "~/app.constants";
-import type { IDeal } from "~/lib/types/deals.types";
+import type { IDeal } from "~/types/deals.types";
 import { v4 as uuid } from "uuid";
 import { DB } from "~/lib/appwrite";
 
