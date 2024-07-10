@@ -55,14 +55,16 @@ class SocialLoginService {
       const frontendRedirectUri = `${CLIENT_URL}?authLink=${user.activationlink}`;
       return res.redirect(frontendRedirectUri);
     } catch (error) {
-      console.error(error);
-      const match = error.detail.match(emailRegex);
-      if (match) {
-        const email = match[1];
-        const errorMessage = email;
-        return res.redirect(
-          `${CLIENT_URL}?email=${email}&error=${encodeURIComponent(errorMessage)}`,
-        );
+      console.error('Error in handleCallback:', error);
+      if (error && typeof error === 'object' && error.detail) {
+        const match = error.detail.match(emailRegex);
+        if (match) {
+          const email = match[1];
+          const errorMessage = email;
+          return res.redirect(
+            `${CLIENT_URL}?email=${email}&error=${encodeURIComponent(errorMessage)}`
+          );
+        }
       }
       return res.json(ApiError.BadRequest(error));
     }
