@@ -16,18 +16,22 @@ class MailService {
   }
 
   async sendActivationMail(to, link) {
-    console.log(SMTP_USER);
-    await this.transporter.sendMail({
-      from: SMTP_USER,
-      to,
-      subject: `Активація аккаунту на ${CLIENT_URL}`,
-      text: "",
-      html: `<div>
-                        <h1>Вітаємо Вас з успішною реєстрацією!</h1>
-                        Для активації аккаунту на платформі ${CLIENT_URL} перейдить за цим посиланням:
-                        <a href="${link}">${link}</a>
-                    </div>`,
-    });
+    try {
+      await this.transporter.sendMail({
+        from: SMTP_USER,
+        to,
+        subject: `Активація аккаунту на ${CLIENT_URL}`,
+        text: "",
+        html: `<div>
+                          <h1>Вітаємо Вас з успішною реєстрацією!</h1>
+                          Для активації аккаунту на платформі ${CLIENT_URL} перейдить за цим посиланням:
+                          <a href="${link}">${link}</a>
+                      </div>`,
+      });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

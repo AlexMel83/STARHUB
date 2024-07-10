@@ -2,18 +2,18 @@ module.exports = class ApiError extends Error {
   status;
   errors;
 
+  constructor(status, message, errors = []) {
+    super(message);
+    this.status = status;
+    this.errors = errors;
+  }
+
   toJSON() {
     return {
       status: this.status,
       message: this.message,
       errors: this.errors,
     };
-  }
-
-  constructor(status, message, errors = []) {
-    super(message);
-    this.status = status;
-    this.errors = errors;
   }
 
   static UnauthorizedError() {
@@ -30,6 +30,11 @@ module.exports = class ApiError extends Error {
 
   static NotFound(message) {
     return new ApiError(404, message);
+  }
+
+  static ConflictRequest(message) {
+    
+    return new ApiError(409, message);
   }
 
   static AccessDeniedForRole(detail) {

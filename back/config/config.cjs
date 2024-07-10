@@ -6,6 +6,8 @@ const {
   JWT_RF_SALT,
   JWT_RF_EXP,
   JWT_RF_TYPE,
+  JWT_AC_MA,
+  JWT_RF_MA,
 } = process.env;
 
 module.exports = {
@@ -20,8 +22,14 @@ module.exports = {
     expired: JWT_RF_EXP,
     type: JWT_RF_TYPE,
   },
-  cookieOptions: {
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+  rFcookieOptions: {
+    maxAge: JWT_RF_MA,
+    httpOnly: true,
+    sameSite: "None",
+    secure: true,
+  },
+  aCcookieOptions: {
+    maxAge: JWT_AC_MA,
     httpOnly: true,
     sameSite: "None",
     secure: true,

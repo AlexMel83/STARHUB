@@ -78,7 +78,13 @@ module.exports = function (app) {
       const { url, codeVerifier } =
         await socialLoginService.generateAuthUrl(provider);
       req.session.codeVerifier = codeVerifier;
-      res.json({ url });
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          return next(err);
+        }
+        res.json({ url });
+      });
     } catch (e) {
       next(e);
     }

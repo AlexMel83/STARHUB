@@ -6,7 +6,7 @@ const userModel = require("../../data-layer/models/user-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class UserController {
-  async registration(req, res) {
+  async registration(req, res, next) {
     let trx;
     try {
       trx = await knex.transaction();
@@ -17,43 +17,48 @@ class UserController {
         role,
         trx,
       );
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
       await trx.commit();
+      delete userData.refreshToken;
       return res.json(userData);
     } catch (error) {
       await trx.rollback();
-      console.error(error.code);
+      console.error(error);
       if (error.status === 400) {
-        return res.json(ApiError.BadRequest(error));
+        return next(ApiError.BadRequest(error));
       } else if (error.code === "ESOCKET") {
-        return res.json(ApiError.IntServError("mail-server error"));
+        return next(ApiError.IntServError("mail-server error"));
+      } else if(error.status === 409) {
+        return next(error);
       } else {
-        return res.json(ApiError.IntServError(error));
+        return next(ApiError.IntServError(error));
       }
     }
   }
 
-  async login(req, res) {
+  async login(req, res, next) {
     let trx;
     try {
       trx = await knex.transaction();
       const { email, password } = req.body;
       const userData = await userService.login(email, password, trx);
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
-      trx.commit();
-      userData.refreshToken = "";
-      userData.accessToken = "";
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
+      await trx.commit();
+      delete userData.refreshToken; // Удаление токена из данных
       return res.json(userData);
     } catch (error) {
-      if (error.code === "ECONNREFUSED") {
-        res.json(ApiError.IntServError("Connection refused"));
+      if (trx) {
+        await trx.rollback();
       }
-      trx.rollback();
-      console.error(error);
+      if (error.code === "ECONNREFUSED") {
+        return next(ApiError.IntServError("Connection refused"));
+      }
       if (error.status === 400) {
-        return res.json(ApiError.BadRequest(error));
+        return next(ApiError.BadRequest(error.message));
+      } else if (error.status === 404) {
+        return next(ApiError.NotFound(error.message));
       } else {
-        return res.json(ApiError.IntServError(error));
+        return next(ApiError.IntServError(error.message));
       }
     }
   }
@@ -113,8 +118,9 @@ class UserController {
         );
       }
       const userData = await userService.refresh(refreshToken, trx);
-      res.cookie("refreshToken", userData.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", userData.refreshToken, config.rFcookieOptions);
       await trx.commit();
+      delete userData.refreshToken;
       return res.json(userData);
     } catch (error) {
       if (trx) {

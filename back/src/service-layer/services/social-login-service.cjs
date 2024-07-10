@@ -51,7 +51,7 @@ class SocialLoginService {
       const userDto = new UserDto(user);
       const tokens = tokenService.generateTokens({ ...userDto });
       await tokenService.saveToken(user.id, tokens.refreshToken);
-      res.cookie("refreshToken", tokens.refreshToken, config.cookieOptions);
+      res.cookie("refreshToken", tokens.refreshToken, config.rFcookieOptions);
       const frontendRedirectUri = `${CLIENT_URL}?authLink=${user.activationlink}`;
       return res.redirect(frontendRedirectUri);
     } catch (error) {
