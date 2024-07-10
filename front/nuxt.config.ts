@@ -38,5 +38,10 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ["./stores/**"],
   },
+  runtimeConfig: {
+    public: {
+      localhostApi: process.env.API_LOCALHOST || 'http://localhost:3000',
+    },
+  },
   compatibilityDate: "2024-07-03",
 });
