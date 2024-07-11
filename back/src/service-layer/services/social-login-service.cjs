@@ -50,7 +50,7 @@ class SocialLoginService {
       const user = await strategy.handleCallback(code, codeVerifier);
       const userDto = new UserDto(user);
       const tokens = tokenService.generateTokens({ ...userDto });
-      await tokenService.saveToken(user.id, tokens.refreshToken);
+      await tokenService.saveToken(user.id, tokens.refreshToken, tokens.expRfToken);
       res.cookie("refreshToken", tokens.refreshToken, config.rFcookieOptions);
       const frontendRedirectUri = `${CLIENT_URL}?authLink=${user.activationlink}`;
       return res.redirect(frontendRedirectUri);
