@@ -70,14 +70,14 @@ class SocialLoginService {
     }
   }
 
-  async getAuthUser(authLink, res) {
+  async getAuthUser(authLink, res, next) {
     if (!uuidRegex.test(authLink)) {
       throw ApiError.BadRequest("Wrong auth link");
     }
     try {
       const userData = await UserModel.findUserByActivationLink(authLink);
       if (!userData) {
-        throw ApiError.BadRequest("Wrong auth link");
+        return next(ApiError.BadRequest("Wrong auth link"));
       }
       if (userData) {
         return res.json(userData);
