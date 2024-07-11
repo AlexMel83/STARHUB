@@ -1,11 +1,17 @@
 const authRouteInit = require("./auth.routes.cjs");
+const customersRouteInit = require("./customers.routes.cjs");
+const dealsRouteInit = require("./deals.routes.cjs");
 
 const routeInit = (app, express) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   authRouteInit(app);
+  customersRouteInit(app);
+  dealsRouteInit(app);
 };
 
 module.exports = {
   routeInit,
+  customersRouteInit,
+  dealsRouteInit,
 };
