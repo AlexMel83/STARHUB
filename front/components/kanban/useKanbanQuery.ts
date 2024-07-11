@@ -24,28 +24,28 @@ export function useKanbanQuery() {
         ...column,
         items: [],
       }));
-      
 
       const deals = data as unknown as IDeal[];
-      console.log(deals, newBoard)
+
       for (const deal of deals) {
-        let column = newBoard.find((col) => col.id === deal.status);
+           const column = newBoard.find((col) => col.id === deal.status);
         if (column) {
           const existingDeal = column.items.find(
-            (item) => item.id === deal.$id,
+            (item) => item.id === deal.id,
           );
           if (!existingDeal) {
             column.items.push({
-              $createdAt: deal.$createdAt,
-              id: deal.$id,
+              created_at: deal.created_at,
+              id: deal.id,
               name: deal.name,
               price: deal.price,
-              companyName: deal.customer.name,
-              status: column.name,
+              customer: deal.customer.name,
+              status: deal.status,
             });
           }
         }
       }
+  
       return newBoard;
     },
   });

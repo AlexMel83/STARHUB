@@ -1,4 +1,5 @@
 const knex = require("./../../../config/knex.config.cjs");
+const customerModel = require("./customer-model.cjs");
 
 const DealsTable = "deals";
 const DealFields = [
@@ -14,11 +15,14 @@ const DealFields = [
 module.exports = {
   async getDealById(id, trx = knex) {
     try {
-        const candidate = await knex(DealsTable)
+        const deal = await knex(DealsTable)
         .select(DealFields)
-        .where("id", "=", id)
+        .where({id})
         .first();
-      return candidate ? candidate : null;
+        if(deal) {
+          deal.customer = await customerModel.getCustomerById(deal.customer_id);
+        }
+      return deal ? deal : null;
     } catch (error) {
       console.error(error);
       throw error;
@@ -38,13 +42,20 @@ module.exports = {
     };
   },
 
-  async getAllDeals() {
+  async getAllDeals(trx = knex) {
     try {
-        return await knex(DealsTable).select(DealFields);
+      const deals = await trx(DealsTable).select(DealFields);
+      const dealsWithCustomers = await Promise.all(
+        deals.map(async (deal) => {
+          deal.customer = await customerModel.getCustomerById(deal.customer_id);
+          return deal;
+        })
+      ); 
+      return dealsWithCustomers;
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async addDeal(payload, trx = knex) {
