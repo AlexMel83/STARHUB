@@ -1,29 +1,30 @@
 export interface DealResponse {
     status: number;
     data: {
-      user: {
-        email: string;
+        id: number;
         name: string;
-        role: string;
-        isactivated: boolean;
-      };
-      url: string;
+        price: number;
+        status: string;
     };
   };
   
   export interface DealApi {
-    getDealById(id: number): Promise<DealResponse>;
     getAllDeals(): Promise<DealResponse>;
-  }
+    getDealById(id: number): Promise<DealResponse>;
+    getDealByCustomerId(customer_id:number): Promise<DealResponse>;
+  };
   
   export default function (instance: any): DealApi {
     return {
-      getDealById(id: number): Promise<DealResponse> {
-        return instance.get(`/login/${id}`);
-      },
       getAllDeals(): Promise<DealResponse> {
         return instance.get("/deals");
       },
+      getDealById(id: number): Promise<DealResponse> {
+        return instance.get(`/deals/${id}`);
+      },
+      getDealByCustomerId(customer_id: number): Promise<DealResponse> {
+        return instance.get(`/deals?customer_id=${customer_id}`);
+      },
     };
-  }
+  };
   
