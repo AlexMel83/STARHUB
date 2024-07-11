@@ -8,7 +8,7 @@ module.exports = {
     return data;
   },
 
-  async saveToken(userId, refreshToken, trx) {
+  async saveToken(userId, refreshToken, expToken, trx) {
     try {
       const userExist = await trx(TokensTable)
         .select("*")
@@ -16,18 +16,19 @@ module.exports = {
       if (userExist.length) {
         await trx(TokensTable)
           .where("user_id", "=", userId)
-          .update({ refreshtoken: refreshToken });
+          .update({ refreshtoken: refreshToken, exp_token: expToken });
       } else {
         await trx(TokensTable).insert({
           user_id: userId,
           refreshtoken: refreshToken,
+          exp_token: expToken,
         });
-      }
+      };
       return refreshToken;
-    } catch (e) {
-      console.error("Помилка транзакції:", e);
-      throw e;
-    }
+    } catch (error) {
+      console.error("Помилка транзакції:", error);
+      throw error;
+    };
   },
 
   async deleteOneToken(refreshToken, trx) {
@@ -39,7 +40,7 @@ module.exports = {
     } catch (error) {
       console.error("Помилка транзакції:", error);
       throw error;
-    }
+    };
   },
 
   async findOneToken(refreshToken, trx) {

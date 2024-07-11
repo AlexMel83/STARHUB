@@ -26,6 +26,7 @@ exports.up = async function (knex) {
       table.increments("id").primary().notNullable().unique();
       table.integer("user_id").notNullable().index();
       table.text("refreshtoken").notNullable().index();
+      table.timestamp("exp_token").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
     });
     await trx.schema.createTable("customers", function (table) {
@@ -62,7 +63,7 @@ exports.up = async function (knex) {
     console.error(error);
     await trx.rollback();
     throw Error("Failed migration");
-  }
+  };
 };
 
 /**
@@ -83,5 +84,5 @@ exports.down = async function (knex) {
       error: error,
       message: "Migration for removing tables failed",
     });
-  }
+  };
 };
