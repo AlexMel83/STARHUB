@@ -29,4 +29,5 @@ export interface IDeal extends IBaseField {
   name: string;
   price: number;
   status: EnumStatus;
+  customer_id: number;
 }

@@ -19,6 +19,7 @@ export default {
     created(){
         this.$load(async()=>{
             this.deals = (await this.$api.deals.getAllDeals()).data;
+            console.log(this.deals)
         })
     }
 }

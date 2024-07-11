@@ -5,6 +5,7 @@ export interface DealResponse {
         name: string;
         price: number;
         status: string;
+        customer_id: number;
     };
   };
   
