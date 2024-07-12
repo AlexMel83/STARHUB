@@ -1,5 +1,3 @@
-const config = require("../../../config/config.cjs");
-const knex = require("./../../../config/knex.config.cjs");
 const dealModel = require("../../data-layer/models/deal-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
@@ -47,7 +45,6 @@ class dealController {
     if (!dealDataBase) {
       return next(ApiError.NotFound(`deal with id: ${fields.id} was not found`));
     }
-    let updatedDeal = {};
     const payload = {
       id: fields.id,
       name: fields?.name ?? dealDataBase.name,
@@ -56,7 +53,8 @@ class dealController {
       customer_id: fields?.customer_id ?? dealDataBase.customer_id,
       updated_at: new Date().toISOString(),
     };
-    return res.status(200).json(updatedDeal);
+    const response = await dealModel.editDeal(payload);
+    return res.status(200).json(response);
     } catch(error){
       console.error(error);
       return next(ApiError.IntServError(error));
