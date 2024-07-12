@@ -23,7 +23,7 @@
           v-model="nameRef"
         />
         <div class="grid grid-cols-2 gap-5 mt-4">
-          <UiButton type="button" @click="">Login</UiButton>
+          <UiButton type="button" @click="login">Login</UiButton>
           <UiButton type="button" @click="register">Register</UiButton>
         </div>
       </form>
@@ -62,26 +62,26 @@ const clearData = async () => {
   isLoadingStore.set(false);
 };
 
-// const login = async () => {
-//   console.log("+");
-//   try {
-//     isLoadingStore.set(true);
-//     await account.createEmailPasswordSession(emailRef.value, passwordRef.value);
-//     const response = await account.get();
-//     if (response) {
-//       authStore.set({
-//         email: response.email,
-//         name: response.name,
-//         status: response.status,
-//       });
-//     }
-//     console.log(response, authStore);
-//     await clearData();
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     isLoadingStore.set(false);
-//   }
-// };
+const login = async () => {
+  console.log("+");
+  try {
+    isLoadingStore.set(true);
+    await account.createEmailPasswordSession(emailRef.value, passwordRef.value);
+    const response = await account.get();
+    if (response) {
+      authStore.set({
+        email: response.email,
+        name: response.name,
+        status: true,
+      });
+    }
+    console.log(response, authStore);
+    await clearData();
+  } catch (error) {
+    console.error("Login error:", error);
+    isLoadingStore.set(false);
+  }
+};
 
 const register = async () => {
   try {

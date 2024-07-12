@@ -21,7 +21,6 @@ onMounted(async () => {
   
   const urlParams = new URLSearchParams(window.location.search);
   const authLink: string | null = urlParams.get('authLink');
-  console.log(authLink)
   if (authLink && uuidRegex.test(authLink)) {
     const authUser = await $load(async () => $api.auth.getAuthUser(authLink), errors);
     localStorage.setItem('authUser', JSON.stringify(authUser));

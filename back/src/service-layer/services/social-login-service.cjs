@@ -50,32 +50,34 @@ class SocialLoginService {
       const user = await strategy.handleCallback(code, codeVerifier);
       const userDto = new UserDto(user);
       const tokens = tokenService.generateTokens({ ...userDto });
-      await tokenService.saveToken(user.id, tokens.refreshToken);
+      await tokenService.saveToken(user.id, tokens.refreshToken, tokens.expRfToken);
       res.cookie("refreshToken", tokens.refreshToken, config.rFcookieOptions);
       const frontendRedirectUri = `${CLIENT_URL}?authLink=${user.activationlink}`;
       return res.redirect(frontendRedirectUri);
     } catch (error) {
-      console.error(error);
-      const match = error.detail.match(emailRegex);
-      if (match) {
-        const email = match[1];
-        const errorMessage = email;
-        return res.redirect(
-          `${CLIENT_URL}?email=${email}&error=${encodeURIComponent(errorMessage)}`,
-        );
+      console.error('Error in handleCallback:', error);
+      if (error && typeof error === 'object' && error.detail) {
+        const match = error.detail.match(emailRegex);
+        if (match) {
+          const email = match[1];
+          const errorMessage = email;
+          return res.redirect(
+            `${CLIENT_URL}?email=${email}&error=${encodeURIComponent(errorMessage)}`
+          );
+        }
       }
       return res.json(ApiError.BadRequest(error));
     }
   }
 
-  async getAuthUser(authLink, res) {
+  async getAuthUser(authLink, res, next) {
     if (!uuidRegex.test(authLink)) {
       throw ApiError.BadRequest("Wrong auth link");
     }
     try {
       const userData = await UserModel.findUserByActivationLink(authLink);
       if (!userData) {
-        throw ApiError.BadRequest("Wrong auth link");
+        return next(ApiError.BadRequest("Wrong auth link"));
       }
       if (userData) {
         return res.json(userData);

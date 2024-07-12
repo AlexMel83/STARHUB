@@ -1,4 +1,4 @@
-import { EnumStatus } from "~/lib/types/deals.types";
+import { EnumStatus } from "~/types/deals.types";
 import type { IColumn } from "./kanban.types";
 
 export const KANBAN_DATA: IColumn[] = [

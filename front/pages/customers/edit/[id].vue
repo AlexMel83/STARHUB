@@ -3,7 +3,7 @@ import { storage } from "@/lib/appwrite";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { v4 as uuid } from "uuid";
 import { COLLECTION_CUSTOMERS, DB_ID, STORAGE_ID } from "@/app.constants";
-import type { ICustomer } from "@/lib/types/deals.types";
+import type { ICustomer } from "~/types/deals.types";
 import { DB } from "@/lib/appwrite";
 
 interface InputFileEvent extends Event {

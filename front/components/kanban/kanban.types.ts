@@ -1,11 +1,11 @@
-import type { EnumStatus } from "~/lib/types/deals.types";
+import type { EnumStatus } from "~/types/deals.types";
 
 export interface ICard {
-  id: string;
+  id: number;
   name: string;
   price: number;
-  $createdAt: string;
-  companyName: string;
+  created_at: string;
+  customer: string;
   status: string;
 }
 

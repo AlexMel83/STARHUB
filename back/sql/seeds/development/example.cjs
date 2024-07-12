@@ -67,6 +67,54 @@ const usersData = [
   },
 ];
 
+const customersData = [
+  {
+    name: "Спортмастер",
+    email: "dsd@dsd.ua",
+    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/5f8ca226-b7e2-4802-817b-935dc3321798/download?project=668181210001356c2833",
+    from_source: "iz gazet",
+  },
+  {
+    name: "Facebook",
+    email: "dsds@sas.ya",
+    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/avatar/view?project=668181210001356c2833&mode=admin",
+    from_source: "From NY",
+  },
+  {
+    name: "мусоровоз",
+    email: "fdfd@dss.ya",
+    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/74887ba2-f139-423e-80ea-a813dd586b60/download?project=668181210001356c2833",
+    from_source: "jeko",
+  }
+];
+
+const dealsData = [
+  {
+    name: "Настроить рекламу",
+    price: 32323,
+    status: "done",
+    customer_id: 1,
+  },
+  {
+    name: "Настроить рекламу",
+    price: 32323,
+    status: "produced",
+    customer_id: 1,
+  },
+  {
+    name: "Покрасить стены",
+    price: 34000,
+    status: "todo",
+    customer_id: 2,
+  },
+  {
+    name: "вынести мусор",
+    price: 35,
+    status: "to-be-agreed",
+    customer_id: 3,
+  },
+];
+
 exports.seed = async function (knex) {
   const seedExist = await knex("users").select("*").where({ id: 1 });
 
@@ -75,6 +123,8 @@ exports.seed = async function (knex) {
 
     try {
       await trx("users").insert(usersData);
+      await trx("customers").insert(customersData);
+      await trx("deals").insert(dealsData);
 
       await trx.commit();
     } catch (error) {

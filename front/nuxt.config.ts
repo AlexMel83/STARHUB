@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   plugins: [
     '~/plugins/api.js',
     '~/plugins/errorHandler.js',
-],
+  ],
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
@@ -31,6 +31,9 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  typescript: {
+    strict: true
+  },
   shadcn: {
     prefix: "Ui",
     componentDir: "./components/ui",

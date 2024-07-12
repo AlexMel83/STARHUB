@@ -100,8 +100,8 @@ module.exports = function (app) {
     await socialLoginService.handleCallback(provider, code, codeVerifier, res);
   });
 
-  app.post("/auth-user/:link", async (req, res) => {
+  app.post("/auth-user/:link", async (req, res, next) => {
     const authLink = req.params.link;
-    await socialLoginService.getAuthUser(authLink, res);
+    await socialLoginService.getAuthUser(authLink, res, next);
   });
 };
