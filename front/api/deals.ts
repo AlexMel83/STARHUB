@@ -1,3 +1,10 @@
+import type { IDeal } from "~/types/deals.types";
+
+interface IDealFormState extends Pick<IDeal, "name" | "price"> {
+  customer_name: string,
+  customer_email: string,
+  status: string;
+};
 export interface DealResponse {
     status: number;
     data: {
@@ -28,6 +35,7 @@ export interface DealResponse {
     getDealById(id: number): Promise<DealResponse>;
     getDealByCustomerId(customer_id:number): Promise<DealResponse>;
     updDeal(payload: UpdateDealStatusPayload): Promise<DealResponseData>
+    addDeal(payload: IDealFormState): Promise<DealResponse>
   };
   
   export default function (instance: any): DealApi {
@@ -43,7 +51,10 @@ export interface DealResponse {
       },
       updDeal(payload): Promise<DealResponseData> {
         return instance.put('/deals', payload);
-      }
+      },
+      addDeal(payload): Promise<DealResponse> {
+        return instance.post('/deals', payload);
+      },
     };
   };
   

@@ -1,4 +1,7 @@
+const config = require("../../../config/config.cjs");
+const knex = require("./../../../config/knex.config.cjs");
 const dealModel = require("../../data-layer/models/deal-model.cjs");
+const customerModel = require("../../data-layer/models/customer-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class dealController {
@@ -23,17 +26,41 @@ class dealController {
 
   async addDeal(req, res, next) {
     const fields = req.body;
+    const customerFields = {
+      customer_email: req.body.customer_email,
+      customer_name: req.body.customer_name,
+    }
+    const trx = await knex.transaction();
+    let customer = {
+      name: customerFields.customer_name,
+      email: customerFields.customer_email,
+    };
     try{
+      const custmerByName = await customerModel.getCustomerByName(customerFields.customer_name, trx);
+      if (custmerByName) {
+        customer.id = custmerByName.id;
+        customer = await customerModel.editCustomer(customer, trx);
+      } else {
+        const customerByEmail = await customerModel.getCustomerByEmail(customerFields.customer_email, trx);
+        if(customerByEmail) {
+          customer.id = customerByEmail.id;
+          customer = await customerModel.editCustomer(customer, trx);
+        } else {
+          [customer] = await customerModel.addCustomer(customer, trx);
+        }
+      }
       const payload = {
         name: fields.name,
         price: fields?.price,
         status: fields.status,
-        customer_id: fields?.customer_id,
-    };
-    const deal = dealModel.addDeal(payload);
-    return res.status(200).json(deal);
+        customer_id: customer.id,
+      };
+      const deal = await dealModel.addDeal(payload, trx);
+      await trx.commit();
+      return res.status(200).json(deal);
     } catch(error){
       console.error(error);
+      await trx.rollback();
       return next(ApiError.IntServError(error));
     };
   };

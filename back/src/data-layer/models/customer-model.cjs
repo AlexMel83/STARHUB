@@ -14,9 +14,35 @@ const CustomerFields = [
 module.exports = {
   async getCustomerById(id, trx = knex) {
     try {
-        const candidate = await knex(CustomersTable)
+        const candidate = await trx(CustomersTable)
         .select(CustomerFields)
-        .where("id", "=", id)
+        .where({id})
+        .first();
+      return candidate ? candidate : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    };
+  },
+
+  async getCustomerByName(name, trx = knex) {
+    try {
+        const candidate = await trx(CustomersTable)
+        .select(CustomerFields)
+        .where({name})
+        .first();
+      return candidate ? candidate : null;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    };
+  },
+
+  async getCustomerByEmail(email, trx = knex) {
+    try {
+        const candidate = await trx(CustomersTable)
+        .select(CustomerFields)
+        .where({email})
         .first();
       return candidate ? candidate : null;
     } catch (error) {
@@ -44,9 +70,9 @@ module.exports = {
   },
 
 
-  async editCustomer(payload) {
+  async editCustomer(payload, trx=knex) {
     try {
-      const [result] = await knex(CustomersTable)
+      const [result] = await trx(CustomersTable)
         .where({ id: payload.id })
         .update(payload)
         .returning(CustomerFields);

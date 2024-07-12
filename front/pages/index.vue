@@ -93,7 +93,7 @@ function handleDrop(targetColumn: IColumn) {
                                     {{convertCurrency(card.price)}}
                                 </UiCardDescription>
                         </UiCardHeader>
-                        <UiCardContent class="text-xs">Company: {{ card.customer }}</UiCardContent>
+                        <UiCardContent class="text-xs"><div>Company:</div>{{ card.customer }}</UiCardContent>
                             <UiCardFooter>{{ dayjs(card.created_at).format('DD MMMM YYYY') }}</UiCardFooter>
                         </UiCard>
                     </div>

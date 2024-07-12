@@ -15,7 +15,7 @@ const DealFields = [
 module.exports = {
   async getDealById(id, trx = knex) {
     try {
-        const deal = await knex(DealsTable)
+        const deal = await trx(DealsTable)
         .select(DealFields)
         .where({id})
         .first();
@@ -31,7 +31,7 @@ module.exports = {
 
   async getDealsByCustomerId(customer_id, trx = knex) {
     try {
-        const response = await knex(DealsTable)
+        const response = await trx(DealsTable)
         .select(DealFields)
         .where({customer_id})
         .first();
@@ -68,9 +68,9 @@ module.exports = {
   },
 
 
-  async editDeal(payload) {
+  async editDeal(payload, trx=knex) {
     try {
-      const [result] = await knex(DealsTable)
+      const [result] = await trx(DealsTable)
         .where({ id: payload.id })
         .update(payload)
         .returning(DealFields);
@@ -81,9 +81,9 @@ module.exports = {
     };
   },
 
-  async deleteDeal(id) {
+  async deleteDeal(id, trx=knex) {
     try {
-      await knex(DealsTable).where({ id }).del();
+      await trx(DealsTable).where({ id }).del();
       return { id };
     } catch (error) {
       console.error(error);
