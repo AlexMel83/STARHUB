@@ -107,7 +107,7 @@ const onSubmit = handleSubmit((values) => {
   </form>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .input {
   @apply border-[#161c26] mb-2 placeholder:text-[#748092] focus:border-border transition-colors;
 }

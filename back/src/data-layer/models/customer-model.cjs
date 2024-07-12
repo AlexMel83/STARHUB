@@ -31,7 +31,6 @@ module.exports = {
         .select(CustomerFields)
         .where({name})
         .first();
-        console.log(candidate)
       return candidate ? candidate : null;
     } catch (error) {
       console.error(error);
@@ -71,9 +70,9 @@ module.exports = {
   },
 
 
-  async editCustomer(payload) {
+  async editCustomer(payload, trx=knex) {
     try {
-      const [result] = await knex(CustomersTable)
+      const [result] = await trx(CustomersTable)
         .where({ id: payload.id })
         .update(payload)
         .returning(CustomerFields);
