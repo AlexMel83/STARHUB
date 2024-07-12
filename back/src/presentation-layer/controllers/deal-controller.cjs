@@ -1,4 +1,5 @@
 const dealModel = require("../../data-layer/models/deal-model.cjs");
+const customerModel = require("../../data-layer/models/customer-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class dealController {
@@ -23,12 +24,27 @@ class dealController {
 
   async addDeal(req, res, next) {
     const fields = req.body;
+    const customerFields = {
+      customer_email: req.body.customer_email,
+      customer_name: req.body.customer_name,
+    }
+    const custmerByName = await customerModel.getCustomerByName(customerFields.customer_name);
+    if (custmerByName) {
+      customerFields.id = custmerByName.id;
+    } else {
+      const customerByEmail = await customerModel.getCustomerByEmail(customerFields.customer_email);
+      if(customerByEmail) {
+        customerFields.id = customerByEmail.id;
+      } else {
+        return next(ApiError.NotFound(`customer with ${customerFields.customer_name} ${customerFields.customer_email} was not found`));
+      }
+    }
     try{
       const payload = {
         name: fields.name,
         price: fields?.price,
         status: fields.status,
-        customer_id: fields?.customer_id,
+        customer_id: customerFields.id,
     };
     const deal = dealModel.addDeal(payload);
     return res.status(200).json(deal);

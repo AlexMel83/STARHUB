@@ -25,6 +25,15 @@ const validateDeal = [
     .optional({ checkFalsy: true })
     .isNumeric()
     .withMessage('Поле "customer_id" має бути числом'),
+  body("customer_name")
+    .optional({ checkFalsy: true })
+    .isString()
+    .withMessage('Поле "name" має бути рядком'),
+  body("customer_email")
+    .optional({ checkFalsy: true })
+    .isEmail()
+    .isAscii()
+    .withMessage('Поле "customer_email" має формат email@email.ua'), 
 ];
 
 module.exports = function (app) {

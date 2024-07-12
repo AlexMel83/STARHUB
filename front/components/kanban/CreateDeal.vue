@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { useMutation } from "@tanstack/vue-query";
 import { defineProps } from "vue";
-import { COLLECTION_DEALS, DB_ID } from "~/app.constants";
 import type { IDeal } from "~/types/deals.types";
 import { v4 as uuid } from "uuid";
-import { DB } from "~/lib/appwrite";
-
-const isOpenForm = ref(false);
 
 interface IDealFormState extends Pick<IDeal, "name" | "price"> {
-  customer: {
-    email: string;
-    name: string;
-  };
+  customer_name: string,
+  customer_email: string,
   status: string;
-}
+};
 
+const isOpenForm = ref(false);
+const { $api, $load } = useNuxtApp();
 const props = defineProps({
   status: {
     type: String,
@@ -28,23 +24,23 @@ const { handleSubmit, defineField, handleReset } = useForm<IDealFormState>({
   initialValues: {
     name: "",
     price: 0,
-    customer: {
-      email: "",
-      name: "",
-    },
+    customer_email: "",
+    customer_name: "",
     status: props.status,
   },
 });
 
 const [name, nameAttrs] = defineField("name");
 const [price, priceAttrs] = defineField("price");
-const [customerEmail, customerEmailAttrs] = defineField("customer.email");
-const [customerName, customerNameAttrs] = defineField("customer.name");
+const [customerEmail, customerEmailAttrs] = defineField("customer_email");
+const [customerName, customerNameAttrs] = defineField("customer_name");
 
 const { mutate, isPending } = useMutation({
   mutationKey: ["create a new deal"],
-  mutationFn: (data: IDealFormState) =>
-    DB.createDocument(DB_ID, COLLECTION_DEALS, uuid(), data),
+  mutationFn: async (data: IDealFormState) => {
+      const response = await $api.deals.addDeal(data);
+      return response;
+      },
   onSuccess() {
     props.refetch && props.refetch();
     handleReset();
