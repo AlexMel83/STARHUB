@@ -29,7 +29,6 @@ export function useComments() {
       }
       try {
         const response: ServerResponse = await $load(() => $api.comments.getComment(cardId), errors);
-        console.log(response);
         commentsRef.value = response.data;
         return response;
       } catch (error) {

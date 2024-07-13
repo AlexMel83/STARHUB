@@ -1,4 +1,4 @@
-import { useMutation, UseQueryResult } from "@tanstack/vue-query";
+import { useMutation } from "@tanstack/vue-query";
 import { useNuxtApp } from "#app";
 
 interface CreateCommentPayload {
@@ -6,16 +6,17 @@ interface CreateCommentPayload {
   text: string;
 }
 
-export function useCreateComment({ refetch }: { refetch: UseQueryResult['refetch'] }) {
+export function useCreateComment({ refetch }: { refetch: () => void }) {
   const { $api } = useNuxtApp();
+  const store = useDealSlideStore();
   const commentRef = ref("");
+  const cardId = store.card?.id || null;
 
   const mutation = useMutation({
     mutationFn: async (newComment: CreateCommentPayload) => {
       return $api.comments.addComment(newComment);
     },
     onSuccess: () => {
-      console.log("Comment created successfully");
       refetch();
     },
     onError: (error) => {
@@ -28,9 +29,11 @@ export function useCreateComment({ refetch }: { refetch: UseQueryResult['refetch
       console.error("Comment is empty");
       return;
     }
-
+    if (!cardId) {
+      throw new Error("Card ID is not defined");
+    };
     const newComment: CreateCommentPayload = {
-      deal_id: 3, // или получайте актуальный id из store или пропсов
+      deal_id: cardId,
       text: commentRef.value
     };
 

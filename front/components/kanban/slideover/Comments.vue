@@ -4,7 +4,7 @@ import { useComments } from "./useComments";
 import { useCreateComment } from "./useCreateComment";
 
 const { comments, refetch, isLoading } = useComments();
-const { commentRef, writeComment } = useCreateComment({ refetch, comments });
+const { commentRef, writeComment } = useCreateComment({ refetch });
 </script>
 
 <template>
