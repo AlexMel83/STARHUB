@@ -2,44 +2,38 @@ const commentController = require("../controllers/comment-controller.cjs");
 const { body, param, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
-const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 const validateComment = [
   body("id")
     .optional({ checkFalsy: true })
     .isNumeric()
     .withMessage('Поле "id" має бути числом'),
-  body("name")
+  body("text")
     .optional({ checkFalsy: true })
     .isString()
-    .withMessage('Поле "name" має бути рядком'),
-  body("email")
-    .notEmpty()
-    .isEmail()
-    .isAscii()
-    .withMessage('Поле "email" має формат email@email.ua'),
-  body("avatar_url")
+    .withMessage('Поле "text" має бути рядком'),
+  body("deal_id")
     .optional({ checkFalsy: true })
-    .isString()
-    .withMessage('Поле "avatar_url" має бути рядком'),
-  body("from_source")
+    .isNumeric()
+    .withMessage('Поле "deal_id" має бути числом'),
+  body("user_id")
     .optional({ checkFalsy: true })
-    .isString()
-    .withMessage('Поле "from_source" має бути рядком'),
+    .isNumeric()
+    .withMessage('Поле "user_id" має бути числом'),
 ];
 
 module.exports = function (app) {
   app.get(
     "/comments",
     query("id").optional({ checkFalsy: true }).isNumeric().withMessage('Поле "id" має бути числом'),
-    commentController.getComment,
+    commentController.getComments,
   );
 
   app.post(
     "/comments", 
     validateComment, 
     validateMiddleware, 
-    commentController.addComment
+    commentController.addComment,
   );
 
   app.put(

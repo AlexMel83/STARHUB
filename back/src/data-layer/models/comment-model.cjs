@@ -24,25 +24,23 @@ module.exports = {
     };
   },
 
-  async getCommentByDealId(deal_id, trx = knex) {
+  async getCommentsByDealId(deal_id, trx = knex) {
     try {
-        const candidate = await trx(CommentsTable)
+      const candidate = await trx(CommentsTable)
         .select(CommentFields)
-        .where({deal_id})
-        .first();
-      return candidate ? candidate : null;
+        .where({deal_id});
+      return candidate ? candidate : [];
     } catch (error) {
       console.error(error);
       throw error;
     };
   },
 
-  async getCustomerByUserId(user_id, trx = knex) {
+  async getCommentsByUserId(user_id, trx = knex) {
     try {
         const candidate = await trx(CommentsTable)
         .select(CommentFields)
-        .where({user_id})
-        .first();
+        .where({user_id});
       return candidate ? candidate : null;
     } catch (error) {
       console.error(error);

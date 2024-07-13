@@ -1,32 +1,44 @@
-import { useMutation } from "@tanstack/vue-query";
-import { v4 as uuid } from "uuid";
-import { COLLECTION_COMMENTS, DB_ID } from "~/app.constants";
-import { DB } from "~/lib/appwrite";
+import { useMutation, UseQueryResult } from "@tanstack/vue-query";
+import { useNuxtApp } from "#app";
 
-export function useCreateComment({ refetch }: { refetch: () => void }) {
-  const store = useDealSlideStore();
-  const commentRef = ref<string>();
+interface CreateCommentPayload {
+  deal_id: number;
+  text: string;
+}
 
-  const { mutate } = useMutation({
-    mutationKey: ["add comments", commentRef.value],
-    mutationFn: () =>
-      DB.createDocument(DB_ID, COLLECTION_COMMENTS, uuid(), {
-        text: commentRef.value,
-        deal: store.card?.id,
-      }),
-    onSuccess: () => {
-      refetch();
-      commentRef.value = "";
+export function useCreateComment({ refetch }: { refetch: UseQueryResult['refetch'] }) {
+  const { $api } = useNuxtApp();
+  const commentRef = ref("");
+
+  const mutation = useMutation({
+    mutationFn: async (newComment: CreateCommentPayload) => {
+      return $api.comments.addComment(newComment);
     },
+    onSuccess: () => {
+      console.log("Comment created successfully");
+      refetch();
+    },
+    onError: (error) => {
+      console.error("Error creating comment:", error);
+    }
   });
 
-  const writeComment = () => {
-    if (!commentRef.value) return;
-    mutate();
+  const writeComment = async () => {
+    if (!commentRef.value) {
+      console.error("Comment is empty");
+      return;
+    }
+
+    const newComment: CreateCommentPayload = {
+      deal_id: 3, // или получайте актуальный id из store или пропсов
+      text: commentRef.value
+    };
+
+    mutation.mutate(newComment);
   };
 
   return {
-    writeComment,
     commentRef,
+    writeComment,
   };
 }
