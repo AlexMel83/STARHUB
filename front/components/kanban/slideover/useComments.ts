@@ -1,13 +1,18 @@
 import { useQuery } from "@tanstack/vue-query";
-import { COLLECTION_DEALS, DB_ID } from "~/app.constants";
-import { DB } from "~/lib/appwrite";
 
 export function useComments() {
   const store = useDealSlideStore();
   const cardId = store.card?.id || "";
+  const { $api, $load } = useNuxtApp();
+  const errors = reactive({
+    textError: '',
+  });
 
   return useQuery({
     queryKey: ["deal", cardId],
-    queryFn: () => DB.getDocument(DB_ID, COLLECTION_DEALS, cardId),
+    queryFn: async () => await $load(async () => {
+      const response = await $api.comments.getComment(cardId);
+      return response.data;
+      }, errors),
   });
 }
