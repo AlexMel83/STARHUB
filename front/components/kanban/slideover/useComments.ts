@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/vue-query";
 
 export function useComments() {
   const store = useDealSlideStore();
-  const cardId = store.card?.id || "";
   const { $api, $load } = useNuxtApp();
+  const cardId = store.card?.id || null;
   const errors = reactive({
     textError: '',
   });
@@ -11,8 +11,10 @@ export function useComments() {
   return useQuery({
     queryKey: ["deal", cardId],
     queryFn: async () => await $load(async () => {
-      const response = await $api.comments.getComment(cardId);
-      return response.data;
+      if (cardId === null) {
+        return [];
+      };
+      return await $api.comments.getComment(cardId);
       }, errors),
   });
 }
