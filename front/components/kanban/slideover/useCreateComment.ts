@@ -38,6 +38,7 @@ export function useCreateComment({ refetch }: { refetch: () => void }) {
     };
 
     mutation.mutate(newComment);
+    commentRef.value = "";
   };
 
   return {
