@@ -41,7 +41,7 @@ export function useComments() {
 
   watch(query.data, (newData) => {
     if (newData) {
-      commentsRef.value = newData.data;
+      commentsRef.value = [...newData.data].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     }
   });
 
