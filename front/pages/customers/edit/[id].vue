@@ -2,9 +2,8 @@
 import { storage } from "@/lib/appwrite";
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { v4 as uuid } from "uuid";
-import { COLLECTION_CUSTOMERS, DB_ID, STORAGE_ID } from "@/app.constants";
-import type { ICustomer } from "~/types/deals.types";
-import { DB } from "@/lib/appwrite";
+import type { ICustomer, ServerResponse } from "~/types/deals.types";
+import { useForm } from 'vee-validate';
 
 interface InputFileEvent extends Event {
   target: HTMLInputElement;
@@ -17,25 +16,41 @@ useSeoMeta({
   title: "Edit company",
 });
 
+const { $api, $load } = useNuxtApp();
+  const errors = reactive({
+    textError: '',
+  });
+
 const route = useRoute();
-const customerId = route.params.id as string;
+const router = useRouter();
+const customerId = route.params.id as unknown as number;
 
 const { handleSubmit, defineField, setFieldValue, setValues, values } =
   useForm<ICustomerFormState>();
 
 const { data, isSuccess } = useQuery({
   queryKey: ["get customer"],
-  queryFn: () => DB.getDocument(DB_ID, COLLECTION_CUSTOMERS, customerId),
+  queryFn: async () => {
+      try {
+        const customer: ServerResponse = await $load(() => $api.customers.getCustomerById(customerId), errors);
+        return customer.data;
+      } catch (error) {
+        console.error("Error fetching customer:", error);
+        throw error;
+      }
+    },
 });
 
-watch(isSuccess, () => {
-  const initialData = data.value as unknown as ICustomerFormState;
-  setValues({
-    email: initialData.email,
-    avatar_url: initialData.avatar_url,
-    from_source: initialData.from_source || "",
-    name: initialData.name,
-  });
+watchEffect(()=>{
+  if(isSuccess.value && data.value) {
+    const initialData = data.value as unknown as ICustomerFormState;
+    setValues({
+      email: initialData.email,
+      avatar_url: initialData.avatar_url,
+      from_source: initialData.from_source || "",
+      name: initialData.name,
+    });
+  }
 });
 
 const [name, nameAttrs] = defineField("name");
@@ -44,15 +59,25 @@ const [fromSource, fromSourceAttrs] = defineField("from_source");
 
 const { mutate, isPending } = useMutation({
   mutationKey: ["update customer", customerId],
-  mutationFn: (data: ICustomerFormState) =>
-    DB.updateDocument(DB_ID, COLLECTION_CUSTOMERS, customerId, data),
+  mutationFn: (formData: ICustomerFormState) => {
+    const updatedCustomer: ICustomer = {
+      id: customerId,
+      ...data.value,
+      ...formData,
+      updated_at: new Date().toISOString(),
+    };
+    return $api.customers.editCustomer(updatedCustomer);
+  },
+  onSuccess: () => {
+    router.push('/customers');
+  }
 });
 
 const { mutate: uploadImage, isPending: isUploadImagePending } = useMutation({
   mutationKey: ["upload image"],
   mutationFn: (file: File) => storage.createFile(STORAGE_ID, uuid(), file),
   onSuccess(data) {
-    const response = storage.getFileDownload(STORAGE_ID, data.$id);
+    const response = storage.getFileDownload(STORAGE_ID, data.id);
     setFieldValue("avatar_url", response.href);
   },
 });
@@ -65,7 +90,7 @@ const onSubmit = handleSubmit((values) => {
 <template>
   <div class="p-10">
     <h1 class="font-bold text-2xl mb-10">
-      Edit {{ (data as unknown as ICustomerFormState)?.name }}
+      Edit {{ values.name }}
     </h1>
     <form @submit="onSubmit" class="form">
       <UiInput
@@ -117,7 +142,7 @@ const onSubmit = handleSubmit((values) => {
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="postcss">
 .input {
   @apply border-[#161c26] mb-4 placeholder:text-[#748092] focus:border-border transition-colors;
 }

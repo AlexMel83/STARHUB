@@ -2,7 +2,6 @@
 import { useMutation } from "@tanstack/vue-query";
 import { defineProps } from "vue";
 import type { IDeal } from "~/types/deals.types";
-import { v4 as uuid } from "uuid";
 
 interface IDealFormState extends Pick<IDeal, "name" | "price"> {
   customer_name: string,
