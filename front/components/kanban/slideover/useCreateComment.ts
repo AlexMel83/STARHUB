@@ -1,32 +1,48 @@
 import { useMutation } from "@tanstack/vue-query";
-import { v4 as uuid } from "uuid";
-import { COLLECTION_COMMENTS, DB_ID } from "~/app.constants";
-import { DB } from "~/lib/appwrite";
+import { useNuxtApp } from "#app";
+
+interface CreateCommentPayload {
+  deal_id: number;
+  text: string;
+}
 
 export function useCreateComment({ refetch }: { refetch: () => void }) {
+  const { $api } = useNuxtApp();
   const store = useDealSlideStore();
-  const commentRef = ref<string>();
+  const commentRef = ref("");
+  const cardId = store.card?.id || null;
 
-  const { mutate } = useMutation({
-    mutationKey: ["add comments", commentRef.value],
-    mutationFn: () =>
-      DB.createDocument(DB_ID, COLLECTION_COMMENTS, uuid(), {
-        text: commentRef.value,
-        deal: store.card?.id,
-      }),
+  const mutation = useMutation({
+    mutationFn: async (newComment: CreateCommentPayload) => {
+      return $api.comments.addComment(newComment);
+    },
     onSuccess: () => {
       refetch();
-      commentRef.value = "";
     },
+    onError: (error) => {
+      console.error("Error creating comment:", error);
+    }
   });
 
-  const writeComment = () => {
-    if (!commentRef.value) return;
-    mutate();
+  const writeComment = async () => {
+    if (!commentRef.value) {
+      console.error("Comment is empty");
+      return;
+    }
+    if (!cardId) {
+      throw new Error("Card ID is not defined");
+    };
+    const newComment: CreateCommentPayload = {
+      deal_id: cardId,
+      text: commentRef.value
+    };
+
+    mutation.mutate(newComment);
+    commentRef.value = "";
   };
 
   return {
-    writeComment,
     commentRef,
+    writeComment,
   };
 }

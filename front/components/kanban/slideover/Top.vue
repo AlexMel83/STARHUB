@@ -18,10 +18,10 @@ const store = useDealSlideStore();
       </UiBadge>
     </KanbanSlideoverLabel>
     <KanbanSlideoverLabel label-text="Client">
-      {{ store.card?.companyName }}
+      {{ store.card?.customer }}
     </KanbanSlideoverLabel>
     <KanbanSlideoverLabel label-text="Criated">
-      {{ dayjs(store.card?.$createdAt).format("DD MMMM YYYY") }}
+      {{ dayjs(store.card?.created_at).format("DD MMMM YYYY") }}
     </KanbanSlideoverLabel>
   </div>
 </template>

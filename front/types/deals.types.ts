@@ -1,6 +1,6 @@
 export interface IBaseField {
   created_at: string;
-  id: string;
+  id: number;
 }
 
 export interface ICustomer extends IBaseField {
@@ -11,8 +11,13 @@ export interface ICustomer extends IBaseField {
   documents?: string | null;
 }
 
-export interface IComment extends IBaseField {
+export interface IComment {
+  id: number;
   text: string;
+  deal_id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export enum EnumStatus {
@@ -38,4 +43,5 @@ export interface IDeal {
     created_at: string;
     updated_at: string;
   };
+  comments: IComment[];
 }

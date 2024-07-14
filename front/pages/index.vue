@@ -99,6 +99,7 @@ function handleDrop(targetColumn: IColumn) {
                     </div>
                 </div>
             </div>
+            <KanbanSlideover />
         </div>
     </div>
 </template>

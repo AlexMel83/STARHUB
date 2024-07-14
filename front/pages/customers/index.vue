@@ -1,17 +1,35 @@
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
-import { COLLECTION_CUSTOMERS, DB_ID } from "@/app.constants";
 import type { ICustomer } from "~/types/deals.types";
-import { DB } from "@/lib/appwrite";
 
 useSeoMeta({
   title: "Customers",
 });
 
+interface ServerResponse {
+  data: ICustomer[];
+  status: number;
+  statusText: string;
+  headers: any; 
+  config: any;
+}
+
+const { $api, $load } = useNuxtApp();
+  const errors = reactive({
+    textError: '',
+  });
+
 const { data: customers, isLoading } = useQuery({
   queryKey: ["customers"],
-  queryFn: () =>
-    DB.listDocuments(DB_ID, COLLECTION_CUSTOMERS) as unknown as ICustomer[],
+  queryFn: async () => {
+      try {
+        const customers: ServerResponse = await $load(() => $api.customers.getCustomers(), errors);
+        return customers.data;
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+        throw error;
+      }
+    },
 });
 </script>
 
@@ -30,11 +48,11 @@ const { data: customers, isLoading } = useQuery({
       </UiTableHeader>
       <UiTableBody>
         <UiTableRow
-          v-for="customer in customers?.documents as unknown as ICustomer[]"
-          :key="customer.$id"
+          v-for="customer in customers as unknown as ICustomer[]"
+          :key="customer.id"
         >
           <UiTableCell>
-            <NuxtLink :href="`/customers/edit/${customer.$id}`">
+            <NuxtLink :href="`/customers/edit/${customer.id}`">
               <NuxtImg
                 :src="customer.avatar_url"
                 :alt="customer.name"
