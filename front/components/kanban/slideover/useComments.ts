@@ -13,8 +13,8 @@ interface ServerResponse {
 
 export function useComments() {
   const store = useDealSlideStore();
-  const { $api, $load } = useNuxtApp();
   const cardId = store.card?.id || null;
+  const { $api, $load } = useNuxtApp();
   const errors = reactive({
     textError: '',
   });
