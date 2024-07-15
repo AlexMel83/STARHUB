@@ -14,7 +14,6 @@
   </aside>
 </template>
 <script setup lang="ts">
-import { account } from "~/lib/appwrite";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
 const { $api, $load } = useNuxtApp();
 
@@ -24,9 +23,9 @@ const router = useRouter();
 const logout = async () => {
   isLoadingStore.set(true);
   $load(async () => {
-    const res = await $api.auth.logout();
+    await $api.auth.logout();
   });
-  store.clear();
+  store.clearUser();
   await router.push("/");
   isLoadingStore.set(false);
 };

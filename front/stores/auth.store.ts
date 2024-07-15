@@ -1,31 +1,32 @@
-interface IAuthStore {
+import {defineStore} from 'pinia';
+
+interface User {
   email: string;
   name: string;
   role: string;
   isactivated: boolean;
 }
-
-const defaultValue: { user: IAuthStore } = {
-  user: {
-    email: "",
-    name: "",
-    role: "",
-    isactivated: false,
-  },
-};
+interface AuthState {
+  user: User | null;
+}
 
 export const useAuthStore = defineStore("auth", {
-  state: () => defaultValue,
-  getters: {
-    isAuth: (state) => state.user.isactivated,
-  },
+  state: (): AuthState => ({
+    user: null,
+  }),
   actions: {
-    clear() {
-      this.$patch(defaultValue);
+    setUser(user: User) {
+      this.user = user;
+      localStorage.setItem('authUser', JSON.stringify(user));
     },
-    set(input: IAuthStore) {
-      this.$patch({ user: input });
+    clearUser() {
+      this.user = null;
+      localStorage.removeItem('authUser');
     },
+    initialize(){
+      const  storedUser = localStorage.getItem('authUser');
+      storedUser ? this.user = JSON.parse(storedUser) : this.user = null;
+    }
   },
 });
 

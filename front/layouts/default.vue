@@ -1,13 +1,12 @@
 <template>
   <LayoutLoader v-if="isLoadingStore.isLoading" />
   <section v-else class="flex-shrink-0 w-auto max-w-xs">
-    <LayoutSidebar v-if="authStore.user.isactivated" />
+    <LayoutSidebar v-if="authStore.user?.isactivated" />
     <ModalLoginRegistration v-else />
   </section>
 </template>
 <script setup lang="ts">
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
-
 const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
 
@@ -17,24 +16,24 @@ const errors = reactive({
 });
 
 onMounted(async () => {
-  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+  authStore.initialize();
   
+  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
   const urlParams = new URLSearchParams(window.location.search);
   const authLink: string | null = urlParams.get('authLink');
-  if (authLink && uuidRegex.test(authLink)) {
+
+  if(!authStore.user && authLink && uuidRegex.test(authLink)) {
     const authUser = await $load(async () => $api.auth.getAuthUser(authLink), errors);
-    localStorage.setItem('authUser', JSON.stringify(authUser));
-    authStore.set({
-      email: authUser.data.email,
-      name: authUser.data.name,
-      role: authUser.data.role,
-      isactivated: authUser.data.isactivated,
-    });
+    if(authUser?.data) {
+      authStore.setUser(authUser.data);
+    }
   }
+  
   console.log(errors.textError)
   isLoadingStore.set(false);
 });
 </script>
+
 <style scoped>
 .grid {
   display: grid;

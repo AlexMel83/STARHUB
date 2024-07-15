@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
+import { useAuthStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from "yup";
 import { defineShortcuts } from "#imports";
 
@@ -13,7 +13,7 @@ interface AuthResponse {
       isactivated: boolean;
     };
   };
-}
+};
 
 const { $api, $load } = useNuxtApp();
 const isOpen = ref(false);
@@ -125,14 +125,11 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
 
   if (res && (res.status === 200 || res.status === 201)) {
     const data = res.data;
-    localStorage.setItem("user", JSON.stringify(data));
-    authStore.set({
-      email: data.user.email,
-      name: data.user.name,
-      role: data.user.role,
-      isactivated: data.user.isactivated,
-    });
+    localStorage.setItem("authUser", JSON.stringify(data));
+    authStore.setUser(data.user);
     isOpen.value = false;
+  } else {
+    errors.form = "Користувача не авторизовано"
   }
 }
 </script>
