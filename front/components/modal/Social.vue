@@ -9,10 +9,11 @@ interface AuthResponse {
       email: string;
       name: string;
       role: string;
+      isactivated: boolean;
     };
     url: string;
   };
-}
+};
 
 const { $api, $load } = useNuxtApp();
 

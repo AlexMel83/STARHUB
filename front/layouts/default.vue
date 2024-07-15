@@ -11,6 +11,7 @@ const isLoadingStore = useIsLoadingStore();
 const authStore = useAuthStore();
 
 const { $api, $load } = useNuxtApp();
+const router = useRouter();
 const errors = reactive({
   textError: "",
 });
@@ -24,6 +25,7 @@ onMounted(async () => {
 
   if(!authStore.user && authLink && uuidRegex.test(authLink)) {
     const authUser = await $load(async () => $api.auth.getAuthUser(authLink), errors);
+    await router.push("/");
     if(authUser?.data) {
       authStore.setUser(authUser.data);
     }
