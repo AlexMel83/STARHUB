@@ -250,7 +250,6 @@ watch(isOpen, (newValue) => {
                       base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                       input: 'bg-transparent',
                     }"
-                    :passwordVisible="false"
                   >
                     <label>Пароль</label>
                   </UInput>
