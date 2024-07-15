@@ -17,24 +17,29 @@ interface AuthResponse {
 
 const { $api, $load } = useNuxtApp();
 const isOpen = ref(false);
+const currentTab = ref(0);
+
+const schema = computed(()=>currentTab.value === 0 ? loginSchema : registrationSchema);
+
 defineShortcuts({
   escape: {
     usingInput: true,
     whenever: [isOpen],
     handler: () => {
       isOpen.value = false;
+      clearVars();
     },
   },
 });
 // tab features
 const items = [
   {
-    key: "login",
+    key: 0,
     label: "Увійти",
     description: "",
   },
   {
-    key: "registration",
+    key: 1,
     label: "Реєстрація",
     description: "",
   },
@@ -78,10 +83,14 @@ const errors = reactive({
   form: "",
 });
 
-const clearErrors = () => {
+const clearVars = () => {
   errors.email = "";
   errors.password = "";
   errors.form = "";
+  togglePasswordVisibility.value = false;
+  state.email = '';
+  state.password = '';
+  state.passConfirm = '';
 };
 
 // input label features
@@ -104,34 +113,43 @@ const handleBlur = (field: string) => {
 
 const authStore = useAuthStore();
 
-async function onSubmit(event: Event, submit: "login" | "registration") {
-  if (event && typeof event.preventDefault === "function") {
-    event.preventDefault();
-  }
-  clearErrors();
+const handleSubmit = async (event: Event) => {
+  event.preventDefault();
+  clearVars();
 
   const payload = {
     email: state.email,
     password: state.password,
-    role: "",
+    role: currentTab.value === 1 ? 'user' : '',
   };
-  let res: AuthResponse | null = null;
-  if (submit === "login") {
-    res = await $load(async () => $api.auth.signIn(payload), errors);
-  } else if (submit === "registration") {
-    payload.role = "user";
-    res = await $load(async () => $api.auth.signUp(payload), errors);
-  }
-
-  if (res && (res.status === 200 || res.status === 201)) {
-    const data = res.data;
-    localStorage.setItem("authUser", JSON.stringify(data));
-    authStore.setUser(data.user);
-    isOpen.value = false;
-  } else {
+  try{
+    const res = await $load(()=>
+    currentTab.value === 0
+      ? $api.auth.signIn(payload)
+      : $api.auth.signUp(payload));
+    
+      if (res && [200, 201].includes(res.status)) {
+        const data = res.data;
+        localStorage.setItem("authUser", JSON.stringify(data));
+        authStore.setUser(data.user);
+        isOpen.value = false;
+      }
+  } catch(error) {
     errors.form = "Користувача не авторизовано"
   }
-}
+};
+
+const togglePasswordVisibility = ref(false);
+
+const handleTogglePasswordVisibility = async () => {
+  togglePasswordVisibility.value = !togglePasswordVisibility.value;
+};
+
+watch(isOpen, (newValue) => {
+  if (!newValue) {
+    togglePasswordVisibility.value = false;
+  }
+});
 </script>
 
 <template>
@@ -139,17 +157,13 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
     <UButton label="Login" @click="isOpen = true" />
 
     <UModal v-model="isOpen" prevent-close>
-      <UCard
-        :ui="{
+      <UCard :ui="{
           ring: '',
           divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-        }"
-      >
+        }">
         <template #header>
           <div class="flex items-center justify-between">
-            <h3
-              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-            >
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white" >
               StarHub login
             </h3>
             <UButton
@@ -157,20 +171,19 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
-              @click="isOpen = false"
+              @click="()=>{isOpen = false; clearVars();}"
             />
           </div>
           <ModalSocial />
         </template>
 
-        <UTabs :items="items" class="w-full">
+        <UTabs v-model="currentTab" :items="items" class="w-full">
           <template #item="{ item }">
             <UForm
-              ref="form"
-              :schema="item.key === 'login' ? loginSchema : registrationSchema"
+              :schema="schema"
               :state="state"
               class="space-y-4"
-              @submit="(event) => onSubmit(event, item.key)"
+              @submit="handleSubmit"
             >
               <div class="space-y-3 mt-5">
                 <UFormGroup
@@ -183,6 +196,7 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                   }"
                 >
                   <UInput
+                    icon="i-heroicons-envelope"
                     variant="none"
                     color="primary"
                     v-model="state.email"
@@ -196,7 +210,6 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                     <label>Email</label>
                   </UInput>
                 </UFormGroup>
-
                 <UFormGroup
                   name="password"
                   :error="errors.password"
@@ -206,8 +219,11 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                     'text-right': true,
                   }"
                 >
+                <div class="password-input-wrapper">
                   <UInput
+                    v-if="!togglePasswordVisibility"
                     type="password"
+                    icon="i-heroicons-lock-closed"
                     variant="none"
                     color="primary"
                     v-model="state.password"
@@ -217,13 +233,39 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                       base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                       input: 'bg-transparent',
                     }"
+                    :passwordVisible="false"
                   >
                     <label>Пароль</label>
                   </UInput>
+                  <UInput
+                    v-else
+                    type="text"
+                    icon="i-heroicons-lock-closed"
+                    variant="none"
+                    color="primary"
+                    v-model="state.password"
+                    @focus="handleFocus('password')"
+                    @blur="handleBlur('password')"
+                    :ui="{
+                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                      input: 'bg-transparent',
+                    }"
+                    :passwordVisible="false"
+                  >
+                    <label>Пароль</label>
+                  </UInput>
+                  <UButton
+                    color="gray"
+                    variant="ghost"
+                    :icon="togglePasswordVisibility ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                    @click="handleTogglePasswordVisibility"
+                    class="password-toggle"
+                  />
+                  </div>
                 </UFormGroup>
               </div>
               <UFormGroup
-                v-if="item.key === 'registration'"
+                v-if="item.key === 1"
                 name="passConfirm"
                 :class="{
                   'has-value': state.passConfirm !== '' || passConfirmActive,
@@ -231,8 +273,11 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                   'text-right': true,
                 }"
               >
+              <div class="password-input-wrapper">
                 <UInput
+                  v-if="!togglePasswordVisibility"
                   type="password"
+                  icon="i-heroicons-lock-closed"
                   variant="none"
                   color="primary"
                   v-model="state.passConfirm"
@@ -245,6 +290,30 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
                 >
                   <label>Повторіть пароль</label>
                 </UInput>
+                <UInput
+                  v-else
+                  type="text"
+                  icon="i-heroicons-lock-closed"
+                  variant="none"
+                  color="primary"
+                  v-model="state.passConfirm"
+                  @focus="handleFocus('passConfirm')"
+                  @blur="handleBlur('passConfirm')"
+                  :ui="{
+                    base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                    input: 'bg-transparent',
+                  }"
+                >
+                  <label>Повторіть пароль</label>
+                </UInput>
+                <UButton
+                  color="gray"
+                  variant="ghost"
+                  :icon="togglePasswordVisibility ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+                  @click="handleTogglePasswordVisibility"
+                  class="password-toggle"
+                />
+                </div>
               </UFormGroup>
               <UButton type="submit" color="black">
                 {{ item.label }}
@@ -258,20 +327,30 @@ async function onSubmit(event: Event, submit: "login" | "registration") {
 </template>
 
 <style scoped>
+.password-input-wrapper {
+  position: relative;
+}
+.password-toggle{
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
 .input-error {
   color: red;
 }
 .form-group {
   position: relative;
   margin-bottom: 1rem;
+  transition: all 0.3s ease;
 }
 
 .form-group label {
   position: absolute;
   top: 70%;
-  left: 10px;
+  left: 35px;
   transform: translateY(-70%);
-  transition: all 0.2s;
+  transition: all 0.3s;
   pointer-events: none;
   color: #999;
   z-index: 10;

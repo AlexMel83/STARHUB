@@ -17,54 +17,45 @@ interface AuthResponse {
 
 const { $api, $load } = useNuxtApp();
 
-const errors = reactive({
-  textError: "",
-});
+const textError = ref('');
 
 const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-  let res: AuthResponse | null = null;
-  res = await $load(async () => $api.auth.socAuth(provider), errors);
+  try{
+    const res: AuthResponse = await $load(async () => $api.auth.socAuth(provider));
   if (res.data.url) {
     window.location.href = res.data.url;
-  }
+  };
+  } catch(error){
+    textError.value = "Помилка при авторизації через соціальну мережу";
+  } ;
 };
 </script>
 
 <template>
   <div class="wrapper-login-using">
-    <p class="social-title text-slate-600">Увійти за допомогою соцмереж</p>
-    <div class="login-using">
-      <div class="login-using-item" @click="handleSocialLogin('google')">
-        <LogosGoogleIcon />
-      </div>
-      <div class="login-using-item" @click="handleSocialLogin('facebook')">
-        <LogosFacebook />
-      </div>
+    <div class="login-using mt-5 mb-5">
+      <UTooltip text="Увійти через Google">
+        <div class="login-using-item" @click="handleSocialLogin('google')">
+          <LogosGoogleIcon />
+        </div>
+      </UTooltip>
+      <UTooltip text="Увійти через Facebook">
+        <div class="login-using-item" @click="handleSocialLogin('facebook')">
+          <LogosFacebook />
+        </div>
+      </UTooltip>
     </div>
+    <UNotifications v-if="textError" color="red" :timeout="3000">
+      {{ textError }}
+    </UNotifications>
     <!-- <div class="space-y-4 block">
           <UButton color="black" label="Login with Facebook" icon="i-simple-icons-facebook" block />
           <UButton color="black" label="Login with Google" icon="i-simple-icons-google" block />
         </div> -->
-    <p v-if="errors.textError" class="text-eror">{{ errors.textError }}</p>
-    <p class="social-title text-slate-600 mt-5 mb-0">
-      Або продовжуйте вхід через:
-    </p>
-    <div class="social-error" v-if="errors.textError">
-      {{ errors.textError }} <br />скористайтесь полями нижче для авторизації через email
-    </div>
   </div>
 </template>
 
 <style scoped>
-.social-title {
-  margin: 0 10px 10px 10px;
-}
-.social-error {
-  color: red;
-  font-size: 12px;
-  margin-top: 10px;
-  text-align: center;
-}
 .wrapper-login-using {
   width: 100%;
   display: flex;
@@ -91,5 +82,15 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-using .login-using-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.social-title {
+  margin: 0 10px 10px 10px;
 }
 </style>
