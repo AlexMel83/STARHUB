@@ -54,10 +54,6 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     :timeout="3000">
       {{ textError }}
     </UNotifications>
-    <!-- <div class="space-y-4 block">
-          <UButton color="black" label="Login with Facebook" icon="i-simple-icons-facebook" block />
-          <UButton color="black" label="Login with Google" icon="i-simple-icons-google" block />
-        </div> -->
   </div>
 </template>
 
