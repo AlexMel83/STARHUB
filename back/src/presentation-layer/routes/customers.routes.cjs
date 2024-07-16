@@ -1,8 +1,8 @@
 const customerController = require("../controllers/customer-controller.cjs");
-const { body, param, query } = require("express-validator");
+const { body, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
-const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
+const upload = require("../../middlewares/upload.cjs");
 
 const validateCustomer = [
   body("id")
@@ -18,10 +18,6 @@ const validateCustomer = [
     .isEmail()
     .isAscii()
     .withMessage('Поле "email" має формат email@email.ua'),
-  body("avatar_url")
-    .optional({ checkFalsy: true })
-    .isString()
-    .withMessage('Поле "avatar_url" має бути рядком'),
   body("from_source")
     .optional({ checkFalsy: true })
     .isString()
@@ -39,6 +35,7 @@ module.exports = function (app) {
     "/customers", 
     validateCustomer, 
     validateMiddleware, 
+    upload.single('avatar_url'),
     customerController.addCustomer
   );
 
@@ -47,6 +44,7 @@ module.exports = function (app) {
     validateCustomer,
     body("id").notEmpty().withMessage("Id is required"),
     validateMiddleware, 
+    upload.single('avatar'),
     customerController.editCustomer
   );
 
@@ -56,5 +54,18 @@ module.exports = function (app) {
     query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
    customerController.deleteCustomer,
+  );
+
+  app.post(
+    "/upload",
+    authMiddleware,
+    upload.single('avatar'),
+    (req, res) => {
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+      const fileUrl = `/uploads/${req.file.filename}`;
+      return res.status(200).json({ url: fileUrl });
+    }
   );
 };

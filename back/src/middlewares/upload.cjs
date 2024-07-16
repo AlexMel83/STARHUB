@@ -16,20 +16,17 @@ const allowedFileTypes = [
 ];
 const uploadFolder = "uploads";
 
-fs.mkdirSync(uploadFolder, { recursive: true });
-
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    const hash = createHash("md5").update(file.originalname).digest("hex");
-    const folder1 = hash.slice(-2);
-    const folder2 = hash.slice(-4, -2);
-    const destinationPath = path.join(uploadFolder, folder1, folder2);
-    fs.mkdirSync(destinationPath, { recursive: true });
-    cb(null, destinationPath);
+    const uploadDir = path.join(__dirname, "../../uploads");
+    if(!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadFolder, { recursive: true });
+    };
+    cb(null, uploadDir);
   },
   filename(req, file, cb) {
-    const date = dayjs().utc().format("YYYYMMDD-HHmmss_SSS");
-    cb(null, `${date}-${file.originalname}`);
+    
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 

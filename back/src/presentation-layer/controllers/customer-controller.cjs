@@ -21,6 +21,7 @@ class CustomerController {
 
   async addCustomer(req, res, next) {
     const fields = req.body;
+    fields.avatar_url = req.file ? req.file.path : "";
     try{
       const payload = {
       name: fields?.name,
@@ -38,6 +39,9 @@ class CustomerController {
 
   async editCustomer(req, res, next) {
     const fields = req.body;
+    if(req.file){
+      fields.avatar_url = req.file.path;
+    };
     try{
       const customerDataBase = await customerModel.getCustomerById(fields.id);
     if (!customerDataBase) {

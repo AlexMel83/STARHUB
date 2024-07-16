@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { storage } from "@/lib/appwrite";
 import { useMutation, useQuery } from "@tanstack/vue-query";
-import { v4 as uuid } from "uuid";
 import type { ICustomer, ServerResponse } from "~/types/deals.types";
 import { useForm } from 'vee-validate';
+import axios from 'axios';
+
+useSeoMeta({
+  title: "Edit company",
+});
 
 interface InputFileEvent extends Event {
   target: HTMLInputElement;
@@ -11,10 +14,6 @@ interface InputFileEvent extends Event {
 
 interface ICustomerFormState
   extends Pick<ICustomer, "avatar_url" | "email" | "name" | "from_source"> {}
-
-useSeoMeta({
-  title: "Edit company",
-});
 
 const { $api, $load } = useNuxtApp();
 const errors = reactive({
@@ -70,21 +69,37 @@ const { mutate, isPending } = useMutation({
   },
   onSuccess: () => {
     router.push('/customers');
-  }
-});
-
-const { mutate: uploadImage, isPending: isUploadImagePending } = useMutation({
-  mutationKey: ["upload image"],
-  mutationFn: (file: File) => storage.createFile(STORAGE_ID, uuid(), file),
-  onSuccess(data) {
-    const response = storage.getFileDownload(STORAGE_ID, data.id);
-    setFieldValue("avatar_url", response.href);
   },
 });
 
-const onSubmit = handleSubmit((values) => {
-  mutate(values);
+const {mutate: uploadImage, isPending: isUploadImagePending} = useMutation({
+  mutationKey: ['upload image'],
+  mutationFn: async (file: File)=>{
+    console.log('File:', file)
+    const formData = new FormData();
+    formData.append('avatar', file);
+    console.log('FormData:', formData)
+    try{
+      const response = await axios.post('/customers', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+    } catch(error){
+      console.error('Upload error:', error);
+      throw error;
+    }
+  },
+  onSuccess(data) {
+    console.log('Upload success:', data);
+    setFieldValue('avatar_url', data.url);
+  },
 });
+
+const onSubmit = handleSubmit((values)=>{
+  mutate(values);
+})
 </script>
 
 <template>
@@ -127,11 +142,9 @@ const onSubmit = handleSubmit((values) => {
           <div class="text-sm mb-4">Logo</div>
           <UiInput
             type="file"
-            :onchange="
-              (e: InputFileEvent) =>
-                e?.target?.files?.length && uploadImage(e.target.files[0])
-            "
-            :disabled="isUploadImagePending"
+            :onchange="(e: InputFileEvent) =>
+              e?.target?.files?.length && uploadImage(e.target.files[0])"
+              :disabled="isUploadImagePending"
           />
         </label>
       </div>
