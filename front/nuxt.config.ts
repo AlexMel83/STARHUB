@@ -3,6 +3,9 @@ import { defineNuxtConfig } from 'nuxt/config';
 export default defineNuxtConfig({
   components: true,
   devtools: { enabled: true },
+  typescript: {
+    strict: true
+  },
   plugins: [
     '~/plugins/api.js',
     '~/plugins/errorHandler.js',
@@ -31,8 +34,8 @@ export default defineNuxtConfig({
       },
     ],
   ],
-  typescript: {
-    strict: true
+  colorMode: {
+    preference: 'light'
   },
   shadcn: {
     prefix: "Ui",

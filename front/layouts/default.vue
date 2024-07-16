@@ -3,6 +3,18 @@
   <section v-else class="flex-shrink-0 w-auto max-w-xs">
     <LayoutSidebar v-if="authStore.user?.isactivated" />
     <ModalLoginRegistration v-else />
+    <ClientOnly>
+    <UButton
+      :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
+      color="gray"
+      variant="ghost"
+      aria-label="Theme"
+      @click="isDark = !isDark"
+    />
+    <template #fallback>
+      <div class="w-8 h-8" />
+    </template>
+  </ClientOnly>
   </section>
 </template>
 <script setup lang="ts">
@@ -34,6 +46,16 @@ onMounted(async () => {
   console.log(errors.textError)
   isLoadingStore.set(false);
 });
+
+const colorMode = useColorMode()
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
+  },
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
+})
 </script>
 
 <style scoped>
