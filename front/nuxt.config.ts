@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   modules: [
     "@nuxt/ui",
     "@nuxt/image",
+    '@nuxtjs/color-mode',
     "shadcn-nuxt",
     "shadcn-nuxt",
     "@pinia/nuxt",

@@ -17,16 +17,18 @@ interface AuthResponse {
 
 const { $api, $load } = useNuxtApp();
 
-const textError = ref('');
+const errors = reactive({
+  textError: "",
+});
 
 const handleSocialLogin = async (provider: 'google' | 'facebook') => {
   try{
-    const res: AuthResponse = await $load(async () => $api.auth.socAuth(provider));
+    const res: AuthResponse = await $load(async () => $api.auth.socAuth(provider), errors);
   if (res.data.url) {
     window.location.href = res.data.url;
   };
   } catch(error){
-    textError.value = "Помилка при авторизації через соціальну мережу";
+    errors.textError = "Помилка при авторизації через соціальну мережу";
   } ;
 };
 </script>
@@ -49,10 +51,10 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
       </UTooltip>
     </div>
     <UNotifications 
-    v-if="textError" 
+    v-if="errors.textError" 
     color="red" 
     :timeout="3000">
-      {{ textError }}
+      {{ errors.textError }}
     </UNotifications>
   </div>
 </template>

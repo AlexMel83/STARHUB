@@ -3,7 +3,7 @@
   <section v-else class="flex-shrink-0 w-auto max-w-xs">
     <LayoutSidebar v-if="authStore.user?.isactivated" />
     <ModalLoginRegistration v-else />
-    <ClientOnly>
+     <ClientOnly>
     <UButton
       :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
       color="gray"

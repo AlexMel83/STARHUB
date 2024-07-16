@@ -129,18 +129,18 @@ const handleSubmit = async (event: Event) => {
     const res: AuthResponse = await $load(()=>
     currentTab.value === 0
       ? $api.auth.signIn(payload)
-      : $api.auth.signUp(payload));
+      : $api.auth.signUp(payload),errors);
     
       if (res && [200, 201].includes(res.status)) {
         const data = res.data;
         localStorage.setItem("authUser", JSON.stringify(data));
         authStore.setUser(data.user);
         isOpen.value = false;
+        clearVars();
       }
   } catch(error) {
     errors.form = "Користувача не авторизовано"
   }
-  clearVars();
   isLoading.value = false;
 };
 
