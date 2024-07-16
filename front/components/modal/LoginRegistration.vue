@@ -3,36 +3,33 @@ import { useAuthStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from "yup";
 import { defineShortcuts } from "#imports";
 
-interface AuthResponse {
-  status: number;
-  data: {
-    user: {
-      email: string;
-      name: string;
-      role: string;
-      isactivated: boolean;
-    };
-  };
-};
-
 const { $api, $load } = useNuxtApp();
+const authStore = useAuthStore();
+
+const minPwd = 4;
 const isOpen = ref(false);
 const currentTab = ref(0);
+const isLoading = ref(false);
+const emailActive = ref(false);
+const passwordActive = ref(false);
+const passConfirmActive = ref(false);
+const togglePasswordVisibility = ref(false);
 
-const schema = computed(()=>currentTab.value === 0 ? loginSchema : registrationSchema);
-
-defineShortcuts({
-  escape: {
-    usingInput: true,
-    whenever: [isOpen],
-    handler: () => {
-      isOpen.value = false;
-      clearErrors();
-      clearVars();
-    },
-  },
+const formData = reactive({
+  email: "",
+  password: "",
+  passConfirm: "",
 });
-// tab features
+const state = reactive({
+  email: formData.email,
+  password: formData.password,
+  passConfirm: formData.passConfirm,
+});
+const errors = reactive({
+  email: "",
+  password: "",
+  form: "",
+});
 const items = [
   {
     key: 0,
@@ -46,21 +43,28 @@ const items = [
   },
 ];
 
-const formData = reactive({
-  email: "",
-  password: "",
-  passConfirm: "",
-});
-// input validation
-const minPwd = 4;
-
+const clearErrors = ()=>{
+  errors.email = "";
+  errors.password = "";
+  errors.form = "";
+}
+const clearVars = () => {
+  togglePasswordVisibility.value = false;
+  isLoading.value = false;
+  state.email = '';
+  state.password = '';
+  state.passConfirm = '';
+};
+const handleTogglePasswordVisibility = async () => {
+  togglePasswordVisibility.value = !togglePasswordVisibility.value;
+};
+const schema = computed(()=>currentTab.value === 0 ? loginSchema : registrationSchema);
 const loginSchema = object({
   email: string().email("Невірний email").required("Потрібен Email"),
   password: string()
     .min(minPwd, `Пароль має бути не менше ${minPwd} симовлів`)
     .required("Потрібен пароль"),
 });
-
 const registrationSchema = object({
   email: string().email("Невірний email").required("Потрібен Email"),
   password: string()
@@ -72,41 +76,23 @@ const registrationSchema = object({
   ),
 });
 
-const state = reactive({
-  email: formData.email,
-  password: formData.password,
-  passConfirm: formData.passConfirm,
+defineShortcuts({
+  escape: {
+    usingInput: true,
+    whenever: [isOpen],
+    handler: () => {
+      isOpen.value = false;
+      clearErrors();
+      clearVars();
+    },
+  },
 });
-
-const errors = reactive({
-  email: "",
-  password: "",
-  form: "",
-});
-
-const clearErrors = ()=>{
-  errors.email = "";
-  errors.password = "";
-  errors.form = "";
-}
-const clearVars = () => {
-  togglePasswordVisibility.value = false;
-  state.email = '';
-  state.password = '';
-  state.passConfirm = '';
-};
-
-// input label features
-const emailActive = ref(false);
-const passwordActive = ref(false);
-const passConfirmActive = ref(false);
 
 const handleFocus = (field: string) => {
   if (field === "email") emailActive.value = true;
   if (field === "password") passwordActive.value = true;
   if (field === "passConfirm") passConfirmActive.value = true;
 };
-
 const handleBlur = (field: string) => {
   if (field === "email" && !formData.email) emailActive.value = false;
   if (field === "password" && !formData.password) passwordActive.value = false;
@@ -114,12 +100,11 @@ const handleBlur = (field: string) => {
     passConfirmActive.value = false;
 };
 
-const authStore = useAuthStore();
-
 const handleSubmit = async (event: Event) => {
   if (event && typeof event.preventDefault === "function") {
     event.preventDefault();
   }
+  isLoading.value = true;
   clearErrors();
 
   const payload = {
@@ -143,12 +128,7 @@ const handleSubmit = async (event: Event) => {
     errors.form = "Користувача не авторизовано"
   }
   clearVars();
-};
-
-const togglePasswordVisibility = ref(false);
-
-const handleTogglePasswordVisibility = async () => {
-  togglePasswordVisibility.value = !togglePasswordVisibility.value;
+  isLoading.value = false;
 };
 
 watch(isOpen, (newValue) => {
@@ -211,6 +191,7 @@ watch(isOpen, (newValue) => {
                     :ui="{
                       base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                       input: 'bg-transparent',
+                      rounded: 'rounded-none',
                     }"
                   >
                     <label>Email</label>
@@ -238,6 +219,7 @@ watch(isOpen, (newValue) => {
                     :ui="{
                       base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                       input: 'bg-transparent',
+                      rounded: 'rounded-none',
                     }"
                     :passwordVisible="false"
                   >
@@ -255,6 +237,7 @@ watch(isOpen, (newValue) => {
                     :ui="{
                       base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                       input: 'bg-transparent',
+                      rounded: 'rounded-none',
                     }"
                   >
                     <label>Пароль</label>
@@ -291,6 +274,7 @@ watch(isOpen, (newValue) => {
                   :ui="{
                     base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                     input: 'bg-transparent',
+                    rounded: 'rounded-none',
                   }"
                 >
                   <label>Повторіть пароль</label>
@@ -307,6 +291,7 @@ watch(isOpen, (newValue) => {
                   :ui="{
                     base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
                     input: 'bg-transparent',
+                    rounded: 'rounded-none',
                   }"
                 >
                   <label>Повторіть пароль</label>
@@ -320,7 +305,11 @@ watch(isOpen, (newValue) => {
                 />
                 </div>
               </UFormGroup>
-              <UButton type="submit" color="black">
+              <UButton 
+                type="submit"
+                color="black"
+                :loading="isLoading"
+               >
                 {{ item.key === 0 ? 'Увійти' : 'Зареєструватись' }}
               </UButton>
             </UForm>
