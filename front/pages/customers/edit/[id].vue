@@ -17,9 +17,9 @@ useSeoMeta({
 });
 
 const { $api, $load } = useNuxtApp();
-  const errors = reactive({
-    textError: '',
-  });
+const errors = reactive({
+  textError: '',
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -59,14 +59,14 @@ const [fromSource, fromSourceAttrs] = defineField("from_source");
 
 const { mutate, isPending } = useMutation({
   mutationKey: ["update customer", customerId],
-  mutationFn: (formData: ICustomerFormState) => {
+  mutationFn: async (formData: ICustomerFormState) => {
     const updatedCustomer: ICustomer = {
       id: customerId,
       ...data.value,
       ...formData,
       updated_at: new Date().toISOString(),
     };
-    return $api.customers.editCustomer(updatedCustomer);
+    return await $api.customers.editCustomer(updatedCustomer);
   },
   onSuccess: () => {
     router.push('/customers');

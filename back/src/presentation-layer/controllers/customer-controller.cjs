@@ -1,11 +1,9 @@
-const config = require("../../../config/config.cjs");
-const knex = require("./../../../config/knex.config.cjs");
 const customerModel = require("../../data-layer/models/customer-model.cjs");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class CustomerController {
   async getCustomers(req, res, next) {
-    const user = req.user;
+
     try {
       let response;
       if (req?.query?.id) {
@@ -45,7 +43,7 @@ class CustomerController {
     if (!customerDataBase) {
       return next(ApiError.NotFound(`customer with id: ${fields.id} was not found`));
     }
-    let updatedCustomer = {};
+   
     const payload = {
       id: fields.id,
       name: fields?.name ?? customerDataBase.name,
@@ -54,6 +52,7 @@ class CustomerController {
       from_source: fields?.from_source ?? userDataBase.from_source,
       updated_at: new Date().toISOString(),
     };
+    const updatedCustomer = await customerModel.editCustomer(payload);
     return res.status(200).json(updatedCustomer);
     } catch(error){
       console.error(error);
