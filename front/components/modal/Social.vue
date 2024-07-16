@@ -34,7 +34,10 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
 <template>
   <div class="wrapper-login-using">
     <div class="login-using mt-5 mb-5">
-      <UTooltip text="Увійти через Google">
+      <UTooltip text="Увійти через Google" >
+        <template #text>
+          <span class="italic">Увійти через Google</span>
+        </template>
         <div class="login-using-item" @click="handleSocialLogin('google')">
           <LogosGoogleIcon />
         </div>
@@ -45,7 +48,10 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
         </div>
       </UTooltip>
     </div>
-    <UNotifications v-if="textError" color="red" :timeout="3000">
+    <UNotifications 
+    v-if="textError" 
+    color="red" 
+    :timeout="3000">
       {{ textError }}
     </UNotifications>
     <!-- <div class="space-y-4 block">
@@ -61,7 +67,6 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 15px;
 }
 
 .login-using {

@@ -27,6 +27,7 @@ defineShortcuts({
     whenever: [isOpen],
     handler: () => {
       isOpen.value = false;
+      clearErrors();
       clearVars();
     },
   },
@@ -35,7 +36,7 @@ defineShortcuts({
 const items = [
   {
     key: 0,
-    label: "Увійти",
+    label: "Акаунт",
     description: "",
   },
   {
@@ -83,10 +84,12 @@ const errors = reactive({
   form: "",
 });
 
-const clearVars = () => {
+const clearErrors = ()=>{
   errors.email = "";
   errors.password = "";
   errors.form = "";
+}
+const clearVars = () => {
   togglePasswordVisibility.value = false;
   state.email = '';
   state.password = '';
@@ -114,8 +117,10 @@ const handleBlur = (field: string) => {
 const authStore = useAuthStore();
 
 const handleSubmit = async (event: Event) => {
-  event.preventDefault();
-  clearVars();
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
+  }
+  clearErrors();
 
   const payload = {
     email: state.email,
@@ -137,6 +142,7 @@ const handleSubmit = async (event: Event) => {
   } catch(error) {
     errors.form = "Користувача не авторизовано"
   }
+  clearVars();
 };
 
 const togglePasswordVisibility = ref(false);
@@ -315,7 +321,7 @@ watch(isOpen, (newValue) => {
                 </div>
               </UFormGroup>
               <UButton type="submit" color="black">
-                {{ item.label }}
+                {{ item.key === 0 ? 'Увійти' : 'Зареєструватись' }}
               </UButton>
             </UForm>
           </template>
@@ -340,15 +346,15 @@ watch(isOpen, (newValue) => {
 }
 .form-group {
   position: relative;
-  margin-bottom: 1rem;
+  margin: 1.4rem 0;
   transition: all 0.3s ease;
 }
 
 .form-group label {
   position: absolute;
-  top: 70%;
+  top: 85%;
   left: 35px;
-  transform: translateY(-70%);
+  transform: translateY(-90%);
   transition: all 0.3s;
   pointer-events: none;
   color: #999;
