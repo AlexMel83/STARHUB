@@ -75,16 +75,15 @@ const { mutate, isPending } = useMutation({
 const {mutate: uploadImage, isPending: isUploadImagePending} = useMutation({
   mutationKey: ['upload image'],
   mutationFn: async (file: File)=>{
-    console.log('File:', file)
     const formData = new FormData();
-    formData.append('avatar', file);
-    console.log('FormData:', formData)
+    formData.append('file', file);
     try{
-      const response = await axios.post('/customers', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+      const response = await axios.post('http://localhost:4041/upload', formData, {
+    })
+    if (!response) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+  
     return response.data;
     } catch(error){
       console.error('Upload error:', error);

@@ -56,16 +56,10 @@ module.exports = function (app) {
    customerController.deleteCustomer,
   );
 
-  app.post(
-    "/upload",
-    authMiddleware,
-    upload.single('avatar'),
-    (req, res) => {
-      if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-      }
-      const fileUrl = `/uploads/${req.file.filename}`;
-      return res.status(200).json({ url: fileUrl });
+  app.post('/upload', upload.single('file'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).send('No file uploaded.');
     }
-  );
+    res.sendFile(req.file.path);
+  });
 };
