@@ -33,7 +33,7 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
 
 <template>
   <div class="wrapper-login-using">
-    <div class="login-using mt-5 mb-5">
+    <div class="login-using mt-5 mb-4">
       <UTooltip text="Увійти через Google" >
         <template #text>
           <span class="italic">Увійти через Google</span>
@@ -67,7 +67,7 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
 
 .login-using {
   width: 166px;
-  height: 60px;
+  height: 40px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -77,7 +77,7 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
   height: 100%;
   width: 60px;
   border: 1px solid var(--border-color);
-  border-radius: 5px;
+  border-radius: 50%;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -89,9 +89,6 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
 .login-using .login-using-item:hover {
   transform: scale(1.05);
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.social-title {
-  margin: 0 10px 10px 10px;
+  border-radius: 50%;
 }
 </style>

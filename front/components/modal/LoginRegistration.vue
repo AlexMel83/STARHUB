@@ -3,6 +3,19 @@ import { useAuthStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from "yup";
 import { defineShortcuts } from "#imports";
 
+interface AuthResponse {
+  status: number;
+  data: {
+    user: {
+      email: string;
+      name: string;
+      role: string;
+      isactivated: boolean;
+    };
+    url: string;
+  };
+};
+
 const { $api, $load } = useNuxtApp();
 const authStore = useAuthStore();
 
@@ -113,7 +126,7 @@ const handleSubmit = async (event: Event) => {
     role: currentTab.value === 1 ? 'user' : '',
   };
   try{
-    const res = await $load(()=>
+    const res: AuthResponse = await $load(()=>
     currentTab.value === 0
       ? $api.auth.signIn(payload)
       : $api.auth.signUp(payload));
@@ -163,7 +176,13 @@ watch(isOpen, (newValue) => {
           <ModalSocial />
         </template>
 
-        <UTabs v-model="currentTab" :items="items" class="w-full">
+        <UTabs 
+        v-model="currentTab" 
+        :items="items"
+        :ui="{
+                    
+                  }"
+        >
           <template #item="{ item }">
             <UForm
               :schema="schema"
