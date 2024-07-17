@@ -23,6 +23,7 @@ const errors = reactive({
 const route = useRoute();
 const router = useRouter();
 const customerId = route.params.id as unknown as number;
+const previewUrl = ref<string | null>(null);
 
 const { handleSubmit, defineField, setFieldValue, setValues, values } =
   useForm<ICustomerFormState>();
@@ -95,6 +96,7 @@ const onFileChange = (e: InputFileEvent) => {
   const file = e.target.files?.[0];
   if (file) {
     const localUrl = URL.createObjectURL(file);
+    previewUrl.value = localUrl;
     setFieldValue('avatar_url', localUrl);
   }
 };
@@ -115,7 +117,7 @@ const onSubmit = handleSubmit(async (values)=>{
 });
 
 const avatarPreview = computed(() => {
-  return values.avatar_url || (isUploadImagePending ? '/path/to/loading-image.gif' : '');
+  return previewUrl.value || values.avatar_url || (isUploadImagePending ? '/path/to/loading-image.gif' : '');
 });
 </script>
 
