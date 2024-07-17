@@ -3,7 +3,6 @@ const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 const fs = require("fs");
 const path = require("path");
-const { createHash } = require("crypto");
 const ApiError = require("../middlewares/exceptions/api-errors.cjs");
 
 dayjs.extend(utc);
@@ -18,15 +17,32 @@ const uploadFolder = "uploads";
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    const uploadDir = path.join(__dirname, "../../uploads");
+    const {entity, id} = req.body;
+    let uploadDir = null;
+    if(!entity || !id) {
+      uploadDir = path.join(__dirname, `../../${uploadFolder}`);
+    } else {
+      uploadDir = path.join(__dirname, `../../${uploadFolder}/${entity}-${id}`);
+    }
     if(!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadFolder, { recursive: true });
+      fs.mkdirSync(uploadDir, { recursive: true });
     };
     cb(null, uploadDir);
   },
   filename(req, file, cb) {
-    
-    cb(null, Date.now() + path.extname(file.originalname));
+    const {entity, id} = req.body;
+    let uploadDir = null;
+    if(!entity || !id) {
+      uploadDir = path.join(__dirname, '../../uploads');
+    } else {
+      uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
+    }
+    const filePath = path.join(uploadDir, file.originalname);
+    if(fs.existsSync(filePath)) {
+      cb(ApiError.BadRequest('File already exists', filePath));
+    } else {
+      cb(null, file.originalname);
+    };
   },
 });
 
@@ -34,7 +50,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedFileTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new ApiError.BadRequest("Wrong image type"));
+    cb(ApiError.BadRequest("Wrong image type"));
   }
 };
 

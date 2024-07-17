@@ -76,15 +76,19 @@ const {mutate: uploadImage, isPending: isUploadImagePending} = useMutation({
   mutationKey: ['upload image'],
   mutationFn: async (file: File)=>{
     const formData = new FormData();
+    formData.append('id', customerId.toString());
+    formData.append('entity', 'customer');
     formData.append('file', file);
     try{
       const response = await axios.post('http://localhost:4041/upload', formData, {
-    })
-    if (!response) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-  
-    return response.data;
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if(response.status !== 200) {
+        throw new Error(`HTTP error! status: ${response}`);
+      }
+      return response.data;
     } catch(error){
       console.error('Upload error:', error);
       throw error;
@@ -92,11 +96,26 @@ const {mutate: uploadImage, isPending: isUploadImagePending} = useMutation({
   },
   onSuccess(data) {
     console.log('Upload success:', data);
-    setFieldValue('avatar_url', data.url);
+    setFieldValue('avatar_url', data.filePath);
   },
 });
 
-const onSubmit = handleSubmit((values)=>{
+const onFileChange = (e: InputFileEvent) => {
+  const file = e.target.files?.[0];
+  console.log('file:', file)
+  if(file){
+    const localUrl = URL.createObjectURL(file);
+    setFieldValue('avatar_url', localUrl);
+    console.log('localUrl:', localUrl)
+  };
+};
+
+const onSubmit = handleSubmit(async (values)=>{
+  const inputFile = document.querySelector('input[type="file"]') as HTMLInputElement;
+  const avatarFile = inputFile.files?.[0]
+  if(avatarFile) {
+    await uploadImage(avatarFile);
+  }
   mutate(values);
 })
 </script>
@@ -141,9 +160,8 @@ const onSubmit = handleSubmit((values)=>{
           <div class="text-sm mb-4">Logo</div>
           <UiInput
             type="file"
-            :onchange="(e: InputFileEvent) =>
-              e?.target?.files?.length && uploadImage(e.target.files[0])"
-              :disabled="isUploadImagePending"
+            :onchange="(e: InputFileEvent) => onFileChange(e)"
+            :disabled="isUploadImagePending"
           />
         </label>
       </div>

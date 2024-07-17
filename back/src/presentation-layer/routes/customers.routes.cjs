@@ -3,6 +3,7 @@ const { body, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
 const upload = require("../../middlewares/upload.cjs");
+const path = require("path");
 
 const validateCustomer = [
   body("id")
@@ -56,10 +57,22 @@ module.exports = function (app) {
    customerController.deleteCustomer,
   );
 
-  app.post('/upload', upload.single('file'), (req, res) => {
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
-    }
-    res.sendFile(req.file.path);
+  app.post('/upload',
+    upload.single('file'), 
+    (req, res, next) => {
+      const {id, entity} = req.body;
+      let uploadDir = null;
+      if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+      }
+      if (!id || !entity) {
+        uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
+      }console.log(req.body.filePath)
+      const filePath = path.join(__dirname, req.body.filePath || '../../uploads');
+
+      res.status(200).json({
+        message: 'Upload success',
+        filePath: filePath,
+      });
   });
 };
