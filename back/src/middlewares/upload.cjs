@@ -38,8 +38,11 @@ const storage = multer.diskStorage({
     } else {
       uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
     }
-    const filePath = path.join(uploadDir, file.originalname);
+    const filePath = path.join(uploadDir, fileName);
     if (fs.existsSync(filePath)) {
+      const relativePath = path.relative(path.join(__dirname, '../..'), filePath);
+      req.fileExists = true;
+      req.existingFilePath = relativePath.replace(/\\/g, '/');
       const extension = path.extname(fileName);
       const baseName = path.basename(fileName, extension);
       const newFileName = `${baseName}_${Date.now()}${extension}`;
