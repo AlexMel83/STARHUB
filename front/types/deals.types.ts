@@ -4,10 +4,10 @@ export interface IBaseField {
 }
 
 export interface ServerResponse {
-  data: ICustomer[];
+  data: ICustomer | ICustomer[];
   status: number;
   statusText: string;
-  headers: any; 
+  headers: any;
   config: any;
 }
 

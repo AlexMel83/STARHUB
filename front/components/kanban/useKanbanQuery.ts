@@ -3,8 +3,6 @@ import { KANBAN_DATA } from "./kanban.data";
 import type { IDeal } from "~/types/deals.types";
 import type { IColumn } from "./kanban.types";
 
-
-
 export function useKanbanQuery() {
   const { $api, $load } = useNuxtApp();
   const errors = reactive({
@@ -15,9 +13,10 @@ export function useKanbanQuery() {
 
   return useQuery({
     queryKey: ["deals"],
-    queryFn: async () => await $load(async () => {
-      const response = await $api.deals.getAllDeals();
-      return response.data;
+    queryFn: async () =>
+      await $load(async () => {
+        const response = await $api.deals.getAllDeals();
+        return response.data;
       }, errors),
     select(data) {
       const newBoard: IColumn[] = KANBAN_DATA.map((column) => ({
@@ -28,11 +27,9 @@ export function useKanbanQuery() {
       const deals = data as unknown as IDeal[];
 
       for (const deal of deals) {
-           const column = newBoard.find((col) => col.id === deal.status);
+        const column = newBoard.find((col) => col.id === deal.status);
         if (column) {
-          const existingDeal = column.items.find(
-            (item) => item.id === deal.id,
-          );
+          const existingDeal = column.items.find((item) => item.id === deal.id);
           if (!existingDeal) {
             column.items.push({
               created_at: deal.created_at,
@@ -45,7 +42,7 @@ export function useKanbanQuery() {
           }
         }
       }
-  
+
       return newBoard;
     },
   });

@@ -15,39 +15,40 @@ const allowedFileTypes = [
   "image/x-icon",
 ];
 const uploadFolder = "uploads";
+const BASE_PATH = path.resolve(__dirname, "..", "..");
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    const {entity, id} = req.body;
+    const { entity, id } = req.body;
     let uploadDir = null;
-    if(!entity || !id) {
-      uploadDir = path.join(__dirname, `../../${uploadFolder}`);
+    if (!entity || !id) {
+      uploadDir = path.join(BASE_PATH, uploadFolder);
     } else {
-      uploadDir = path.join(__dirname, `../../${uploadFolder}/${entity}-${id}`);
+      uploadDir = path.join(BASE_PATH, uploadFolder, `${entity}-${id}`);
     }
-    if(!fs.existsSync(uploadDir)) {
+    if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
-    };
+    }
     cb(null, uploadDir);
   },
   filename(req, file, cb) {
-    const {entity, id} = req.body;
+    const { entity, id } = req.body;
     const fileName = file.originalname;
     let uploadDir = null;
-    if(!entity || !id) {
-      uploadDir = path.join(__dirname, `../../${uploadFolder}`);
+    if (!entity || !id) {
+      uploadDir = path.join(BASE_PATH, uploadFolder);
     } else {
-      uploadDir = path.join(__dirname, `../../${uploadFolder}/${entity}-${id}`);
+      uploadDir = path.join(BASE_PATH, uploadFolder, `${entity}-${id}`);
     }
     const filePath = path.join(uploadDir, fileName);
     if (fs.existsSync(filePath)) {
-      const relativePath = path.relative(path.join(__dirname, '../..'), filePath);
+      const relativePath = path.relative(BASE_PATH, filePath);
       req.fileExists = true;
-      req.existingFilePath = relativePath.replace(/\\/g, '/');
+      req.existingFilePath = relativePath.replace(/\\/g, "/");
       cb(null, fileName);
     } else {
       cb(null, fileName);
-    };
+    }
   },
 });
 
@@ -56,7 +57,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(ApiError.BadRequest("Wrong image type"));
-  };
+  }
 };
 
 const limits = {
@@ -69,21 +70,20 @@ const upload = multer({
   limits,
 });
 
-// Создаем middleware функцию
 const uploadMiddleware = (req, res, next) => {
-  upload.single('file')(req, res, (err) => {
+  upload.single("file")(req, res, (err) => {
     if (err instanceof multer.MulterError) {
       return next(ApiError.BadRequest(err.message));
     } else if (err) {
       return next(ApiError.BadRequest(err.message));
     }
     if (!req.file && !req.fileExists) {
-      return next(ApiError.BadRequest('No file uploaded'));
+      return next(ApiError.BadRequest("No file uploaded"));
     }
-    const {entity, id} = req.body;
+    const { entity, id } = req.body;
     let uploadDir = null;
     if (!id || !entity) {
-      uploadDir = '/uploads/';
+      uploadDir = "/uploads/";
     } else {
       uploadDir = `/uploads/${entity}-${id}/`;
     }
@@ -93,15 +93,17 @@ const uploadMiddleware = (req, res, next) => {
     } else {
       filePath = uploadDir + req.file.filename;
     }
-    filePath = filePath.replace(/^\//, '');
-    fileUrl = `${req.protocol}://${req.get('host')}/${filePath}`;
+    filePath = filePath.replace(/^\//, "");
+    fileUrl = `${req.protocol}://${req.get("host")}/${filePath}`;
     res.locals.uploadedFile = {
       url: fileUrl,
       path: filePath,
       filename: req.file ? req.file.filename : path.basename(filePath),
       mimetype: req.file ? req.file.mimetype : null,
       size: req.file ? req.file.size : null,
-      message: req.fileExists ? 'File already exists' : 'File uploaded successfully'
+      message: req.fileExists
+        ? "File already exists"
+        : "File uploaded successfully",
     };
     next();
   });

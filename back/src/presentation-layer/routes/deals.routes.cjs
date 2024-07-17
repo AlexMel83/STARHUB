@@ -33,30 +33,31 @@ const validateDeal = [
     .optional({ checkFalsy: true })
     .isEmail()
     .isAscii()
-    .withMessage('Поле "customer_email" має формат email@email.ua'), 
+    .withMessage('Поле "customer_email" має формат email@email.ua'),
 ];
 
 module.exports = function (app) {
   app.get(
     "/deals",
-    query("id").optional({ checkFalsy: true }).isNumeric().withMessage('Поле "id" має бути числом'),
-    query("customer_id").optional({ checkFalsy: true }).isNumeric().withMessage('Поле "customer_id" має бути числом'),
+    query("id")
+      .optional({ checkFalsy: true })
+      .isNumeric()
+      .withMessage('Поле "id" має бути числом'),
+    query("customer_id")
+      .optional({ checkFalsy: true })
+      .isNumeric()
+      .withMessage('Поле "customer_id" має бути числом'),
     dealController.getDeals,
   );
 
-  app.post(
-    "/deals", 
-    validateDeal, 
-    validateMiddleware, 
-    dealController.addDeal
-  );
+  app.post("/deals", validateDeal, validateMiddleware, dealController.addDeal);
 
   app.put(
-    "/deals", 
+    "/deals",
     validateDeal,
     body("id").notEmpty().withMessage("Id is required"),
-    validateMiddleware, 
-    dealController.editDeal
+    validateMiddleware,
+    dealController.editDeal,
   );
 
   app.delete(

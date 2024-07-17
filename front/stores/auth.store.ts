@@ -1,4 +1,4 @@
-import {defineStore} from 'pinia';
+import { defineStore } from "pinia";
 
 interface User {
   email: string;
@@ -17,16 +17,16 @@ export const useAuthStore = defineStore("auth", {
   actions: {
     setUser(user: User) {
       this.user = user;
-      localStorage.setItem('authUser', JSON.stringify(user));
+      localStorage.setItem("authUser", JSON.stringify(user));
     },
     clearUser() {
       this.user = null;
-      localStorage.removeItem('authUser');
+      localStorage.removeItem("authUser");
     },
-    initialize(){
-      const  storedUser = localStorage.getItem('authUser');
-      storedUser ? this.user = JSON.parse(storedUser) : this.user = null;
-    }
+    initialize() {
+      const storedUser = localStorage.getItem("authUser");
+      storedUser ? (this.user = JSON.parse(storedUser)) : (this.user = null);
+    },
   },
 });
 

@@ -13,48 +13,48 @@ const CommentFields = [
 module.exports = {
   async getCommentById(id, trx = knex) {
     try {
-        const candidate = await trx(CommentsTable)
+      const candidate = await trx(CommentsTable)
         .select(CommentFields)
-        .where({id})
+        .where({ id })
         .first();
       return candidate ? candidate : null;
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async getCommentsByDealId(deal_id, trx = knex) {
     try {
       const candidate = await trx(CommentsTable)
         .select(CommentFields)
-        .where({deal_id});
+        .where({ deal_id });
       return candidate ? candidate : [];
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async getCommentsByUserId(user_id, trx = knex) {
     try {
-        const candidate = await trx(CommentsTable)
+      const candidate = await trx(CommentsTable)
         .select(CommentFields)
-        .where({user_id});
+        .where({ user_id });
       return candidate ? candidate : null;
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async getAllComments() {
     try {
-        return await knex(CommentsTable).select(CommentFields);
+      return await knex(CommentsTable).select(CommentFields);
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async addComment(payload, trx = knex) {
@@ -66,8 +66,7 @@ module.exports = {
     }
   },
 
-
-  async editComment(payload, trx=knex) {
+  async editComment(payload, trx = knex) {
     try {
       const [result] = await trx(CommentsTable)
         .where({ id: payload.id })
@@ -77,16 +76,16 @@ module.exports = {
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
-  async deleteComment(id, trx=knex) {
+  async deleteComment(id, trx = knex) {
     try {
       await trx(CustomersTable).where({ id }).del();
       return { id };
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 };

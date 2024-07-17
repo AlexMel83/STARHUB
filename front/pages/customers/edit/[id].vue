@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import type { ICustomer, ServerResponse } from "~/types/deals.types";
-import { useForm } from 'vee-validate';
-import axios from 'axios';
+import { useForm } from "vee-validate";
+import axios from "axios";
 
 useSeoMeta({
   title: "Edit company",
@@ -17,7 +17,7 @@ interface ICustomerFormState
 
 const { $api, $load } = useNuxtApp();
 const errors = reactive({
-  textError: '',
+  textError: "",
 });
 
 const route = useRoute();
@@ -31,24 +31,27 @@ const { handleSubmit, defineField, setFieldValue, setValues, values } =
 const { data, isSuccess } = useQuery({
   queryKey: ["get customer"],
   queryFn: async () => {
-      try {
-        const customer: ServerResponse = await $load(() => $api.customers.getCustomerById(customerId), errors);
-        return customer.data;
-      } catch (error) {
-        console.error("Error fetching customer:", error);
-        throw error;
-      }
-    },
+    try {
+      const response: ServerResponse = await $load(
+        () => $api.customers.getCustomerById(customerId),
+        errors,
+      );
+      return response.data as unknown as ICustomer;
+    } catch (error) {
+      console.error("Error fetching customer:", error);
+      throw error;
+    }
+  },
 });
 
-watchEffect(()=>{
-  if(isSuccess.value && data.value) {
-    const initialData = data.value as unknown as ICustomerFormState;
+watchEffect(() => {
+  if (isSuccess.value && data.value) {
+    const initialData = data.value;
     setValues({
-      email: initialData.email,
-      avatar_url: initialData.avatar_url,
+      email: initialData.email || "",
+      avatar_url: initialData.avatar_url || "",
       from_source: initialData.from_source || "",
-      name: initialData.name,
+      name: initialData.name || "",
     });
   }
 });
@@ -62,70 +65,96 @@ const { mutate, isPending } = useMutation({
   mutationFn: async (formData: ICustomerFormState) => {
     const updatedCustomer: ICustomer = {
       id: customerId,
-      ...data.value,
+      ...(data.value || {}),
       ...formData,
       updated_at: new Date().toISOString(),
     };
     return await $api.customers.editCustomer(updatedCustomer);
   },
   onSuccess: () => {
-    router.push('/customers');
+    router.push("/customers");
   },
 });
 
-const { mutateAsync: uploadImage, isPending: isUploadImagePending } = useMutation<{ file: { url: string } }, Error, File>({
-  mutationKey: ['upload image'],
-  mutationFn: async (file: File) => {
-    const formData = new FormData();
-    formData.append('id', customerId.toString());
-    formData.append('entity', 'customer');
-    formData.append('file', file);
-    const response = await axios.post<{ file: { url: string } }>('http://localhost:4041/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    if (response.status !== 200) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.data;
-  },
-});
+const { mutateAsync: uploadImage, isPending: isUploadImagePending } =
+  useMutation<{ file: { url: string } }, Error, File>({
+    mutationKey: ["upload image"],
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("id", customerId.toString());
+      formData.append("entity", "customer");
+      formData.append("file", file);
+      const response = await axios.post<{ file: { url: string } }>(
+        "http://localhost:4041/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      if (response.status !== 200) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.data;
+    },
+  });
 
 const onFileChange = (e: InputFileEvent) => {
   const file = e.target.files?.[0];
   if (file) {
     const localUrl = URL.createObjectURL(file);
     previewUrl.value = localUrl;
-    setFieldValue('avatar_url', localUrl);
+    setFieldValue("avatar_url", localUrl);
   }
 };
 
-const onSubmit = handleSubmit(async (values)=>{
-  const inputFile = document.querySelector('input[type="file"]') as HTMLInputElement;
+const { mutateAsync: deleteOldFile } = useMutation({
+  mutationKey: ["delete old file"],
+  mutationFn: async (filePath: string) => {
+    await axios.delete("http://localhost:4041/delete-file", {
+      data: { filePath },
+    });
+  },
+});
+
+const onSubmit = handleSubmit(async (values) => {
+  const inputFile = document.querySelector(
+    'input[type="file"]',
+  ) as HTMLInputElement;
   const avatarFile = inputFile.files?.[0];
   let newAvatarUrl = values.avatar_url;
-  if(avatarFile) {
-    try{
+  if (avatarFile) {
+    try {
+      if (data.value?.avatar_url) {
+        const oldFilePath = new URL(data.value.avatar_url).pathname;
+        await deleteOldFile(oldFilePath);
+      }
       const result = await uploadImage(avatarFile);
       newAvatarUrl = result.file.url;
-    } catch(error){
-      console.error('Error uploading file:', error);
-    };
-  };
-  mutate({...values, avatar_url: newAvatarUrl});
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+  if (newAvatarUrl) {
+    mutate({ ...values, avatar_url: newAvatarUrl });
+  } else {
+    console.error("No avatar URL available");
+  }
 });
 
 const avatarPreview = computed(() => {
-  return previewUrl.value || values.avatar_url || (isUploadImagePending.value ? '/path/to/loading-image.gif' : '');
+  return (
+    previewUrl.value ||
+    values.avatar_url ||
+    (isUploadImagePending.value ? "/path/to/loading-image.gif" : "")
+  );
 });
 </script>
 
 <template>
   <div class="p-10">
-    <h1 class="font-bold text-2xl mb-10">
-      Edit {{ values.name }}
-    </h1>
+    <h1 class="font-bold text-2xl mb-10">Edit {{ values.name }}</h1>
     <form @submit="onSubmit" class="form">
       <UiInput
         placeholder="name"

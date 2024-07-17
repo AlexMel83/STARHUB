@@ -14,7 +14,7 @@ interface AuthResponse {
     };
     url: string;
   };
-};
+}
 
 const { $api, $load } = useNuxtApp();
 const authStore = useAuthStore();
@@ -56,22 +56,24 @@ const items = [
   },
 ];
 
-const clearErrors = ()=>{
+const clearErrors = () => {
   errors.email = "";
   errors.password = "";
   errors.form = "";
-}
+};
 const clearVars = () => {
   togglePasswordVisibility.value = false;
   isLoading.value = false;
-  state.email = '';
-  state.password = '';
-  state.passConfirm = '';
+  state.email = "";
+  state.password = "";
+  state.passConfirm = "";
 };
 const handleTogglePasswordVisibility = async () => {
   togglePasswordVisibility.value = !togglePasswordVisibility.value;
 };
-const schema = computed(()=>currentTab.value === 0 ? loginSchema : registrationSchema);
+const schema = computed(() =>
+  currentTab.value === 0 ? loginSchema : registrationSchema,
+);
 const loginSchema = object({
   email: string().email("Невірний email").required("Потрібен Email"),
   password: string()
@@ -123,23 +125,26 @@ const handleSubmit = async (event: Event) => {
   const payload = {
     email: state.email,
     password: state.password,
-    role: currentTab.value === 1 ? 'user' : '',
+    role: currentTab.value === 1 ? "user" : "",
   };
-  try{
-    const res: AuthResponse = await $load(()=>
-    currentTab.value === 0
-      ? $api.auth.signIn(payload)
-      : $api.auth.signUp(payload),errors);
-    
-      if (res && [200, 201].includes(res.status)) {
-        const data = res.data;
-        localStorage.setItem("authUser", JSON.stringify(data));
-        authStore.setUser(data.user);
-        isOpen.value = false;
-        clearVars();
-      }
-  } catch(error) {
-    errors.form = "Користувача не авторизовано"
+  try {
+    const res: AuthResponse = await $load(
+      () =>
+        currentTab.value === 0
+          ? $api.auth.signIn(payload)
+          : $api.auth.signUp(payload),
+      errors,
+    );
+
+    if (res && [200, 201].includes(res.status)) {
+      const data = res.data;
+      localStorage.setItem("authUser", JSON.stringify(data));
+      authStore.setUser(data.user);
+      isOpen.value = false;
+      clearVars();
+    }
+  } catch (error) {
+    errors.form = "Користувача не авторизовано";
   }
   isLoading.value = false;
 };
@@ -156,13 +161,17 @@ watch(isOpen, (newValue) => {
     <UButton label="Login" @click="isOpen = true" />
 
     <UModal v-model="isOpen" prevent-close>
-      <UCard :ui="{
+      <UCard
+        :ui="{
           ring: '',
           divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-        }">
+        }"
+      >
         <template #header>
           <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white" >
+            <h3
+              class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
+            >
               StarHub login
             </h3>
             <UButton
@@ -170,19 +179,18 @@ watch(isOpen, (newValue) => {
               variant="ghost"
               icon="i-heroicons-x-mark-20-solid"
               class="-my-1"
-              @click="()=>{isOpen = false; clearVars();}"
+              @click="
+                () => {
+                  isOpen = false;
+                  clearVars();
+                }
+              "
             />
           </div>
           <ModalSocial />
         </template>
 
-        <UTabs 
-        v-model="currentTab" 
-        :items="items"
-        :ui="{
-                    
-                  }"
-        >
+        <UTabs v-model="currentTab" :items="items" :ui="{}">
           <template #item="{ item }">
             <UForm
               :schema="schema"
@@ -225,49 +233,53 @@ watch(isOpen, (newValue) => {
                     'text-right': true,
                   }"
                 >
-                <div class="password-input-wrapper">
-                  <UInput
-                    v-if="!togglePasswordVisibility"
-                    type="password"
-                    icon="i-heroicons-lock-closed"
-                    variant="none"
-                    color="primary"
-                    v-model="state.password"
-                    @focus="handleFocus('password')"
-                    @blur="handleBlur('password')"
-                    :ui="{
-                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
-                      input: 'bg-transparent',
-                      rounded: 'rounded-none',
-                    }"
-                    :passwordVisible="false"
-                  >
-                    <label>Пароль</label>
-                  </UInput>
-                  <UInput
-                    v-else
-                    type="text"
-                    icon="i-heroicons-lock-closed"
-                    variant="none"
-                    color="primary"
-                    v-model="state.password"
-                    @focus="handleFocus('password')"
-                    @blur="handleBlur('password')"
-                    :ui="{
-                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
-                      input: 'bg-transparent',
-                      rounded: 'rounded-none',
-                    }"
-                  >
-                    <label>Пароль</label>
-                  </UInput>
-                  <UButton
-                    color="gray"
-                    variant="ghost"
-                    :icon="togglePasswordVisibility ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
-                    @click="handleTogglePasswordVisibility"
-                    class="password-toggle"
-                  />
+                  <div class="password-input-wrapper">
+                    <UInput
+                      v-if="!togglePasswordVisibility"
+                      type="password"
+                      icon="i-heroicons-lock-closed"
+                      variant="none"
+                      color="primary"
+                      v-model="state.password"
+                      @focus="handleFocus('password')"
+                      @blur="handleBlur('password')"
+                      :ui="{
+                        base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                        input: 'bg-transparent',
+                        rounded: 'rounded-none',
+                      }"
+                      :passwordVisible="false"
+                    >
+                      <label>Пароль</label>
+                    </UInput>
+                    <UInput
+                      v-else
+                      type="text"
+                      icon="i-heroicons-lock-closed"
+                      variant="none"
+                      color="primary"
+                      v-model="state.password"
+                      @focus="handleFocus('password')"
+                      @blur="handleBlur('password')"
+                      :ui="{
+                        base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                        input: 'bg-transparent',
+                        rounded: 'rounded-none',
+                      }"
+                    >
+                      <label>Пароль</label>
+                    </UInput>
+                    <UButton
+                      color="gray"
+                      variant="ghost"
+                      :icon="
+                        togglePasswordVisibility
+                          ? 'i-heroicons-eye-slash'
+                          : 'i-heroicons-eye'
+                      "
+                      @click="handleTogglePasswordVisibility"
+                      class="password-toggle"
+                    />
                   </div>
                 </UFormGroup>
               </div>
@@ -280,56 +292,56 @@ watch(isOpen, (newValue) => {
                   'text-right': true,
                 }"
               >
-              <div class="password-input-wrapper">
-                <UInput
-                  v-if="!togglePasswordVisibility"
-                  type="password"
-                  icon="i-heroicons-lock-closed"
-                  variant="none"
-                  color="primary"
-                  v-model="state.passConfirm"
-                  @focus="handleFocus('passConfirm')"
-                  @blur="handleBlur('passConfirm')"
-                  :ui="{
-                    base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
-                    input: 'bg-transparent',
-                    rounded: 'rounded-none',
-                  }"
-                >
-                  <label>Повторіть пароль</label>
-                </UInput>
-                <UInput
-                  v-else
-                  type="text"
-                  icon="i-heroicons-lock-closed"
-                  variant="none"
-                  color="primary"
-                  v-model="state.passConfirm"
-                  @focus="handleFocus('passConfirm')"
-                  @blur="handleBlur('passConfirm')"
-                  :ui="{
-                    base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
-                    input: 'bg-transparent',
-                    rounded: 'rounded-none',
-                  }"
-                >
-                  <label>Повторіть пароль</label>
-                </UInput>
-                <UButton
-                  color="gray"
-                  variant="ghost"
-                  :icon="togglePasswordVisibility ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
-                  @click="handleTogglePasswordVisibility"
-                  class="password-toggle"
-                />
+                <div class="password-input-wrapper">
+                  <UInput
+                    v-if="!togglePasswordVisibility"
+                    type="password"
+                    icon="i-heroicons-lock-closed"
+                    variant="none"
+                    color="primary"
+                    v-model="state.passConfirm"
+                    @focus="handleFocus('passConfirm')"
+                    @blur="handleBlur('passConfirm')"
+                    :ui="{
+                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                      input: 'bg-transparent',
+                      rounded: 'rounded-none',
+                    }"
+                  >
+                    <label>Повторіть пароль</label>
+                  </UInput>
+                  <UInput
+                    v-else
+                    type="text"
+                    icon="i-heroicons-lock-closed"
+                    variant="none"
+                    color="primary"
+                    v-model="state.passConfirm"
+                    @focus="handleFocus('passConfirm')"
+                    @blur="handleBlur('passConfirm')"
+                    :ui="{
+                      base: 'border-t-0 border-l-0 border-r-0 border-b-2 focus:ring-0',
+                      input: 'bg-transparent',
+                      rounded: 'rounded-none',
+                    }"
+                  >
+                    <label>Повторіть пароль</label>
+                  </UInput>
+                  <UButton
+                    color="gray"
+                    variant="ghost"
+                    :icon="
+                      togglePasswordVisibility
+                        ? 'i-heroicons-eye-slash'
+                        : 'i-heroicons-eye'
+                    "
+                    @click="handleTogglePasswordVisibility"
+                    class="password-toggle"
+                  />
                 </div>
               </UFormGroup>
-              <UButton 
-                type="submit"
-                color="black"
-                :loading="isLoading"
-               >
-                {{ item.key === 0 ? 'Увійти' : 'Зареєструватись' }}
+              <UButton type="submit" color="black" :loading="isLoading">
+                {{ item.key === 0 ? "Увійти" : "Зареєструватись" }}
               </UButton>
             </UForm>
           </template>
@@ -343,7 +355,7 @@ watch(isOpen, (newValue) => {
 .password-input-wrapper {
   position: relative;
 }
-.password-toggle{
+.password-toggle {
   position: absolute;
   right: 0;
   top: 50%;

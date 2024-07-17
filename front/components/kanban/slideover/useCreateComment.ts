@@ -21,7 +21,7 @@ export function useCreateComment({ refetch }: { refetch: () => void }) {
     },
     onError: (error) => {
       console.error("Error creating comment:", error);
-    }
+    },
   });
 
   const writeComment = async () => {
@@ -31,10 +31,10 @@ export function useCreateComment({ refetch }: { refetch: () => void }) {
     }
     if (!cardId) {
       throw new Error("Card ID is not defined");
-    };
+    }
     const newComment: CreateCommentPayload = {
       deal_id: cardId,
-      text: commentRef.value
+      text: commentRef.value,
     };
 
     mutation.mutate(newComment);

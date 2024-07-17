@@ -7,21 +7,24 @@ useSeoMeta({
 });
 
 const { $api, $load } = useNuxtApp();
-  const errors = reactive({
-    textError: '',
-  });
+const errors = reactive({
+  textError: "",
+});
 
 const { data: customers, isLoading } = useQuery({
   queryKey: ["customers"],
   queryFn: async () => {
-      try {
-        const customers: ServerResponse = await $load(() => $api.customers.getCustomers(), errors);
-        return customers.data;
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-        throw error;
-      }
-    },
+    try {
+      const customers: ServerResponse = await $load(
+        () => $api.customers.getCustomers(),
+        errors,
+      );
+      return customers.data;
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      throw error;
+    }
+  },
 });
 </script>
 

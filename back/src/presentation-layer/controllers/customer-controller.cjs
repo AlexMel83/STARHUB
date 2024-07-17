@@ -3,7 +3,6 @@ const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 class CustomerController {
   async getCustomers(req, res, next) {
-
     try {
       let response;
       if (req?.query?.id) {
@@ -12,57 +11,59 @@ class CustomerController {
       } else {
         response = await customerModel.getAllCustomers();
         return res.json(response);
-      };
+      }
     } catch (error) {
       console.error(error);
       return next(ApiError.IntServError(error));
-    };
-  };
+    }
+  }
 
   async addCustomer(req, res, next) {
     const fields = req.body;
     fields.avatar_url = req.file ? req.file.path : "";
-    try{
+    try {
       const payload = {
-      name: fields?.name,
-      email: fields.email,
-      avatar_url: fields?.avatar_url,
-      from_source: fields?.from_source,
-    };
-    const customer = customerModel.addCustomer(payload);
-    return res.status(200).json(customer);
-    } catch(error){
+        name: fields?.name,
+        email: fields.email,
+        avatar_url: fields?.avatar_url,
+        from_source: fields?.from_source,
+      };
+      const customer = customerModel.addCustomer(payload);
+      return res.status(200).json(customer);
+    } catch (error) {
       console.error(error);
       return next(ApiError.IntServError(error));
-    };
-  };
+    }
+  }
 
   async editCustomer(req, res, next) {
     const fields = req.body;
-    if(req.file){
+    if (req.file) {
       fields.avatar_url = req.file.path;
-    };
-    try{
-      const customerDataBase = await customerModel.getCustomerById(fields.id);
-    if (!customerDataBase) {
-      return next(ApiError.NotFound(`customer with id: ${fields.id} was not found`));
     }
-   
-    const payload = {
-      id: fields.id,
-      name: fields?.name ?? customerDataBase.name,
-      email: fields.email ?? customerDataBase.email,
-      avatar_url: fields?.avatar_url ?? userDataBase.avatar_url,
-      from_source: fields?.from_source ?? userDataBase.from_source,
-      updated_at: new Date().toISOString(),
-    };
-    const updatedCustomer = await customerModel.editCustomer(payload);
-    return res.status(200).json(updatedCustomer);
-    } catch(error){
+    try {
+      const customerDataBase = await customerModel.getCustomerById(fields.id);
+      if (!customerDataBase) {
+        return next(
+          ApiError.NotFound(`customer with id: ${fields.id} was not found`),
+        );
+      }
+
+      const payload = {
+        id: fields.id,
+        name: fields?.name ?? customerDataBase.name,
+        email: fields.email ?? customerDataBase.email,
+        avatar_url: fields?.avatar_url ?? userDataBase.avatar_url,
+        from_source: fields?.from_source ?? userDataBase.from_source,
+        updated_at: new Date().toISOString(),
+      };
+      const updatedCustomer = await customerModel.editCustomer(payload);
+      return res.status(200).json(updatedCustomer);
+    } catch (error) {
       console.error(error);
       return next(ApiError.IntServError(error));
     }
-  };
+  }
 
   async deleteCustomer(req, res, next) {
     const id = req.query.id;
@@ -70,13 +71,13 @@ class CustomerController {
       const response = await customerModel.deleteCustomer(id);
       if (!response) {
         return next(ApiError.NotFound(`customer with id: ${id} was not found`));
-      };
+      }
       return res.status(200).json(response);
     } catch (error) {
       console.error(error);
       return next(ApiError.IntServError(error));
-    };
-  };
-};
+    }
+  }
+}
 
 module.exports = new CustomerController();

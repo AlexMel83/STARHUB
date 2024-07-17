@@ -23,12 +23,12 @@ module.exports = {
           refreshtoken: refreshToken,
           exp_token: expToken,
         });
-      };
+      }
       return refreshToken;
     } catch (error) {
       console.error("Помилка транзакції:", error);
       throw error;
-    };
+    }
   },
 
   async deleteOneToken(refreshToken, trx) {
@@ -40,7 +40,7 @@ module.exports = {
     } catch (error) {
       console.error("Помилка транзакції:", error);
       throw error;
-    };
+    }
   },
 
   async findOneToken(refreshToken, trx) {

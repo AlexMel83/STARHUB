@@ -33,7 +33,6 @@ module.exports = class ApiError extends Error {
   }
 
   static ConflictRequest(message) {
-    
     return new ApiError(409, message);
   }
 

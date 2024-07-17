@@ -4,10 +4,10 @@ import { defineProps } from "vue";
 import type { IDeal } from "~/types/deals.types";
 
 interface IDealFormState extends Pick<IDeal, "name" | "price"> {
-  customer_name: string,
-  customer_email: string,
+  customer_name: string;
+  customer_email: string;
   status: string;
-};
+}
 
 const isOpenForm = ref(false);
 const { $api, $load } = useNuxtApp();
@@ -37,9 +37,9 @@ const [customerName, customerNameAttrs] = defineField("customer_name");
 const { mutate, isPending } = useMutation({
   mutationKey: ["create a new deal"],
   mutationFn: async (data: IDealFormState) => {
-      const response = await $api.deals.addDeal(data);
-      return response;
-      },
+    const response = await $api.deals.addDeal(data);
+    return response;
+  },
   onSuccess() {
     props.refetch && props.refetch();
     handleReset();

@@ -71,21 +71,24 @@ const customersData = [
   {
     name: "Спортмастер",
     email: "dsd@dsd.ua",
-    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/5f8ca226-b7e2-4802-817b-935dc3321798/download?project=668181210001356c2833",
+    avatar_url:
+      "https://cloud.appwrite.io/v1/storage/buckets/storage/files/5f8ca226-b7e2-4802-817b-935dc3321798/download?project=668181210001356c2833",
     from_source: "iz gazet",
   },
   {
     name: "Facebook",
     email: "dsds@sas.ya",
-    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/avatar/view?project=668181210001356c2833&mode=admin",
+    avatar_url:
+      "https://cloud.appwrite.io/v1/storage/buckets/storage/files/avatar/view?project=668181210001356c2833&mode=admin",
     from_source: "From NY",
   },
   {
     name: "мусоровоз",
     email: "fdfd@dss.ya",
-    avatar_url: "https://cloud.appwrite.io/v1/storage/buckets/storage/files/74887ba2-f139-423e-80ea-a813dd586b60/download?project=668181210001356c2833",
+    avatar_url:
+      "https://cloud.appwrite.io/v1/storage/buckets/storage/files/74887ba2-f139-423e-80ea-a813dd586b60/download?project=668181210001356c2833",
     from_source: "jeko",
-  }
+  },
 ];
 
 const dealsData = [

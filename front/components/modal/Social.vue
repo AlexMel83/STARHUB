@@ -13,7 +13,7 @@ interface AuthResponse {
     };
     url: string;
   };
-};
+}
 
 const { $api, $load } = useNuxtApp();
 
@@ -21,22 +21,25 @@ const errors = reactive({
   textError: "",
 });
 
-const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-  try{
-    const res: AuthResponse = await $load(async () => $api.auth.socAuth(provider), errors);
-  if (res.data.url) {
-    window.location.href = res.data.url;
-  };
-  } catch(error){
+const handleSocialLogin = async (provider: "google" | "facebook") => {
+  try {
+    const res: AuthResponse = await $load(
+      async () => $api.auth.socAuth(provider),
+      errors,
+    );
+    if (res.data.url) {
+      window.location.href = res.data.url;
+    }
+  } catch (error) {
     errors.textError = "Помилка при авторизації через соціальну мережу";
-  } ;
+  }
 };
 </script>
 
 <template>
   <div class="wrapper-login-using">
     <div class="login-using mt-5 mb-4">
-      <UTooltip text="Увійти через Google" >
+      <UTooltip text="Увійти через Google">
         <template #text>
           <span class="italic">Увійти через Google</span>
         </template>
@@ -50,10 +53,7 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
         </div>
       </UTooltip>
     </div>
-    <UNotifications 
-    v-if="errors.textError" 
-    color="red" 
-    :timeout="3000">
+    <UNotifications v-if="errors.textError" color="red" :timeout="3000">
       {{ errors.textError }}
     </UNotifications>
   </div>
@@ -90,7 +90,7 @@ const handleSocialLogin = async (provider: 'google' | 'facebook') => {
 
 .login-using .login-using-item:hover {
   transform: scale(1.05);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 50%;
 }
 </style>
