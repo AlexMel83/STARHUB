@@ -12,6 +12,7 @@ const allowedFileTypes = [
   "image/jpeg",
   "image/jpg",
   "image/svg+xml",
+  "image/x-icon",
 ];
 const uploadFolder = "uploads";
 
@@ -34,22 +35,19 @@ const storage = multer.diskStorage({
     const fileName = file.originalname;
     let uploadDir = null;
     if(!entity || !id) {
-      uploadDir = path.join(__dirname, '../../uploads');
+      uploadDir = path.join(__dirname, `../../${uploadFolder}`);
     } else {
-      uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
+      uploadDir = path.join(__dirname, `../../${uploadFolder}/${entity}-${id}`);
     }
     const filePath = path.join(uploadDir, fileName);
     if (fs.existsSync(filePath)) {
       const relativePath = path.relative(path.join(__dirname, '../..'), filePath);
       req.fileExists = true;
       req.existingFilePath = relativePath.replace(/\\/g, '/');
-      const extension = path.extname(fileName);
-      const baseName = path.basename(fileName, extension);
-      const newFileName = `${baseName}_${Date.now()}${extension}`;
-      cb(null, newFileName);
+      cb(null, fileName);
     } else {
       cb(null, fileName);
-    }
+    };
   },
 });
 
@@ -58,15 +56,55 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(ApiError.BadRequest("Wrong image type"));
-  }
+  };
 };
 
 const limits = {
   fileSize: 1024 * 1024 * 5,
 };
 
-module.exports = multer({
+const upload = multer({
   storage,
   fileFilter,
   limits,
 });
+
+// Создаем middleware функцию
+const uploadMiddleware = (req, res, next) => {
+  upload.single('file')(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return next(ApiError.BadRequest(err.message));
+    } else if (err) {
+      return next(ApiError.BadRequest(err.message));
+    }
+    if (!req.file && !req.fileExists) {
+      return next(ApiError.BadRequest('No file uploaded'));
+    }
+    const {entity, id} = req.body;
+    let uploadDir = null;
+    if (!id || !entity) {
+      uploadDir = '/uploads/';
+    } else {
+      uploadDir = `/uploads/${entity}-${id}/`;
+    }
+    let filePath, fileUrl;
+    if (req.fileExists) {
+      filePath = req.existingFilePath;
+    } else {
+      filePath = uploadDir + req.file.filename;
+    }
+    filePath = filePath.replace(/^\//, '');
+    fileUrl = `${req.protocol}://${req.get('host')}/${filePath}`;
+    res.locals.uploadedFile = {
+      url: fileUrl,
+      path: filePath,
+      filename: req.file ? req.file.filename : path.basename(filePath),
+      mimetype: req.file ? req.file.mimetype : null,
+      size: req.file ? req.file.size : null,
+      message: req.fileExists ? 'File already exists' : 'File uploaded successfully'
+    };
+    next();
+  });
+};
+
+module.exports = uploadMiddleware;

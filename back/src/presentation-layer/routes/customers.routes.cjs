@@ -2,8 +2,9 @@ const customerController = require("../controllers/customer-controller.cjs");
 const { body, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
-const upload = require("../../middlewares/upload.cjs");
+const uploadMiddleware = require("../../middlewares/upload.cjs");
 const path = require("path");
+const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 const validateCustomer = [
   body("id")
@@ -36,7 +37,7 @@ module.exports = function (app) {
     "/customers", 
     validateCustomer, 
     validateMiddleware, 
-    upload.single('avatar_url'),
+    uploadMiddleware,
     customerController.addCustomer
   );
 
@@ -57,23 +58,12 @@ module.exports = function (app) {
   );
 
   app.post('/upload',
-    upload.single('file'), 
-    (req, res, next) => {
-      const {id, entity} = req.body;
-      let uploadDir = null;
-      if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-      }
-      if (!id || !entity) {
-        uploadDir = path.join(__dirname, `../../uploads/`);
-      } else {
-        uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
-      }
-      const filePath = path.relative(path.join(__dirname, '../..'), path.join(uploadDir, req.file.filename));
-
+    uploadMiddleware,
+    (req, res) => {
+      const fileInfo = res.locals.uploadedFile;
       res.status(200).json({
-        message: 'Upload success',
-        filePath: filePath,
+        message: fileInfo.message,
+        file: fileInfo
       });
-  });
+    });
 };

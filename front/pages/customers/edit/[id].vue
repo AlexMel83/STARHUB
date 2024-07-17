@@ -73,14 +73,14 @@ const { mutate, isPending } = useMutation({
   },
 });
 
-const { mutateAsync: uploadImage, isPending: isUploadImagePending } = useMutation<{ filePath: string }, Error, File>({
+const { mutateAsync: uploadImage, isPending: isUploadImagePending } = useMutation<{ file: { url: string } }, Error, File>({
   mutationKey: ['upload image'],
   mutationFn: async (file: File) => {
     const formData = new FormData();
     formData.append('id', customerId.toString());
     formData.append('entity', 'customer');
     formData.append('file', file);
-    const response = await axios.post<{ filePath: string }>('http://localhost:4041/upload', formData, {
+    const response = await axios.post<{ file: { url: string } }>('http://localhost:4041/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -88,7 +88,7 @@ const { mutateAsync: uploadImage, isPending: isUploadImagePending } = useMutatio
     if (response.status !== 200) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return response.data;  // Это вернет { filePath: string }
+    return response.data;
   },
 });
 
@@ -108,7 +108,7 @@ const onSubmit = handleSubmit(async (values)=>{
   if(avatarFile) {
     try{
       const result = await uploadImage(avatarFile);
-      newAvatarUrl = `http://localhost:4041/${result.filePath}`;
+      newAvatarUrl = result.file.url;
     } catch(error){
       console.error('Error uploading file:', error);
     };
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit(async (values)=>{
 });
 
 const avatarPreview = computed(() => {
-  return previewUrl.value || values.avatar_url || (isUploadImagePending ? '/path/to/loading-image.gif' : '');
+  return previewUrl.value || values.avatar_url || (isUploadImagePending.value ? '/path/to/loading-image.gif' : '');
 });
 </script>
 
