@@ -72,52 +72,51 @@ const { mutate, isPending } = useMutation({
   },
 });
 
-const {mutate: uploadImage, isPending: isUploadImagePending} = useMutation({
+const { mutateAsync: uploadImage, isPending: isUploadImagePending } = useMutation<{ filePath: string }, Error, File>({
   mutationKey: ['upload image'],
-  mutationFn: async (file: File)=>{
+  mutationFn: async (file: File) => {
     const formData = new FormData();
     formData.append('id', customerId.toString());
     formData.append('entity', 'customer');
     formData.append('file', file);
-    try{
-      const response = await axios.post('http://localhost:4041/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      if(response.status !== 200) {
-        throw new Error(`HTTP error! status: ${response}`);
-      }
-      return response.data;
-    } catch(error){
-      console.error('Upload error:', error);
-      throw error;
+    const response = await axios.post<{ filePath: string }>('http://localhost:4041/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if (response.status !== 200) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  },
-  onSuccess(data) {
-    console.log('Upload success:', data);
-    setFieldValue('avatar_url', data.filePath);
+    return response.data;  // Это вернет { filePath: string }
   },
 });
 
 const onFileChange = (e: InputFileEvent) => {
   const file = e.target.files?.[0];
-  console.log('file:', file)
-  if(file){
+  if (file) {
     const localUrl = URL.createObjectURL(file);
     setFieldValue('avatar_url', localUrl);
-    console.log('localUrl:', localUrl)
-  };
+  }
 };
 
 const onSubmit = handleSubmit(async (values)=>{
   const inputFile = document.querySelector('input[type="file"]') as HTMLInputElement;
-  const avatarFile = inputFile.files?.[0]
+  const avatarFile = inputFile.files?.[0];
+  let newAvatarUrl = values.avatar_url;
   if(avatarFile) {
-    await uploadImage(avatarFile);
-  }
-  mutate(values);
-})
+    try{
+      const result = await uploadImage(avatarFile);
+      newAvatarUrl = `http://localhost:4041/${result.filePath}`;
+    } catch(error){
+      console.error('Error uploading file:', error);
+    };
+  };
+  mutate({...values, avatar_url: newAvatarUrl});
+});
+
+const avatarPreview = computed(() => {
+  return values.avatar_url || (isUploadImagePending ? '/path/to/loading-image.gif' : '');
+});
 </script>
 
 <template>
@@ -148,8 +147,8 @@ const onSubmit = handleSubmit(async (values)=>{
         class="input"
       />
       <img
-        v-if="values.avatar_url || isUploadImagePending"
-        :src="values.avatar_url"
+        v-if="avatarPreview"
+        :src="avatarPreview"
         alt=""
         width="50"
         height="50"

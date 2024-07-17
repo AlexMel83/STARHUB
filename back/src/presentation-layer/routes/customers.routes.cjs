@@ -45,7 +45,6 @@ module.exports = function (app) {
     validateCustomer,
     body("id").notEmpty().withMessage("Id is required"),
     validateMiddleware, 
-    upload.single('avatar'),
     customerController.editCustomer
   );
 
@@ -66,9 +65,11 @@ module.exports = function (app) {
         return res.status(400).send('No file uploaded.');
       }
       if (!id || !entity) {
+        uploadDir = path.join(__dirname, `../../uploads/`);
+      } else {
         uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
-      }console.log(req.body.filePath)
-      const filePath = path.join(__dirname, req.body.filePath || '../../uploads');
+      }
+      const filePath = path.relative(path.join(__dirname, '../..'), path.join(uploadDir, req.file.filename));
 
       res.status(200).json({
         message: 'Upload success',

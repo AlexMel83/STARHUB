@@ -31,6 +31,7 @@ const storage = multer.diskStorage({
   },
   filename(req, file, cb) {
     const {entity, id} = req.body;
+    const fileName = file.originalname;
     let uploadDir = null;
     if(!entity || !id) {
       uploadDir = path.join(__dirname, '../../uploads');
@@ -38,11 +39,14 @@ const storage = multer.diskStorage({
       uploadDir = path.join(__dirname, `../../uploads/${entity}-${id}`);
     }
     const filePath = path.join(uploadDir, file.originalname);
-    if(fs.existsSync(filePath)) {
-      cb(ApiError.BadRequest('File already exists', filePath));
+    if (fs.existsSync(filePath)) {
+      const extension = path.extname(fileName);
+      const baseName = path.basename(fileName, extension);
+      const newFileName = `${baseName}_${Date.now()}${extension}`;
+      cb(null, newFileName);
     } else {
-      cb(null, file.originalname);
-    };
+      cb(null, fileName);
+    }
   },
 });
 
