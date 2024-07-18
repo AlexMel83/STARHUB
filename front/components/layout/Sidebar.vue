@@ -1,7 +1,7 @@
 <template>
   <aside class="px-5 py-8 bg-sidebar h-full relative w-full">
     <NuxtLink to="/">
-      <NuxtImg src="/Logo.png" alt="" width="100px" />
+      <NuxtImg src="/Avatar.png" alt="" width="100px" />
     </NuxtLink>
     <button
       @click="logout"

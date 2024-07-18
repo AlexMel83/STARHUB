@@ -177,16 +177,16 @@ const avatarPreview = computed(() => {
         type="text"
         class="input"
       />
-      <img
-        v-if="avatarPreview"
-        :src="avatarPreview"
-        alt=""
-        width="50"
-        height="50"
-        class="rounded-full my-2"
-      />
       <div class="grid w-full max-w-sm items-center gap-1.5 input">
         <label>
+          <img
+            v-if="avatarPreview"
+            :src="avatarPreview"
+            alt=""
+            width="50"
+            height="50"
+            class="rounded-full my-2"
+          />
           <div class="text-sm mb-4">Logo</div>
           <UiInput
             type="file"
