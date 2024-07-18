@@ -4,7 +4,7 @@
   "description": "root package",
   "main": "index.js",
   "scripts": {
-    "lint": "eslint . && prettier -w .",
+    "lint": "eslint . && prettier -w .", 
     "test": "node --test .",
     "precommit": "eslint --fix . && prettier --write .",
     "prepare": "husky install"
