@@ -1,5 +1,5 @@
 require("dotenv").config({
-  path: __dirname + `/../.${process.env.NODE_ENV}.env`,
+  path: __dirname + `/../../.${process.env.NODE_ENV}.env`,
 });
 const { PORT, CLIENT_URL, PAYMENT_DOMEN, JWT_AC_SECRET, JWT_RF_MA } =
   process.env;

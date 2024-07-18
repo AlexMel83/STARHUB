@@ -1,9 +1,0 @@
-/node_modules
-/.vscode
-/uploads
-!/uploads/public/**
-/pgdata
-.env
-.development.env
-.production.env
-eduhab_back BD SQL.docx
