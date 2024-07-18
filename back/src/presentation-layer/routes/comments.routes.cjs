@@ -25,23 +25,26 @@ const validateComment = [
 module.exports = function (app) {
   app.get(
     "/comments",
-    query("id").optional({ checkFalsy: true }).isNumeric().withMessage('Поле "id" має бути числом'),
+    query("id")
+      .optional({ checkFalsy: true })
+      .isNumeric()
+      .withMessage('Поле "id" має бути числом'),
     commentController.getComments,
   );
 
   app.post(
-    "/comments", 
-    validateComment, 
-    validateMiddleware, 
+    "/comments",
+    validateComment,
+    validateMiddleware,
     commentController.addComment,
   );
 
   app.put(
-    "/comments", 
+    "/comments",
     validateComment,
     body("id").notEmpty().withMessage("Id is required"),
-    validateMiddleware, 
-    commentController.editComment
+    validateMiddleware,
+    commentController.editComment,
   );
 
   app.delete(
@@ -49,6 +52,6 @@ module.exports = function (app) {
     authMiddleware,
     query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
-   commentController.deleteComment,
+    commentController.deleteComment,
   );
 };

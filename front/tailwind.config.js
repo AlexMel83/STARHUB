@@ -75,7 +75,8 @@ const config = {
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
-        lg: "var(--radius)",
+        // lg: "var(--radius)",
+        lg: "calc(var(--radius) - 0.5rem)",
         md: "calc(var(--radius) - 0.5rem)",
         sm: "calc(var(--radius) - 4px)",
       },
@@ -106,11 +107,11 @@ const config = {
     },
   },
   content: [
-    './components/**/*.{vue,js}',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
-    './plugins/**/*.{js,ts}',
-    './nuxt.config.{js,ts}',
+    "./components/**/*.{vue,js}",
+    "./layouts/**/*.vue",
+    "./pages/**/*.vue",
+    "./plugins/**/*.{js,ts}",
+    "./nuxt.config.{js,ts}",
   ],
   plugins: [animate],
 };

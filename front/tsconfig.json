@@ -3,5 +3,5 @@
     "typeRoots": ["./types", "./node_modules/@types"]
   },
   "types": ["@nuxt/types", "@types/node", "./types/nuxt.d.ts"],
-  "extends": "./.nuxt/tsconfig.json",
+  "extends": "./.nuxt/tsconfig.json"
 }

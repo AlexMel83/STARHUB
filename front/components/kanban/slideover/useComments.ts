@@ -7,7 +7,7 @@ interface ServerResponse {
   data: IComment[];
   status: number;
   statusText: string;
-  headers: any; 
+  headers: any;
   config: any;
 }
 
@@ -16,7 +16,7 @@ export function useComments() {
   const cardId = store.card?.id || null;
   const { $api, $load } = useNuxtApp();
   const errors = reactive({
-    textError: '',
+    textError: "",
   });
 
   const commentsRef = ref<IComment[]>([]);
@@ -28,7 +28,10 @@ export function useComments() {
         throw new Error("Card ID is not defined");
       }
       try {
-        const response: ServerResponse = await $load(() => $api.comments.getComment(cardId), errors);
+        const response: ServerResponse = await $load(
+          () => $api.comments.getComment(cardId),
+          errors,
+        );
         commentsRef.value = response.data;
         return response;
       } catch (error) {
@@ -41,7 +44,10 @@ export function useComments() {
 
   watch(query.data, (newData) => {
     if (newData) {
-      commentsRef.value = [...newData.data].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      commentsRef.value = [...newData.data].sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     }
   });
 

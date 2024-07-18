@@ -1,6 +1,6 @@
-import { defineNuxtPlugin } from '#app';
-import axios from 'axios';
-import api from '../api/index';
+import { defineNuxtPlugin, useRuntimeConfig } from "#app";
+import axios from "axios";
+import api from "../api/index";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -9,10 +9,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     baseURL: config.public.localhostApi,
     withCredentials: true,
     headers: {
-      accept: 'application/json',
+      accept: "application/json",
     },
   });
 
   const apiInstance = api(instance);
-  nuxtApp.provide('api', apiInstance);
+  nuxtApp.provide("api", apiInstance);
 });

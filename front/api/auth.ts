@@ -9,7 +9,7 @@ export interface AuthResponse {
     };
     url: string;
   };
-};
+}
 
 interface AuthUser {
   data: {
@@ -18,8 +18,8 @@ interface AuthUser {
     name: string;
     role: string;
     isactivated: boolean;
-  }
-};
+  };
+}
 
 export interface AuthApi {
   signIn(payload: { email: string; password: string }): Promise<AuthResponse>;
@@ -47,10 +47,12 @@ export default function (instance: any): AuthApi {
       return instance.post("/logout");
     },
     socAuth(provider) {
-      return instance.get(`/social-login/${provider}`, {credentials: 'include'},);
+      return instance.get(`/social-login/${provider}`, {
+        credentials: "include",
+      });
     },
     getAuthUser(authLink) {
-      return instance.post(`/auth-user/${authLink}`)
+      return instance.post(`/auth-user/${authLink}`);
     },
   };
 }

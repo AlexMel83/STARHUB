@@ -3,7 +3,7 @@ const { JWT_AC_SECRET, JWT_AC_EXP, JWT_RF_SECRET, JWT_RF_EXP } = process.env;
 const tokenModel = require("../../data-layer/models/token-model.cjs");
 const userModel = require("../../data-layer/models/user-model.cjs");
 const knex = require("../../../config/knex.config.cjs");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
 const allowedRoles = ["user", "manager", "admin"];
@@ -18,28 +18,33 @@ class TokenService {
     });
 
     const refreshTokenExpMs = moment.duration(JWT_RF_EXP).asMilliseconds();
-    const expRfTokenDate = moment().add(refreshTokenExpMs, 'milliseconds');
+    const expRfTokenDate = moment().add(refreshTokenExpMs, "milliseconds");
 
     return {
       accessToken,
       refreshToken,
       expRfToken: expRfTokenDate.toISOString(),
     };
-  };
+  }
 
   async saveToken(userId, refreshToken, expToken, trx = knex) {
     try {
       const tokenData = await tokenModel.getUserToken({ userId }, trx);
       if (tokenData.length) {
         tokenData.refreshToken = refreshToken;
-      };
-      const token = await tokenModel.saveToken(userId, refreshToken, expToken, trx);
+      }
+      const token = await tokenModel.saveToken(
+        userId,
+        refreshToken,
+        expToken,
+        trx,
+      );
       return token;
     } catch (error) {
       console.error(error);
       throw error;
-    };
-  };
+    }
+  }
 
   async validateAccessToken(token, next) {
     try {
@@ -51,22 +56,22 @@ class TokenService {
         return next(
           ApiError.NotFound(`email: ${userData.email} was not found`),
         );
-      };
+      }
       const isactivated_token = userDataBase.isactivated;
       if (!isactivated_token) {
         return next(ApiError.AccessDeniedForRole("User not activated"));
-      };
+      }
       const { role } = userDataBase;
       if (allowedRoles.includes(role)) {
         return userDataBase;
       } else {
         return next(ApiError.AccessDeniedForRole("Wrong role"));
-      };
+      }
     } catch (error) {
       console.error(error);
       return null;
-    };
-  };
+    }
+  }
 
   validateRefreshToken(token) {
     try {
@@ -75,8 +80,8 @@ class TokenService {
     } catch (error) {
       console.error(error);
       return null;
-    };
-  };
+    }
+  }
 
   async removeToken(refreshToken, trx) {
     try {
@@ -85,13 +90,13 @@ class TokenService {
     } catch (error) {
       console.error(error);
       return null;
-    };
-  };
+    }
+  }
 
   async findToken(refreshToken, trx) {
     const tokenData = await tokenModel.findOneToken(refreshToken, trx);
     return tokenData;
-  };
-};
+  }
+}
 
 module.exports = new TokenService();

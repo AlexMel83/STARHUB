@@ -1,14 +1,23 @@
 export interface IBaseField {
-  created_at: string;
+  created_at?: string;
   id: number;
+}
+
+export interface ServerResponse {
+  data: ICustomer | ICustomer[];
+  status: number;
+  statusText: string;
+  headers: any;
+  config: any;
 }
 
 export interface ICustomer extends IBaseField {
   name: string;
   email: string;
-  avatar_url: string;
+  avatar_url?: string;
   from_source?: string;
   documents?: string | null;
+  updated_at?: string;
 }
 
 export interface IComment {

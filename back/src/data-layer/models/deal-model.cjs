@@ -15,31 +15,31 @@ const DealFields = [
 module.exports = {
   async getDealById(id, trx = knex) {
     try {
-        const deal = await trx(DealsTable)
+      const deal = await trx(DealsTable)
         .select(DealFields)
-        .where({id})
+        .where({ id })
         .first();
-        if(deal) {
-          deal.customer = await customerModel.getCustomerById(deal.customer_id);
-        }
+      if (deal) {
+        deal.customer = await customerModel.getCustomerById(deal.customer_id);
+      }
       return deal ? deal : null;
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async getDealsByCustomerId(customer_id, trx = knex) {
     try {
-        const response = await trx(DealsTable)
+      const response = await trx(DealsTable)
         .select(DealFields)
-        .where({customer_id})
+        .where({ customer_id })
         .first();
       return response ? response : null;
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
   async getAllDeals(trx = knex) {
@@ -49,8 +49,8 @@ module.exports = {
         deals.map(async (deal) => {
           deal.customer = await customerModel.getCustomerById(deal.customer_id);
           return deal;
-        })
-      ); 
+        }),
+      );
       return dealsWithCustomers;
     } catch (error) {
       console.error(error);
@@ -67,8 +67,7 @@ module.exports = {
     }
   },
 
-
-  async editDeal(payload, trx=knex) {
+  async editDeal(payload, trx = knex) {
     try {
       const [result] = await trx(DealsTable)
         .where({ id: payload.id })
@@ -78,16 +77,16 @@ module.exports = {
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 
-  async deleteDeal(id, trx=knex) {
+  async deleteDeal(id, trx = knex) {
     try {
       await trx(DealsTable).where({ id }).del();
       return { id };
     } catch (error) {
       console.error(error);
       throw error;
-    };
+    }
   },
 };

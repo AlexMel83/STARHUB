@@ -4,7 +4,7 @@
  */
 exports.up = async function (knex) {
   const trx = await knex.transaction();
-  try{
+  try {
     await trx.schema.createTable("users", function (table) {
       table.increments("id").primary().notNullable();
       table.string("email", 100).nullable().unique().index();
@@ -33,7 +33,12 @@ exports.up = async function (knex) {
       table.increments("id").primary().notNullable();
       table.string("name", 50).notNullable();
       table.string("email", 100).notNullable();
-      table.string("avatar_url",).nullable().defaultTo('https://cloud.appwrite.io/v1/storage/buckets/storage/files/avatar/view?project=668181210001356c2833&mode=admin');
+      table
+        .string("avatar_url")
+        .nullable()
+        .defaultTo(
+          "https://cloud.appwrite.io/v1/storage/buckets/storage/files/avatar/view?project=668181210001356c2833&mode=admin",
+        );
       table.string("from_source", 100).nullable();
       table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
       table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
@@ -42,11 +47,23 @@ exports.up = async function (knex) {
       table.increments("id").primary().notNullable();
       table.string("name", 50).notNullable();
       table.integer("price").notNullable();
-      table.enu("status", ['todo', 'to-be-agreed', 'in-progress', 'produced', 'done']).notNullable().defaultTo('todo'); 
+      table
+        .enu("status", [
+          "todo",
+          "to-be-agreed",
+          "in-progress",
+          "produced",
+          "done",
+        ])
+        .notNullable()
+        .defaultTo("todo");
       table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
       table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
-      table.integer('customer_id').unsigned().notNullable();
-      table.foreign('customer_id').references('customers.id').onDelete('CASCADE');
+      table.integer("customer_id").unsigned().notNullable();
+      table
+        .foreign("customer_id")
+        .references("customers.id")
+        .onDelete("CASCADE");
     });
     await trx.schema.createTable("comments", function (table) {
       table.increments("id").primary().notNullable();
@@ -59,11 +76,11 @@ exports.up = async function (knex) {
       table.foreign("user_id").references("users.id").onDelete("CASCADE");
     });
     await trx.commit();
-  } catch(error){
+  } catch (error) {
     console.error(error);
     await trx.rollback();
     throw Error("Failed migration");
-  };
+  }
 };
 
 /**
@@ -84,5 +101,5 @@ exports.down = async function (knex) {
       error: error,
       message: "Migration for removing tables failed",
     });
-  };
+  }
 };

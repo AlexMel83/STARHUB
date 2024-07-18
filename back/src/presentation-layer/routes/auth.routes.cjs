@@ -80,7 +80,7 @@ module.exports = function (app) {
       req.session.codeVerifier = codeVerifier;
       req.session.save((err) => {
         if (err) {
-          console.error('Session save error:', err);
+          console.error("Session save error:", err);
           return next(err);
         }
         res.json({ url });

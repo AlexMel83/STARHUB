@@ -1,8 +1,8 @@
 const customerController = require("../controllers/customer-controller.cjs");
-const { body, param, query } = require("express-validator");
+const { body, query } = require("express-validator");
 const authMiddleware = require("../../middlewares/auth-middleware.cjs");
 const validateMiddleware = require("../../middlewares/validate-middleware.cjs");
-const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
+const uploadMiddleware = require("../../middlewares/upload.cjs");
 
 const validateCustomer = [
   body("id")
@@ -18,10 +18,6 @@ const validateCustomer = [
     .isEmail()
     .isAscii()
     .withMessage('Поле "email" має формат email@email.ua'),
-  body("avatar_url")
-    .optional({ checkFalsy: true })
-    .isString()
-    .withMessage('Поле "avatar_url" має бути рядком'),
   body("from_source")
     .optional({ checkFalsy: true })
     .isString()
@@ -31,23 +27,27 @@ const validateCustomer = [
 module.exports = function (app) {
   app.get(
     "/customers",
-    query("id").optional({ checkFalsy: true }).isNumeric().withMessage('Поле "id" має бути числом'),
+    query("id")
+      .optional({ checkFalsy: true })
+      .isNumeric()
+      .withMessage('Поле "id" має бути числом'),
     customerController.getCustomers,
   );
 
   app.post(
-    "/customers", 
-    validateCustomer, 
-    validateMiddleware, 
-    customerController.addCustomer
+    "/customers",
+    validateCustomer,
+    validateMiddleware,
+    uploadMiddleware,
+    customerController.addCustomer,
   );
 
   app.put(
-    "/customers", 
+    "/customers",
     validateCustomer,
     body("id").notEmpty().withMessage("Id is required"),
-    validateMiddleware, 
-    customerController.editCustomer
+    validateMiddleware,
+    customerController.editCustomer,
   );
 
   app.delete(
@@ -55,6 +55,6 @@ module.exports = function (app) {
     authMiddleware,
     query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
-   customerController.deleteCustomer,
+    customerController.deleteCustomer,
   );
 };

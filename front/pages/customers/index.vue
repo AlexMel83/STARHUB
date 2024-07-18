@@ -1,35 +1,30 @@
 <script setup lang="ts">
 import { useQuery } from "@tanstack/vue-query";
-import type { ICustomer } from "~/types/deals.types";
+import type { ICustomer, ServerResponse } from "~/types/deals.types";
 
 useSeoMeta({
   title: "Customers",
 });
 
-interface ServerResponse {
-  data: ICustomer[];
-  status: number;
-  statusText: string;
-  headers: any; 
-  config: any;
-}
-
 const { $api, $load } = useNuxtApp();
-  const errors = reactive({
-    textError: '',
-  });
+const errors = reactive({
+  textError: "",
+});
 
 const { data: customers, isLoading } = useQuery({
   queryKey: ["customers"],
   queryFn: async () => {
-      try {
-        const customers: ServerResponse = await $load(() => $api.customers.getCustomers(), errors);
-        return customers.data;
-      } catch (error) {
-        console.error("Error fetching comments:", error);
-        throw error;
-      }
-    },
+    try {
+      const customers: ServerResponse = await $load(
+        () => $api.customers.getCustomers(),
+        errors,
+      );
+      return customers.data;
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+      throw error;
+    }
+  },
 });
 </script>
 

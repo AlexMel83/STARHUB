@@ -28,7 +28,7 @@ class UserController {
         return next(ApiError.BadRequest(error));
       } else if (error.code === "ESOCKET") {
         return next(ApiError.IntServError("mail-server error"));
-      } else if(error.status === 409) {
+      } else if (error.status === 409) {
         return next(error);
       } else {
         return next(ApiError.IntServError(error));
