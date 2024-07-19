@@ -10,7 +10,7 @@ services:
     volumes:
       - ./:/app
     expose:
-     - ${PORT}
+      - ${PORT}
     ports:
       - ${PORT}:4040
     command: sh -c "npm run db:setup && npm run start"
