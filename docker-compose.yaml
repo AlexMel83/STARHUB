@@ -4,11 +4,13 @@ services:
   api:
     container_name: starhub_api
     build:
-      context: ./back
+      context: ./
     env_file:
       - .env
     volumes:
-      - ./back:/app
+      - ./:/app
+    expose:
+      - ${PORT}
     ports:
       - ${PORT}:4040
     command: sh -c "npm run db:setup && npm run start"

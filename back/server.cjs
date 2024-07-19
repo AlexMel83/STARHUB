@@ -5,12 +5,12 @@ const { PORT, CLIENT_URL, PAYMENT_DOMEN, JWT_AC_SECRET, JWT_RF_MA } =
   process.env;
 const http = require("http");
 const express = require("express");
-const { routeInit } = require("./presentation-layer/routes/index.cjs");
+const { routeInit } = require("./src/presentation-layer/routes/index.cjs");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const sessionMaxAge = parseInt(JWT_RF_MA, 10);
-const errorMiddleware = require("./middlewares/error-middleware.cjs");
+const errorMiddleware = require("./src/middlewares/error-middleware.cjs");
 const app = express();
 const server = http.createServer(app);
 
