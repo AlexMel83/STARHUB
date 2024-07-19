@@ -28,8 +28,7 @@ class CommentController {
   async addComment(req, res, next) {
     let user_id = req?.user?.id;
     if (!user_id) {
-      // return next(ApiError.UnauthorizedError('User not autorized'))
-      user_id = 1;
+      return next(ApiError.UnauthorizedError("User not autorized"));
     }
     const fields = req.body;
     try {
@@ -38,6 +37,7 @@ class CommentController {
         deal_id: fields.deal_id,
         user_id: user_id,
       };
+      console.log(payload);
       const comment = commentModel.addComment(payload);
       return res.status(200).json(comment);
     } catch (error) {

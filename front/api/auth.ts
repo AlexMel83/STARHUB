@@ -27,6 +27,7 @@ export interface AuthApi {
   logout(): Promise<any>;
   socAuth(provider: string): Promise<AuthResponse>;
   getAuthUser(authLink: string): Promise<AuthUser>;
+  refresh(refreshToken: string): Promise<AuthResponse>;
 }
 
 export default function (instance: any): AuthApi {
@@ -53,6 +54,9 @@ export default function (instance: any): AuthApi {
     },
     getAuthUser(authLink) {
       return instance.post(`/auth-user/${authLink}`);
+    },
+    refresh(refreshToken) {
+      return instance.post("/refresh", { refreshToken });
     },
   };
 }

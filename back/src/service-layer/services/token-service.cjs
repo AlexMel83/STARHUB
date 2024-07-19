@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
-const { JWT_AC_SECRET, JWT_AC_EXP, JWT_RF_SECRET, JWT_RF_EXP } = process.env;
+const { JWT_AC_SECRET, JWT_AC_EXP, JWT_RF_SECRET, JWT_RF_EXP, JWT_RF_MA } =
+  process.env;
 const tokenModel = require("../../data-layer/models/token-model.cjs");
 const userModel = require("../../data-layer/models/user-model.cjs");
 const knex = require("../../../config/knex.config.cjs");
@@ -17,9 +18,23 @@ class TokenService {
       expiresIn: JWT_RF_EXP,
     });
 
-    const refreshTokenExpMs = moment.duration(JWT_RF_EXP).asMilliseconds();
+    const refreshTokenExpMs = moment.duration(JWT_RF_MA).asMilliseconds();
     const expRfTokenDate = moment().add(refreshTokenExpMs, "milliseconds");
 
+    console.log(
+      "JWT_AC_EXP",
+      JWT_AC_EXP,
+      "accessToken",
+      accessToken,
+      "JWT_RF_EXP",
+      JWT_RF_EXP,
+      "refreshToken",
+      refreshToken,
+      "refreshTokenExpMs",
+      refreshTokenExpMs,
+      "expRfTokenDate",
+      expRfTokenDate,
+    );
     return {
       accessToken,
       refreshToken,
