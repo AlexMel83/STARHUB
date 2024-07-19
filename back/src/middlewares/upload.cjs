@@ -15,7 +15,7 @@ const allowedFileTypes = [
   "image/x-icon",
 ];
 const uploadFolder = "uploads";
-const BASE_PATH = path.resolve(__dirname, "..", "..");
+const BASE_PATH = path.resolve(__dirname, "..", "..", "..");
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {

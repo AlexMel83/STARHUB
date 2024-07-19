@@ -6,7 +6,7 @@ const fs = require("fs").promises;
 const path = require("path");
 const ApiError = require("../../middlewares/exceptions/api-errors.cjs");
 
-const BASE_PATH = path.resolve(__dirname, "..", "..", "..");
+const BASE_PATH = path.resolve(__dirname, "..", "..", "..", "..");
 
 async function deleteFile(filePath) {
   const fullPath = path.join(BASE_PATH, filePath);
