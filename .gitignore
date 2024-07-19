@@ -5,6 +5,7 @@
 /back/uploads
 !/back/uploads/public/**
 /pgdata
+/uploads
 .env
 .development.env
 .production.env
