@@ -21,20 +21,6 @@ class TokenService {
     const refreshTokenExpMs = moment.duration(JWT_RF_MA).asMilliseconds();
     const expRfTokenDate = moment().add(refreshTokenExpMs, "milliseconds");
 
-    console.log(
-      "JWT_AC_EXP",
-      JWT_AC_EXP,
-      "accessToken",
-      accessToken,
-      "JWT_RF_EXP",
-      JWT_RF_EXP,
-      "refreshToken",
-      refreshToken,
-      "refreshTokenExpMs",
-      refreshTokenExpMs,
-      "expRfTokenDate",
-      expRfTokenDate,
-    );
     return {
       accessToken,
       refreshToken,

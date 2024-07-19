@@ -1,9 +1,13 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
+import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
 import axios from "axios";
 import api from "../api/index";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
+  const router = useRouter();
+  const store = useAuthStore();
+  const isLoadingStore = useIsLoadingStore();
 
   const instance = axios.create({
     baseURL: config.public.localhostApi,
@@ -13,29 +17,33 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
   });
 
-  let accessToken = null;
+  const logout = async () => {
+    isLoadingStore.set(true);
+    await instance.get("/logout");
+    store.clearUser();
+    localStorage.removeItem("access_token");
+    await router.push("/");
+    isLoadingStore.set(false);
+  };
 
   const refreshToken = async () => {
     try {
       const response = await instance.get("/refresh");
-      accessToken = response.data.accessToken;
+      const { accessToken } = response.data;
       localStorage.setItem("access_token", accessToken);
       return accessToken;
     } catch (error) {
       console.error("Failed to refresh token:", error);
-      // Здесь вы можете добавить логику для выхода пользователя
-      // например, перенаправление на страницу входа
+      logout();
       throw error;
     }
   };
 
   instance.interceptors.request.use(
     async (config) => {
-      if (!accessToken) {
-        accessToken = localStorage.getItem("access_token");
-      }
-      if (accessToken) {
-        config.headers.Authorization = `Bearer ${accessToken}`;
+      const token = localStorage.getItem("access_token");
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     },
@@ -53,8 +61,7 @@ export default defineNuxtPlugin((nuxtApp) => {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return instance(originalRequest);
         } catch (refreshError) {
-          // Если не удалось обновить токен, перенаправьте на страницу входа
-          // или выполните другое действие по вашему усмотрению
+          logout();
           return Promise.reject(refreshError);
         }
       }
