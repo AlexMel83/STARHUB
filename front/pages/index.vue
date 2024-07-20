@@ -3,7 +3,7 @@ import type { ICard, IColumn } from "~/components/kanban/kanban.types";
 import { useKanbanQuery } from "@/components/kanban/useKanbanQuery";
 import { generateColumnStyle } from "@/components/kanban/generate-gradient";
 import { convertCurrency } from "@/lib/convertCurrency.js";
-import type { EnumStatus } from "~/types/deals.types";
+import type { EnumStatus, ServerResponse } from "~/types/deals.types";
 import { useMutation } from "@tanstack/vue-query";
 import { useDealSlideStore } from "@/stores/deal-slide.store";
 import dayjs from "dayjs";

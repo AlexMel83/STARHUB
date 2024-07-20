@@ -13,12 +13,22 @@ export function useKanbanQuery() {
 
   return useQuery({
     queryKey: ["deals"],
-    queryFn: async () =>
-      await $load(async () => {
-        const response = await $api.deals.getAllDeals();
-        return response.data;
-      }, errors),
+    queryFn: async () => {
+      try {
+        const data = await $load(async () => {
+          const response = await $api.deals.getAllDeals();
+          return response.data || [];
+        }, errors);
+        return data;
+      } catch (error) {
+        console.error("Error fetching deals:", error);
+        return [];
+      }
+    },
     select(data) {
+      if (!Array.isArray(data) || data.length === 0) {
+        return [];
+      }
       const newBoard: IColumn[] = KANBAN_DATA.map((column) => ({
         ...column,
         items: [],
