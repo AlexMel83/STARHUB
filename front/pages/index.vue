@@ -64,7 +64,7 @@ console.log(colorMode.preference);
 
 <template>
   <div class="p-10">
-    <div>
+    <ClientOnly>
       <h1>Color mode: {{ $colorMode.value }}</h1>
       <select v-model="$colorMode.preference">
         <option value="system">System</option>
@@ -72,7 +72,7 @@ console.log(colorMode.preference);
         <option value="dark">Dark</option>
         <option value="sepia">Sepia</option>
       </select>
-    </div>
+    </ClientOnly>
     <h1 class="font-bold text-2x1 mb-10">StarHub CRM Wellcome!</h1>
     <div v-if="isLoading">Loading...</div>
     <div v-else>
