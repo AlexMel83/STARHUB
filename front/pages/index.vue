@@ -3,7 +3,7 @@ import type { ICard, IColumn } from "~/components/kanban/kanban.types";
 import { useKanbanQuery } from "@/components/kanban/useKanbanQuery";
 import { generateColumnStyle } from "@/components/kanban/generate-gradient";
 import { convertCurrency } from "@/lib/convertCurrency.js";
-import type { EnumStatus } from "~/types/deals.types";
+import type { EnumStatus, ServerResponse } from "~/types/deals.types";
 import { useMutation } from "@tanstack/vue-query";
 import { useDealSlideStore } from "@/stores/deal-slide.store";
 import dayjs from "dayjs";
@@ -15,7 +15,7 @@ useSeoMeta({
 const dragCardRef = ref<ICard | null>(null);
 const sourceColumnRef = ref<IColumn | null>(null);
 const dragColumnRef = ref<IColumn | null>(null);
-const { data, isLoading, refetch } = useKanbanQuery();
+const { data, isLoading, isFetching, refetch } = useKanbanQuery();
 const store = useDealSlideStore();
 const { $api, $load } = useNuxtApp();
 const errors = reactive({
@@ -64,7 +64,7 @@ console.log(colorMode.preference);
 
 <template>
   <div class="p-10">
-    <div>
+    <ClientOnly>
       <h1>Color mode: {{ $colorMode.value }}</h1>
       <select v-model="$colorMode.preference">
         <option value="system">System</option>
@@ -72,9 +72,9 @@ console.log(colorMode.preference);
         <option value="dark">Dark</option>
         <option value="sepia">Sepia</option>
       </select>
-    </div>
+    </ClientOnly>
     <h1 class="font-bold text-2x1 mb-10">StarHub CRM Wellcome!</h1>
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading || isFetching">Loading...</div>
     <div v-else>
       <div class="grid grid-cols-5 gap-16">
         <div

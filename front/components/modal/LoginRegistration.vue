@@ -2,19 +2,7 @@
 import { useAuthStore } from "~/stores/auth.store";
 import { object, string, ref as yupRef } from "yup";
 import { defineShortcuts } from "#imports";
-
-interface AuthResponse {
-  status: number;
-  data: {
-    user: {
-      email: string;
-      name: string;
-      role: string;
-      isactivated: boolean;
-    };
-    url: string;
-  };
-}
+import type { AuthResponse } from "@/api/auth.js";
 
 const { $api, $load } = useNuxtApp();
 const authStore = useAuthStore();
@@ -127,6 +115,7 @@ const handleSubmit = async (event: Event) => {
     password: state.password,
     role: currentTab.value === 1 ? "user" : "",
   };
+
   try {
     const res: AuthResponse = await $load(
       () =>
@@ -138,11 +127,11 @@ const handleSubmit = async (event: Event) => {
 
     if (res && [200, 201].includes(res.status)) {
       const data = res.data;
-      localStorage.setItem("authUser", JSON.stringify(data));
-      authStore.setUser(data.user);
+      authStore.setUser(data);
       isOpen.value = false;
       clearVars();
     }
+    console.log(res);
   } catch (error) {
     errors.form = "Користувача не авторизовано";
   }

@@ -2,22 +2,24 @@ export interface AuthResponse {
   status: number;
   data: {
     user: {
-      email: string;
+      id: number;
+      email: string | null;
+      facebook_id: string | null;
+      google_id: string | null;
       name: string;
+      surname: string;
+      phone: string;
+      picture: string;
       role: string;
+      social_login: boolean;
       isactivated: boolean;
+      created_at: string;
+      udated_at: string;
     };
     url: string;
-  };
-}
-
-interface AuthUser {
-  data: {
-    id: number;
-    email: string;
-    name: string;
-    role: string;
-    isactivated: boolean;
+    accessToken: string;
+    expAcToken: string;
+    expRfToken: string;
   };
 }
 
@@ -26,7 +28,8 @@ export interface AuthApi {
   signUp(payload: { email: string; password: string }): Promise<AuthResponse>;
   logout(): Promise<any>;
   socAuth(provider: string): Promise<AuthResponse>;
-  getAuthUser(authLink: string): Promise<AuthUser>;
+  getAuthUser(authLink: string): Promise<AuthResponse>;
+  refresh(refreshToken: string): Promise<AuthResponse>;
 }
 
 export default function (instance: any): AuthApi {
@@ -53,6 +56,9 @@ export default function (instance: any): AuthApi {
     },
     getAuthUser(authLink) {
       return instance.post(`/auth-user/${authLink}`);
+    },
+    refresh(refreshToken) {
+      return instance.post("/refresh", { refreshToken });
     },
   };
 }
