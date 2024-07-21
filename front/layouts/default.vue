@@ -47,6 +47,7 @@ onMounted(async () => {
       const authUser: any = {
         user: data,
         accessToken: "mock",
+        expAcToken: "mock",
       };
       await router.push("/");
       authStore.setUser(authUser);
