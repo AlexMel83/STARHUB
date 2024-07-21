@@ -1,7 +1,7 @@
 <template>
   <LayoutLoader v-if="isLoadingStore.isLoading" />
   <section v-else class="flex-shrink-0 w-auto max-w-xs">
-    <LayoutSidebar v-if="authStore.user?.isactivated" />
+    <LayoutSidebar v-if="authStore?.authUser?.user.isactivated" />
     <ModalLoginRegistration v-else />
     <ClientOnly>
       <UButton
@@ -38,7 +38,7 @@ onMounted(async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const authLink: string | null = urlParams.get("authLink");
 
-  if (!authStore.user && authLink && uuidRegex.test(authLink)) {
+  if (!authStore.authUser && authLink && uuidRegex.test(authLink)) {
     const authUser = await $load(
       async () => $api.auth.getAuthUser(authLink),
       errors,
@@ -48,8 +48,6 @@ onMounted(async () => {
       authStore.setUser(authUser.data);
     }
   }
-
-  console.log(errors.textError);
   isLoadingStore.set(false);
 });
 

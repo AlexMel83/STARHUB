@@ -1,19 +1,7 @@
 <script setup lang="ts">
 import LogosGoogleIcon from "./LogosGoogleIcon.vue";
 import LogosFacebook from "./LogosFacebook.vue";
-
-interface AuthResponse {
-  status: number;
-  data: {
-    user: {
-      email: string;
-      name: string;
-      role: string;
-      isactivated: boolean;
-    };
-    url: string;
-  };
-}
+import type { AuthResponse } from "@/api/auth.js";
 
 const { $api, $load } = useNuxtApp();
 

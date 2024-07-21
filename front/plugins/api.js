@@ -21,7 +21,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     isLoadingStore.set(true);
     await instance.get("/logout");
     store.clearUser();
-    localStorage.removeItem("access_token");
     await router.push("/");
     isLoadingStore.set(false);
   };
@@ -30,7 +29,15 @@ export default defineNuxtPlugin((nuxtApp) => {
     try {
       const response = await instance.get("/refresh");
       const { accessToken } = response.data;
-      localStorage.setItem("access_token", accessToken);
+
+      const authUserStr = localStorage.getItem("authUser");
+      if (!authUserStr) {
+        throw new Error("No authUser found in localStorage");
+      }
+      const authUser = JSON.parse(authUserStr);
+      authUser.accessToken = accessToken;
+      localStorage.setItem("authUser", JSON.stringify(authUser));
+
       return accessToken;
     } catch (error) {
       console.error("Failed to refresh token:", error);
@@ -41,7 +48,13 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   instance.interceptors.request.use(
     async (config) => {
-      const token = localStorage.getItem("access_token");
+      const authUserStr = localStorage.getItem("authUser");
+      if (!authUserStr) {
+        throw new Error("No authUser found in localStorage");
+      }
+
+      const authUser = JSON.parse(authUserStr);
+      const token = authUser.accessToken;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }

@@ -1,31 +1,72 @@
 import { defineStore } from "pinia";
 
+export interface AuthResponse {
+  status: number;
+  data: {
+    user: {
+      id: number;
+      email: string | null;
+      facebook_id: string | null;
+      google_id: string | null;
+      name: string;
+      surname: string;
+      phone: string;
+      picture: string;
+      role: string;
+      social_login: boolean;
+      isactivated: boolean;
+      created_at: string;
+      udated_at: string;
+    };
+    url: string;
+    accessToken: string;
+    expAcToken: string;
+    expRfToken: string;
+  };
+}
 interface User {
-  email: string;
-  name: string;
-  role: string;
-  isactivated: boolean;
+  user: {
+    id: number;
+    email: string | null;
+    facebook_id: string | null;
+    google_id: string | null;
+    name: string;
+    surname: string;
+    phone: string;
+    picture: string;
+    role: string;
+    social_login: boolean;
+    isactivated: boolean;
+    created_at: string;
+    udated_at: string;
+  };
+  url: string;
+  accessToken: string;
+  expAcToken: string;
+  expRfToken: string;
 }
 interface AuthState {
-  user: User | null;
+  authUser: User | null;
 }
 
 export const useAuthStore = defineStore("auth", {
   state: (): AuthState => ({
-    user: null,
+    authUser: null,
   }),
   actions: {
-    setUser(user: User) {
-      this.user = user;
-      localStorage.setItem("authUser", JSON.stringify(user));
+    setUser(authUser: User) {
+      this.authUser = authUser;
+      localStorage.setItem("authUser", JSON.stringify(authUser));
     },
     clearUser() {
-      this.user = null;
+      this.authUser = null;
       localStorage.removeItem("authUser");
     },
     initialize() {
       const storedUser = localStorage.getItem("authUser");
-      storedUser ? (this.user = JSON.parse(storedUser)) : (this.user = null);
+      storedUser
+        ? (this.authUser = JSON.parse(storedUser))
+        : (this.authUser = null);
     },
   },
 });

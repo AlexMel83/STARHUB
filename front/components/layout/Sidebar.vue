@@ -26,9 +26,6 @@ const logout = async () => {
     await $api.auth.logout();
   });
   store.clearUser();
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("authUser");
-  localStorage.removeItem("user");
   await router.push("/");
   isLoadingStore.set(false);
 };
