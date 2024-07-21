@@ -15,7 +15,7 @@ useSeoMeta({
 const dragCardRef = ref<ICard | null>(null);
 const sourceColumnRef = ref<IColumn | null>(null);
 const dragColumnRef = ref<IColumn | null>(null);
-const { data, isLoading, refetch } = useKanbanQuery();
+const { data, isLoading, isFetching, refetch } = useKanbanQuery();
 const store = useDealSlideStore();
 const { $api, $load } = useNuxtApp();
 const errors = reactive({
@@ -74,7 +74,7 @@ console.log(colorMode.preference);
       </select>
     </ClientOnly>
     <h1 class="font-bold text-2x1 mb-10">StarHub CRM Wellcome!</h1>
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading || isFetching">Loading...</div>
     <div v-else>
       <div class="grid grid-cols-5 gap-16">
         <div

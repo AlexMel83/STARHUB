@@ -2,29 +2,39 @@ import { useQuery } from "@tanstack/vue-query";
 import { KANBAN_DATA } from "./kanban.data";
 import type { IDeal } from "~/types/deals.types";
 import type { IColumn } from "./kanban.types";
+import { ref, onMounted } from "vue";
 
 export function useKanbanQuery() {
-  const { $api, $load } = useNuxtApp();
+  const { $api } = useNuxtApp();
   const errors = reactive({
     email: "",
     password: "",
     form: "",
   });
-
-  return useQuery({
-    queryKey: ["deals"],
-    queryFn: async () => {
-      try {
-        const data = await $load(async () => {
-          const response = await $api.deals.getAllDeals();
-          return response.data || [];
-        }, errors);
-        return data;
-      } catch (error) {
-        console.error("Error fetching deals:", error);
+  const isLoading = ref(true);
+  const isFetching = ref(false);
+  const queryFn = async () => {
+    try {
+      const response = await $api.deals.getAllDeals();
+      if (!response.data) {
         return [];
       }
-    },
+      isLoading.value = false;
+      isFetching.value = false;
+      const data = response.data;
+      return data;
+    } catch (error) {
+      console.error("Error fetching deals:", error);
+      isLoading.value = false;
+      isFetching.value = false;
+      return [];
+    }
+  };
+
+  const { data, refetch } = useQuery({
+    queryKey: ["deals"],
+    queryFn,
+    enabled: false,
     select(data) {
       if (!Array.isArray(data) || data.length === 0) {
         return [];
@@ -56,4 +66,18 @@ export function useKanbanQuery() {
       return newBoard;
     },
   });
+
+  onMounted(() => {
+    isFetching.value = true;
+    setTimeout(() => {
+      refetch();
+    }, 300);
+  });
+
+  return {
+    data,
+    isLoading,
+    isFetching,
+    refetch,
+  };
 }

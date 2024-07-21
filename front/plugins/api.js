@@ -2,6 +2,7 @@ import { defineNuxtPlugin, useRuntimeConfig } from "#app";
 import { useAuthStore, useIsLoadingStore } from "~/stores/auth.store";
 import axios from "axios";
 import api from "../api/index";
+import { useRouter } from "vue-router";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig();
@@ -49,13 +50,9 @@ export default defineNuxtPlugin((nuxtApp) => {
   instance.interceptors.request.use(
     async (config) => {
       const authUserStr = localStorage.getItem("authUser");
-      if (!authUserStr) {
-        throw new Error("No authUser found in localStorage");
-      }
-
-      const authUser = JSON.parse(authUserStr);
-      const token = authUser.accessToken;
-      if (token) {
+      if (authUserStr) {
+        const authUser = JSON.parse(authUserStr);
+        const token = authUser.accessToken;
         config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
@@ -67,14 +64,14 @@ export default defineNuxtPlugin((nuxtApp) => {
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
-      if (error.response.status === 403 && !originalRequest._retry) {
+      if (error.response?.status === 403 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
           const newToken = await refreshToken();
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
           return instance(originalRequest);
         } catch (refreshError) {
-          logout();
+          await logout();
           return Promise.reject(refreshError);
         }
       }

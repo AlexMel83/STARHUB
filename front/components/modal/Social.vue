@@ -15,6 +15,7 @@ const handleSocialLogin = async (provider: "google" | "facebook") => {
       async () => $api.auth.socAuth(provider),
       errors,
     );
+    console.log(res);
     if (res.data.url) {
       window.location.href = res.data.url;
     }

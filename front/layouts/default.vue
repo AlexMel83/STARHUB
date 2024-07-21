@@ -39,13 +39,17 @@ onMounted(async () => {
   const authLink: string | null = urlParams.get("authLink");
 
   if (!authStore.authUser && authLink && uuidRegex.test(authLink)) {
-    const authUser = await $load(
+    const { data } = await $load(
       async () => $api.auth.getAuthUser(authLink),
       errors,
     );
-    await router.push("/");
-    if (authUser?.data) {
-      authStore.setUser(authUser.data);
+    if (data) {
+      const authUser: any = {
+        user: data,
+        accessToken: "mock",
+      };
+      await router.push("/");
+      authStore.setUser(authUser);
     }
   }
   isLoadingStore.set(false);

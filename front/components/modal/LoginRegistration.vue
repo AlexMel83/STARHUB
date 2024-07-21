@@ -115,6 +115,7 @@ const handleSubmit = async (event: Event) => {
     password: state.password,
     role: currentTab.value === 1 ? "user" : "",
   };
+
   try {
     const res: AuthResponse = await $load(
       () =>
@@ -130,6 +131,7 @@ const handleSubmit = async (event: Event) => {
       isOpen.value = false;
       clearVars();
     }
+    console.log(res);
   } catch (error) {
     errors.form = "Користувача не авторизовано";
   }
