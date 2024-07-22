@@ -1,11 +1,11 @@
 <template>
-  <div
-    class="bg-white w-4/5 m-auto h-screen rounded-xl shadow-xl mt-14 text-black"
-  >
+  <div class="bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black">
     <Header />
-    <Card />
-    <Card />
-    <Card />
+    <div class="flex">
+      <Card />
+      <Card />
+      <Card />
+    </div>
   </div>
 </template>
 
