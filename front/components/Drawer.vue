@@ -11,7 +11,7 @@ import CartItemList from "./CartItemList.vue";
       <DrawerHead />
       <CartItemList />
 
-      <div class="flex flex-col gap-4 my-7">
+      <div class="flex flex-col gap-4 mt-7">
         <div class="flex gap-2">
           <span>Summ:</span>
           <div class="flex-1 border-b border-dashed"></div>
@@ -22,13 +22,13 @@ import CartItemList from "./CartItemList.vue";
           <div class="flex-1 border-b border-dashed"></div>
           <b>65 uah</b>
         </div>
+        <button
+          disabled
+          class="mt-4 bg-lime-500 w-full text-white disabled:bg-slate-300 cursor-pointer rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
+        >
+          Checkout Order
+        </button>
       </div>
-      <button
-        disabled
-        class="bg-lime-500 w-full text-white disabled:bg-slate-300 cursor-pointer rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
-      >
-        Checkout Order
-      </button>
     </div>
   </div>
 </template>

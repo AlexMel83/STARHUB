@@ -2,10 +2,20 @@
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
-    <Drawer />
+    <!-- <Drawer /> -->
     <Header />
     <div class="p-10">
-      <h2 class="text-3xl font-bold mb-8">All Shoes</h2>
+      <div class="flex justify-between">
+        <h2 class="text-3xl font-bold mb-8">All Shoes</h2>
+        <div class="relative">
+          <img class="absolute left-4 top-3" src="/search.svg" alt="Search" />
+          <input
+            class="boredr rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
+            type="text"
+            placeholder="Search..."
+          />
+        </div>
+      </div>
       <CardList />
     </div>
   </div>
