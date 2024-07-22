@@ -25,7 +25,7 @@ import CartItemList from "./CartItemList.vue";
       </div>
       <button
         disabled
-        class="bg-lime-500 w-full text-white disabled:bg-slate-400 rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
+        class="bg-lime-500 w-full text-white disabled:bg-slate-300 cursor-pointer rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
       >
         Checkout Order
       </button>
