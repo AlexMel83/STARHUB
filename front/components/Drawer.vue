@@ -11,7 +11,7 @@ import CartItemList from "./CartItemList.vue";
       <DrawerHead />
       <CartItemList />
 
-      <div class="flex flex-col gap-4 mb-6">
+      <div class="flex flex-col gap-4 my-7">
         <div class="flex gap-2">
           <span>Summ:</span>
           <div class="flex-1 border-b border-dashed"></div>

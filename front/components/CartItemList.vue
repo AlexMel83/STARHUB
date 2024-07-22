@@ -1,9 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="grid grid-cols-1 gap-2 mb-5">
-    <CartItem />
-    <CartItem />
+  <div class="grid grid-cols-1 gap-2">
     <CartItem />
     <CartItem />
     <CartItem />
