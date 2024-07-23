@@ -1,13 +1,18 @@
 require("dotenv").config({
-  path: `${__dirname}/../.${
-    process.env.NODE_ENV === "development" ? process.env.NODE_ENV : "production"
-  }.env`,
+  path: "./../../.env",
 });
 
 /**
  * @type {Object.<string, import('knex').Knex.Config>}
  */
-
+console.log("Loaded environment variables:");
+console.log(`POSTGRES_HOST: ${process.env.POSTGRES_HOST}`);
+console.log(`POSTGRES_PORT: ${process.env.POSTGRES_PORT}`);
+console.log(`POSTGRES_USER: ${process.env.POSTGRES_USER}`);
+console.log(
+  `POSTGRES_PASSWORD: ${process.env.POSTGRES_PASSWORD ? "****" : "undefined"}`,
+);
+console.log(`POSTGRES_DB: ${process.env.POSTGRES_DB}`);
 module.exports = {
   development: {
     client: "postgresql",

@@ -90,16 +90,14 @@ exports.up = async function (knex) {
 exports.down = async function (knex) {
   const trx = await knex.transaction();
   try {
-    await trx.schema.dropTableIfExists("users");
     await trx.schema.dropTableIfExists("tokens");
-    await trx.schema.dropTableIfExists("customers");
-    await trx.schema.dropTableIfExists("deals");
     await trx.schema.dropTableIfExists("comments");
+    await trx.schema.dropTableIfExists("deals");
+    await trx.schema.dropTableIfExists("customers");
+    await trx.schema.dropTableIfExists("users");
     await trx.commit();
   } catch (error) {
-    throw Error({
-      error: error,
-      message: "Migration for removing tables failed",
-    });
+    await trx.rollback();
+    throw new Error(`Migration rollback failed: ${error.message}`);
   }
 };

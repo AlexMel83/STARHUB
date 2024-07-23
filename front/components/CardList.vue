@@ -1,4 +1,14 @@
 <script setup lang="ts">
+interface Item {
+  id: number;
+  price: number;
+  title: string;
+  imageUrl: string;
+}
+
+const props = defineProps<{
+  items: Item[];
+}>();
 const onClickAdd = () => {
   alert("text");
 };
@@ -7,19 +17,12 @@ const onClickAdd = () => {
 <template>
   <div class="grid grid-cols-4 gap-5">
     <Card
-      :price="5000"
-      :isAdded="false"
-      :isFavorite="true"
-      title="Man's shoes"
-      imageUrl="_nuxt/public/sneakers/sneakers-1.jpg"
+      v-for="item in props.items"
+      :key="item.id"
+      :title="item.title"
+      :imageUrl="item.imageUrl"
+      :price="item.price"
       :onClickAdd="onClickAdd"
     />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
-    <Card />
   </div>
 </template>
