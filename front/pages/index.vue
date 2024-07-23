@@ -49,10 +49,14 @@ interface Item {
   imageUrl: string;
 }
 
+const { $api, $load } = useNuxtApp();
 const items = ref<Item[]>([]);
 const filters = reactive({
   sortBy: "",
   searchQuery: "",
+});
+const errors = reactive({
+  textError: "",
 });
 
 const onChangeSelect = (event: Event) => {
@@ -67,8 +71,22 @@ const onChangeSearchInput = (event: Event) => {
 
 const fetchFavorites = async () => {
   try {
-    const { data } = await axios.get("http://localhost:4041/sneakers");
-    items.value = data;
+    const { data: favorites } = await $load(
+      () => $api.favoriteSneakers.getFavoriteSneakers(),
+      errors,
+    );
+    items.value = items.value.map((item) => {
+      const favorite = favorites.find((favorite) => favorite.id === item.id);
+
+      if (!favorite) {
+        return item;
+      }
+
+      return {
+        ...item,
+        isFavorite: true,
+      };
+    });
   } catch (error) {
     console.error(error);
   }
@@ -85,13 +103,21 @@ const fetchItems = async () => {
     const { data } = await axios.get("http://localhost:4041/sneakers", {
       params,
     });
-    items.value = data;
+    items.value = data.map((item: any) => ({
+      ...item,
+      isFavorite: false,
+      isAdded: false,
+    }));
   } catch (error) {
     console.error(error);
   }
 };
 
-onMounted(fetchItems);
+onMounted(async () => {
+  await fetchItems();
+  await fetchFavorites();
+});
+
 watch(filters, fetchItems);
 </script>
 

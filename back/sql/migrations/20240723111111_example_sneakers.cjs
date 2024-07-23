@@ -11,6 +11,22 @@ exports.up = async function (knex) {
       table.integer("price", 100).nullable();
       table.string("imageUrl", 50).nullable();
     });
+    await trx.schema.createTable("favorite_sneakers", function (table) {
+      table.increments("id").primary().notNullable();
+      table.integer("user_id").notNullable();
+      table.integer("sneakers_id").notNullable();
+      table
+        .foreign("user_id")
+        .references("id")
+        .inTable("users")
+        .onDelete("CASCADE");
+      table
+        .foreign("sneakers_id")
+        .references("id")
+        .inTable("sneakers")
+        .onDelete("CASCADE");
+      table.unique(["user_id", "sneakers_id"]);
+    });
     await trx.commit();
   } catch (error) {
     console.error(error);
@@ -26,6 +42,7 @@ exports.up = async function (knex) {
 exports.down = async function (knex) {
   const trx = await knex.transaction();
   try {
+    await trx.schema.dropTableIfExists("favorite_sneakers");
     await trx.schema.dropTableIfExists("sneakers");
     await trx.commit();
   } catch (error) {
