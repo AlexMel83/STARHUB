@@ -2,7 +2,6 @@
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
-    <!-- <Drawer /> -->
     <Header />
     <div class="p-10">
       <div class="flex justify-between">
@@ -10,8 +9,9 @@
         <div class="flex gap-4 items-center">
           <select
             @change="onChangeSelect"
-            class="py-2 px-3 bordrer rounded-md outline-none items-center"
+            class="py-2 px-3 border rounded-md outline-none items-center"
           >
+            <option value="">Select...</option>
             <option value="title">By Name</option>
             <option value="price">By Low Price</option>
             <option value="-price">By High Price</option>
@@ -19,7 +19,8 @@
           <div class="relative">
             <img class="absolute left-4 top-3" src="/search.svg" alt="Search" />
             <input
-              class="boredr rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
+              @input="onChangeSearchInput"
+              class="border rounded-md py-2 pl-11 pr-4 outline-none focus:border-gray-400"
               type="text"
               placeholder="Search..."
             />
@@ -33,6 +34,9 @@
 
 <script setup lang="ts">
 import axios from "axios";
+import { ref, reactive, onMounted, watch } from "vue";
+import Header from "@/components/Header.vue";
+import CardList from "@/components/CardList.vue";
 
 useSeoMeta({
   title: "Orders | StarHub CRM",
@@ -46,34 +50,41 @@ interface Item {
 }
 
 const items = ref<Item[]>([]);
-const sortBy = ref("");
-const searchQuery = ref("");
+const filters = reactive({
+  sortBy: "",
+  searchQuery: "",
+});
 
 const onChangeSelect = (event: Event) => {
-  if (event.target) {
-    sortBy.value = event.target.value;
+  const target = event.target as HTMLSelectElement;
+  filters.sortBy = target.value;
+};
+
+const onChangeSearchInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  filters.searchQuery = target.value;
+};
+
+const fetchItems = async () => {
+  try {
+    const params: any = {};
+    if (filters.sortBy) {
+      params.sortBy = filters.sortBy;
+    }
+    if (filters.searchQuery) {
+      params.title = filters.searchQuery;
+    }
+    const { data } = await axios.get("http://localhost:4041/sneakers", {
+      params,
+    });
+    items.value = data;
+  } catch (error) {
+    console.error(error);
   }
 };
 
-onMounted(async () => {
-  try {
-    const { data } = await axios.get("http://localhost:4041/sneakers");
-    items.value = data;
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-watch(sortBy, async () => {
-  try {
-    const { data } = await axios.get(
-      "http://localhost:4041/sneakers?sortBy=" + sortBy.value,
-    );
-    items.value = data;
-  } catch (error) {
-    console.error(error);
-  }
-});
+onMounted(fetchItems);
+watch(filters, fetchItems);
 </script>
 
 <style scoped>
