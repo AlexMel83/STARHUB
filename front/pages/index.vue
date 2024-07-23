@@ -65,6 +65,14 @@ const onChangeSearchInput = (event: Event) => {
   filters.searchQuery = target.value;
 };
 
+const fetchFavorites = async () => {
+  try {
+    const { data } = await axios.get("http://localhost:4041/sneakers");
+    items.value = data;
+  } catch (error) {
+    console.error(error);
+  }
+};
 const fetchItems = async () => {
   try {
     const params: any = {};
