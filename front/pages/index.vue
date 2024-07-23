@@ -44,10 +44,15 @@ interface Item {
   imageUrl: string;
 }
 
-onMounted(() => {
-  fetch("https://852a6f7a57bf5941.mokky.dev/items")
-    .then((res) => res.json())
-    .then((data) => console.log(data));
+const items = ref<Item[]>([]);
+
+onMounted(async () => {
+  try {
+    const { data } = await axios.get("http://localhost:4041/sneakers");
+    items.value = data;
+  } catch (error) {
+    console.error(error);
+  }
 });
 </script>
 
