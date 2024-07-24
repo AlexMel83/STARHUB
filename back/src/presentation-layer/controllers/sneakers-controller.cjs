@@ -54,13 +54,16 @@ class SneakersController {
 
   async addFavoriteSneakers(req, res, next) {
     const user_id = req.user.id;
-    const sneakers_id = req.itemId;
-    let query = knex("sneakers");
+    const sneakers_id = req.query.id;
+    let query = knex("favorite_sneakers");
     try {
       query = query.insert({ user_id, sneakers_id });
       const response = await query;
       res.json(response);
     } catch (error) {
+      if (error.code === "23505") {
+        res.json("sneakers already exist in favorite_sneakers");
+      }
       console.error(error);
       return next(ApiError.IntServError(error));
     }
@@ -68,8 +71,8 @@ class SneakersController {
 
   async removeFavoriteSneakers(req, res, next) {
     const user_id = req.user.id;
-    const sneakers_id = req.itemId;
-    let query = knex("sneakers");
+    const sneakers_id = req.query.id;
+    let query = knex("favorite_sneakers");
     try {
       query = query.where({ user_id }).where({ sneakers_id });
       const response = await query.del();

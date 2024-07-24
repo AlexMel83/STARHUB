@@ -1,13 +1,22 @@
 <script setup>
-defineProps({
+const props = defineProps({
+  id: Number,
   imageUrl: String,
   title: String,
   price: Number,
   isFavorite: Boolean,
   isAdded: Boolean,
   onClickAdd: Function,
-  onClickFavorite: Function,
+  onClickFavotite: Function,
 });
+
+const addToFavorites = inject("addToFavorites");
+
+const removeFromFavorites = inject("removeFromFavorites");
+
+const onClickFavotite = () => {
+  props.isFavorite ? removeFromFavorites(props.id) : addToFavorites(props.id);
+};
 </script>
 
 <template>
@@ -15,7 +24,7 @@ defineProps({
     class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:-translate-y-2 transition hover:shadow-xl"
   >
     <img
-      @click="onClickFavorite"
+      @click="onClickFavotite"
       :src="isFavorite ? '_nuxt/public/like-2.svg' : '_nuxt/public/like-1.svg'"
       alt="like-2"
       class="absolute top-8 left-8"

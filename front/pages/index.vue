@@ -91,6 +91,25 @@ const fetchFavorites = async () => {
     console.error(error);
   }
 };
+
+const addToFavorites = async (id: number) => {
+  try {
+    await $api.favoriteSneakers.addFavoriteSneakers(id);
+    await fetchFavorites();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const removeFromFavorites = async (id: number) => {
+  try {
+    await $api.favoriteSneakers.removeFavoriteSneakers(id);
+    await fetchFavorites();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const fetchItems = async () => {
   try {
     const params: any = {};
@@ -119,6 +138,10 @@ onMounted(async () => {
 });
 
 watch(filters, fetchItems);
+
+provide("addToFavorites", addToFavorites);
+
+provide("removeFromFavorites", removeFromFavorites);
 </script>
 
 <style scoped>

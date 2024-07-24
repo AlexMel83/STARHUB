@@ -1,5 +1,3 @@
-import type { IComment } from "~/types/deals.types";
-
 interface FavoriteSneakersResponse {
   data: FavoriteSneakers[];
   status: number;
@@ -16,9 +14,7 @@ interface FavoriteSneakers {
 
 export interface FavoriteSneakersApi {
   getFavoriteSneakers(): Promise<FavoriteSneakersResponse>;
-  addFavoriteSneakers(
-    payload: FavoriteSneakers,
-  ): Promise<FavoriteSneakersResponse>;
+  addFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse>;
   removeFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse>;
 }
 
@@ -27,11 +23,11 @@ export default function (instance: any): FavoriteSneakersApi {
     getFavoriteSneakers(): Promise<FavoriteSneakersResponse> {
       return instance.get(`/favoriteSneakers`);
     },
-    addFavoriteSneakers(payload): Promise<FavoriteSneakersResponse> {
-      return instance.post("/favoriteSneakers", payload);
+    addFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse> {
+      return instance.post(`/favoriteSneakers?id=${id}`);
     },
     removeFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse> {
-      return instance.delete(`/favoriteSneakers/${id}`);
+      return instance.delete(`/favoriteSneakers?id=${id}`);
     },
   };
 }

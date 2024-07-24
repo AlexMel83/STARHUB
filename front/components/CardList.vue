@@ -4,11 +4,14 @@ interface Item {
   price: number;
   title: string;
   imageUrl: string;
+  isFavorite: boolean;
+  isAdded: boolean;
 }
 
 const props = defineProps<{
   items: Item[];
 }>();
+
 const onClickAdd = () => {
   alert("text");
 };
@@ -23,6 +26,9 @@ const onClickAdd = () => {
       :imageUrl="item.imageUrl"
       :price="item.price"
       :onClickAdd="onClickAdd"
+      :id="item.id"
+      :isAdded="item.isAdded"
+      :isFavorite="item.isFavorite"
     />
   </div>
 </template>

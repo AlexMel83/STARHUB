@@ -32,7 +32,7 @@ module.exports = function (app) {
   app.post(
     "/favoriteSneakers",
     authMiddleware,
-    validateFavorite,
+    query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
     sneakersController.addFavoriteSneakers,
   );
@@ -40,7 +40,7 @@ module.exports = function (app) {
   app.delete(
     "/favoriteSneakers",
     authMiddleware,
-    validateFavorite,
+    query("id").notEmpty().withMessage("Id is required"),
     validateMiddleware,
     sneakersController.removeFavoriteSneakers,
   );
