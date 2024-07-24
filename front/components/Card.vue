@@ -11,11 +11,15 @@ const props = defineProps({
 });
 
 const addToFavorites = inject("addToFavorites");
-
 const removeFromFavorites = inject("removeFromFavorites");
 
-const onClickFavotite = () => {
-  props.isFavorite ? removeFromFavorites(props.id) : addToFavorites(props.id);
+const onClickFavotite = async () => {
+  if (props.isFavorite) {
+    await removeFromFavorites(props.id);
+  } else {
+    await addToFavorites(props.id);
+  }
+  props.onClickFavotite();
 };
 </script>
 

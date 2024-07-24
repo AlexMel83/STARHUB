@@ -47,6 +47,8 @@ interface Item {
   price: number;
   title: string;
   imageUrl: string;
+  isFavorite: boolean;
+  isAdded: boolean;
 }
 
 const { $api, $load } = useNuxtApp();
@@ -79,7 +81,10 @@ const fetchFavorites = async () => {
       const favorite = favorites.find((favorite) => favorite.id === item.id);
 
       if (!favorite) {
-        return item;
+        return {
+          ...item,
+          isFavorite: false,
+        };
       }
 
       return {
@@ -127,6 +132,7 @@ const fetchItems = async () => {
       isFavorite: false,
       isAdded: false,
     }));
+    await fetchFavorites();
   } catch (error) {
     console.error(error);
   }
