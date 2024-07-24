@@ -34,12 +34,18 @@ class SneakersController {
 
   async getFavoriteSneakers(req, res, next) {
     const user_id = req.user.id;
-    const sneakers_id = req.itemId;
-    let query = knex("sneakers");
     try {
-      query = query.where({ user_id }).where({ sneakers_id });
-      const response = await query;
-      res.json(response);
+      const favoriteSneakers = await knex("sneakers")
+        .join(
+          "favorite_sneakers",
+          "sneakers.id",
+          "=",
+          "favorite_sneakers.sneakers_id",
+        )
+        .where("favorite_sneakers.user_id", user_id)
+        .select("sneakers.*");
+
+      res.json(favoriteSneakers);
     } catch (error) {
       console.error(error);
       return next(ApiError.IntServError(error));
