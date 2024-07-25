@@ -1,16 +1,12 @@
 <script setup lang="ts">
-interface Item {
-  id: number;
-  price: number;
-  title: string;
-  imageUrl: string;
-  isFavorite: boolean;
-  isAdded: boolean;
-}
+import type { Item } from "@/types/sneakers.types.js";
 
-const props = defineProps<{
-  items: Item[];
-}>();
+const props = defineProps({
+  items: {
+    type: Array as () => Item[],
+    required: true,
+  },
+});
 
 const onClickAdd = () => {
   alert("text");
@@ -26,7 +22,7 @@ const onClickAdd = () => {
       :imageUrl="item.imageUrl"
       :price="item.price"
       :onClickAdd="onClickAdd"
-      :id="item.id"
+      :item="item"
       :isAdded="item.isAdded"
       :isFavorite="item.isFavorite"
     />

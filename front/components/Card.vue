@@ -1,6 +1,9 @@
 <script setup>
 const props = defineProps({
-  id: Number,
+  item: {
+    type: Object,
+    required: true,
+  },
   imageUrl: String,
   title: String,
   price: Number,
@@ -12,11 +15,11 @@ const props = defineProps({
 const addToFavorites = inject("addToFavorites");
 const removeFromFavorites = inject("removeFromFavorites");
 
-const onClickFavotite = async (id) => {
-  if (props.isFavorite) {
-    await removeFromFavorites(id);
+const onClickFavotite = async () => {
+  if (props.item.isFavorite) {
+    await removeFromFavorites(props.item);
   } else {
-    await addToFavorites(id);
+    await addToFavorites(props.item);
   }
 };
 </script>
@@ -26,7 +29,7 @@ const onClickFavotite = async (id) => {
     class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:-translate-y-2 transition hover:shadow-xl"
   >
     <img
-      @click="onClickFavotite(props.id)"
+      @click="onClickFavotite(item)"
       :src="isFavorite ? '_nuxt/public/like-2.svg' : '_nuxt/public/like-1.svg'"
       alt="like-2"
       class="absolute top-8 left-8"

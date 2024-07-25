@@ -97,19 +97,19 @@ const fetchFavorites = async () => {
   }
 };
 
-const addToFavorites = async (id: number) => {
+const addToFavorites = async (item: Item) => {
   try {
-    await $api.favoriteSneakers.addFavoriteSneakers(id);
-    await fetchFavorites();
+    await $api.favoriteSneakers.addFavoriteSneakers(item.id);
+    item.isFavorite = true;
   } catch (error) {
     console.error(error);
   }
 };
 
-const removeFromFavorites = async (id: number) => {
+const removeFromFavorites = async (item: Item) => {
   try {
-    await $api.favoriteSneakers.removeFavoriteSneakers(id);
-    await fetchFavorites();
+    await $api.favoriteSneakers.removeFavoriteSneakers(item.id);
+    item.isFavorite = false;
   } catch (error) {
     console.error(error);
   }
