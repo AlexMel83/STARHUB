@@ -100,15 +100,15 @@ const fetchFavorites = async () => {
 const addToFavorites = async (item: Item) => {
   if (item.isFavorite) {
     try {
-      await $api.favoriteSneakers.removeFavoriteSneakers(item.id);
       item.isFavorite = false;
+      await $api.favoriteSneakers.removeFavoriteSneakers(item.id);
     } catch (error) {
       console.error(error);
     }
   } else {
     try {
-      await $api.favoriteSneakers.addFavoriteSneakers(item.id);
       item.isFavorite = true;
+      await $api.favoriteSneakers.addFavoriteSneakers(item.id);
     } catch (error) {
       console.error(error);
     }
