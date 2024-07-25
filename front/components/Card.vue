@@ -13,15 +13,6 @@ const props = defineProps({
 });
 
 const addToFavorites = inject("addToFavorites");
-const removeFromFavorites = inject("removeFromFavorites");
-
-const onClickFavotite = async () => {
-  if (props.item.isFavorite) {
-    await removeFromFavorites(props.item);
-  } else {
-    await addToFavorites(props.item);
-  }
-};
 </script>
 
 <template>
@@ -29,7 +20,7 @@ const onClickFavotite = async () => {
     class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:-translate-y-2 transition hover:shadow-xl"
   >
     <img
-      @click="onClickFavotite(item)"
+      @click="addToFavorites(item)"
       :src="isFavorite ? '_nuxt/public/like-2.svg' : '_nuxt/public/like-1.svg'"
       alt="like-2"
       class="absolute top-8 left-8"
