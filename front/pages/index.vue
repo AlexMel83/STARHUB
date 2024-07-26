@@ -1,4 +1,5 @@
 <template>
+  <Drawer v-if="drawerOpen" />
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
@@ -53,6 +54,7 @@ interface Item {
 
 const { $api, $load } = useNuxtApp();
 const items = ref<Item[]>([]);
+const drawerOpen = ref(false);
 const filters = reactive({
   sortBy: "",
   searchQuery: "",
