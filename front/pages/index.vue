@@ -2,8 +2,8 @@
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
-    <Drawer v-if="drawerOpen" />
-    <Header @open-drawer="openDrawer" />
+    <Drawer v-if="drawerOpen" :totalPrice="totalPrice" :tax="tax" />
+    <Header @open-drawer="openDrawer" :totalPrice="totalPrice" />
     <div class="p-10">
       <div class="flex justify-between">
         <h2 class="text-3xl font-bold mb-8">All Shoes</h2>
@@ -63,6 +63,10 @@ const filters = reactive({
 const errors = reactive({
   textError: "",
 });
+const totalPrice = computed(() =>
+  cart.value.reduce((acc, item) => acc + item.price, 0),
+);
+const tax = computed(() => Math.round(totalPrice.value * 0.2));
 
 const closeDrawer = () => {
   drawerOpen.value = false;

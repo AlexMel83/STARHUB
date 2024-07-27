@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import CartItemList from "./CartItemList.vue";
+defineProps({
+  totalPrice: Number,
+  tax: Number,
+});
 </script>
 
 <template>
@@ -15,12 +18,12 @@ import CartItemList from "./CartItemList.vue";
         <div class="flex gap-2">
           <span>Summ:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <b>1290 uah</b>
+          <b>{{ totalPrice }} uah</b>
         </div>
         <div class="flex gap-2">
-          <span>Tax 5%:</span>
+          <span>Tax 20%:</span>
           <div class="flex-1 border-b border-dashed"></div>
-          <b>65 uah</b>
+          <b>{{ tax }} uah</b>
         </div>
         <button
           disabled
