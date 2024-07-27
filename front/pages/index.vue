@@ -1,8 +1,8 @@
 <template>
-  <Drawer v-if="drawerOpen" />
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
+    <Drawer v-if="drawerOpen" />
     <Header />
     <div class="p-10">
       <div class="flex justify-between">
