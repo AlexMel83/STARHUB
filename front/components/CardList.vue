@@ -8,9 +8,6 @@ const props = defineProps({
   },
 });
 
-const onClickAdd = () => {
-  alert("text");
-};
 const emit = defineEmits(["addToCart"]);
 </script>
 

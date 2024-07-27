@@ -2,7 +2,7 @@ import type { DealApi } from "~/api/deals";
 import { AuthApi } from "~/api/auth";
 import { CommentApi } from "~/api/comments";
 import { CustomerApi } from "~/api/customers.ts";
-import { FavoriteSneakersApi } from "~/api/favoriteSneakers";
+import { SneakersApi } from "~/api/favoriteSneakers";
 
 declare module "#app" {
   interface NuxtApp {
@@ -11,7 +11,7 @@ declare module "#app" {
       deals: DealApi;
       comments: CommentApi;
       customers: CustomerApi;
-      favoriteSneakers: FavoriteSneakersApi;
+      sneakers: SneakersApi;
       // Добавьте другие API, если они у вас есть
     };
     $load: <T>(

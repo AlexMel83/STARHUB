@@ -34,10 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Favorite } from "~/types/sneakers.types.js";
 import axios from "axios";
-import { ref, reactive, onMounted, watch } from "vue";
-import Header from "@/components/Header.vue";
-import CardList from "@/components/CardList.vue";
 
 useSeoMeta({
   title: "Orders | StarHub CRM",
@@ -68,6 +66,12 @@ const totalPrice = computed(() =>
 );
 const tax = computed(() => Math.round(totalPrice.value * 0.2));
 
+const createOrder = async () => {
+  try {
+  } catch (error) {
+    console.error(error);
+  }
+};
 const closeDrawer = () => {
   drawerOpen.value = false;
 };
@@ -88,42 +92,34 @@ const onChangeSearchInput = (event: Event) => {
 
 const fetchFavorites = async () => {
   try {
-    const { data: favorites } = await $load(
-      () => $api.favoriteSneakers.getFavoriteSneakers(),
+    const { data: favorites }: { data: Favorite[] } = await $load(
+      () => $api.sneakers.getFavoriteSneakers(),
       errors,
     );
     items.value = items.value.map((item) => {
       const favorite = favorites.find((favorite) => favorite.id === item.id);
 
-      if (!favorite) {
-        return {
-          ...item,
-          isFavorite: false,
-        };
-      }
-
       return {
         ...item,
-        isFavorite: true,
+        isFavorite: Boolean(favorite),
       };
     });
   } catch (error) {
     console.error(error);
   }
 };
-
 const addToFavorites = async (item: Item) => {
   if (item.isFavorite) {
     try {
       item.isFavorite = false;
-      await $api.favoriteSneakers.removeFavoriteSneakers(item.id);
+      await $api.sneakers.removeFavoriteSneakers(item.id);
     } catch (error) {
       console.error(error);
     }
   } else {
     try {
       item.isFavorite = true;
-      await $api.favoriteSneakers.addFavoriteSneakers(item.id);
+      await $api.sneakers.addFavoriteSneakers(item.id);
     } catch (error) {
       console.error(error);
     }
