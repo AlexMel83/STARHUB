@@ -11,6 +11,7 @@ const props = defineProps({
 const onClickAdd = () => {
   alert("text");
 };
+const emit = defineEmits(["addToCart"]);
 </script>
 
 <template>
@@ -21,7 +22,7 @@ const onClickAdd = () => {
       :title="item.title"
       :imageUrl="item.imageUrl"
       :price="item.price"
-      :onClickAdd="onClickAdd"
+      :onClickAdd="() => emit('addToCart', item)"
       :item="item"
       :isAdded="item.isAdded"
       :isFavorite="item.isFavorite"

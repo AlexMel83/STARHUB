@@ -3,7 +3,7 @@
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
     <Drawer v-if="drawerOpen" />
-    <Header />
+    <Header @open-drawer="openDrawer" />
     <div class="p-10">
       <div class="flex justify-between">
         <h2 class="text-3xl font-bold mb-8">All Shoes</h2>
@@ -28,7 +28,7 @@
           </div>
         </div>
       </div>
-      <CardList :items="items" class="mt-10" />
+      <CardList :items="items" class="mt-10" @add-to-cart="onClickAddCart" />
     </div>
   </div>
 </template>
@@ -54,6 +54,7 @@ interface Item {
 
 const { $api, $load } = useNuxtApp();
 const items = ref<Item[]>([]);
+const cart = ref<Item[]>([]);
 const drawerOpen = ref(false);
 const filters = reactive({
   sortBy: "",
@@ -62,6 +63,14 @@ const filters = reactive({
 const errors = reactive({
   textError: "",
 });
+
+const closeDrawer = () => {
+  drawerOpen.value = false;
+};
+
+const openDrawer = () => {
+  drawerOpen.value = true;
+};
 
 const onChangeSelect = (event: Event) => {
   const target = event.target as HTMLSelectElement;
@@ -117,6 +126,23 @@ const addToFavorites = async (item: Item) => {
   }
 };
 
+const addToCart = (item: Item) => {
+  cart.value.push(item);
+  item.isAdded = true;
+};
+
+const removeFromCart = (item: Item) => {
+  item.isAdded = false;
+  cart.value.splice(cart.value.indexOf(item), 1);
+};
+const onClickAddCart = (item: Item) => {
+  if (!item.isAdded) {
+    addToCart(item);
+  } else {
+    removeFromCart(item);
+  }
+};
+
 const fetchItems = async () => {
   try {
     const params: any = {};
@@ -148,6 +174,13 @@ onMounted(async () => {
 watch(filters, fetchItems);
 
 provide("addToFavorites", addToFavorites);
+provide("cart", {
+  cart,
+  addToCart,
+  removeFromCart,
+  openDrawer,
+  closeDrawer,
+});
 </script>
 
 <style scoped>

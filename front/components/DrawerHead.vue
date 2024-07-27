@@ -1,6 +1,7 @@
 <template>
   <div class="flex items-center gap-5 mb-4">
     <svg
+      @click="closeDrawer()"
       class="cursor-pointer opacity-30 rotate-180 hover:opacity-100 transition hover:-translate-x-1"
       width="16"
       height="14"
@@ -26,3 +27,7 @@
     <h2 class="text-2xl font-bold">Cart</h2>
   </div>
 </template>
+
+<script setup>
+const { closeDrawer } = inject("cart");
+</script>
