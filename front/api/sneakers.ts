@@ -16,6 +16,8 @@ export interface FavoriteSneakersApi {
   getFavoriteSneakers(): Promise<FavoriteSneakersResponse>;
   addFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse>;
   removeFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse>;
+  getOrders(): Promise<FavoriteSneakersResponse>;
+  createOrder(id: number): Promise<FavoriteSneakersResponse>;
 }
 
 export default function (instance: any): FavoriteSneakersApi {
@@ -28,6 +30,12 @@ export default function (instance: any): FavoriteSneakersApi {
     },
     removeFavoriteSneakers(id: number): Promise<FavoriteSneakersResponse> {
       return instance.delete(`/favoriteSneakers?id=${id}`);
+    },
+    getOrders() {
+      return instance.get(`/orders`);
+    },
+    createOrder(id: number) {
+      return instance.post(`/orders?id=${id}`);
     },
   };
 }
