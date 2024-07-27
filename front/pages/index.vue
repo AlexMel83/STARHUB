@@ -2,7 +2,12 @@
   <div
     class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
   >
-    <Drawer v-if="drawerOpen" :totalPrice="totalPrice" :tax="tax" />
+    <Drawer
+      v-if="drawerOpen"
+      :totalPrice="totalPrice"
+      :tax="tax"
+      @create-order="createOrder"
+    />
     <Header @open-drawer="openDrawer" :totalPrice="totalPrice" />
     <div class="p-10">
       <div class="flex justify-between">
@@ -68,6 +73,15 @@ const tax = computed(() => Math.round(totalPrice.value * 0.2));
 
 const createOrder = async () => {
   try {
+    const { data }: { data: Item[] } = await $load(
+      () =>
+        $api.sneakers.createOrder({
+          sneakers: cart.value,
+        }),
+      errors,
+    );
+    cart.value = [];
+    return data;
   } catch (error) {
     console.error(error);
   }

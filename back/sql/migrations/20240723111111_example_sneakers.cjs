@@ -43,6 +43,7 @@ exports.up = async function (knex) {
       table.integer("order_id").notNullable();
       table.integer("sneakers_id").notNullable();
       table.integer("price").notNullable();
+      table.integer("quantity").notNullable().defaultTo(1);
       table
         .foreign("order_id")
         .references("id")

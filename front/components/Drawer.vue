@@ -3,6 +3,8 @@ defineProps({
   totalPrice: Number,
   tax: Number,
 });
+
+const emit = defineEmits(["createOrder"]);
 </script>
 
 <template>
@@ -26,7 +28,8 @@ defineProps({
           <b>{{ tax }} uah</b>
         </div>
         <button
-          disabled
+          :disabled="totalPrice ? false : true"
+          @click="() => emit('createOrder')"
           class="mt-4 bg-lime-500 w-full text-white disabled:bg-slate-300 cursor-pointer rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
         >
           Checkout Order

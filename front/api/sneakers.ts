@@ -32,10 +32,10 @@ export default function (instance: any): FavoriteSneakersApi {
       return instance.delete(`/favoriteSneakers?id=${id}`);
     },
     getOrders() {
-      return instance.get(`/orders`);
+      return instance.get(`/orderSneakers`);
     },
-    createOrder(id: number) {
-      return instance.post(`/orders?id=${id}`);
+    createOrder(payload) {
+      return instance.post("/orderSneakers", payload);
     },
   };
 }
