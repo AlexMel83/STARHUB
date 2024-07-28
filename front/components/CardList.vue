@@ -7,7 +7,6 @@ const props = defineProps({
     required: true,
   },
 });
-
 const emit = defineEmits(["addToCart"]);
 </script>
 

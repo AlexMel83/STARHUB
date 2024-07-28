@@ -43,7 +43,7 @@ import type { Favorite } from "~/types/sneakers.types.js";
 import axios from "axios";
 
 useSeoMeta({
-  title: "Orders | StarHub CRM",
+  title: "Products | StarHub CRM",
 });
 
 interface Item {
@@ -63,9 +63,6 @@ const filters = reactive({
   sortBy: "",
   searchQuery: "",
 });
-const errors = reactive({
-  textError: "",
-});
 const totalPrice = computed(() =>
   cart.value.reduce((acc, item) => acc + item.price, 0),
 );
@@ -73,13 +70,9 @@ const tax = computed(() => Math.round(totalPrice.value * 0.2));
 
 const createOrder = async () => {
   try {
-    const { data }: { data: Item[] } = await $load(
-      () =>
-        $api.sneakers.createOrder({
-          sneakers: cart.value,
-        }),
-      errors,
-    );
+    const { data }: { data: Item[] } = await $api.sneakers.createOrder({
+      sneakers: cart.value,
+    });
     cart.value = [];
     return data;
   } catch (error) {
@@ -106,10 +99,8 @@ const onChangeSearchInput = (event: Event) => {
 
 const fetchFavorites = async () => {
   try {
-    const { data: favorites }: { data: Favorite[] } = await $load(
-      () => $api.sneakers.getFavoriteSneakers(),
-      errors,
-    );
+    const { data: favorites }: { data: Favorite[] } =
+      await $api.sneakers.getFavoriteSneakers();
     items.value = items.value.map((item) => {
       const favorite = favorites.find((favorite) => favorite.id === item.id);
 
