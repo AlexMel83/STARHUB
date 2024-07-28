@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     "@nuxt/ui",
     "@nuxt/image",
     '@nuxtjs/color-mode',
+    '@formkit/auto-animate/nuxt',
     "shadcn-nuxt",
     "shadcn-nuxt",
     "@pinia/nuxt",

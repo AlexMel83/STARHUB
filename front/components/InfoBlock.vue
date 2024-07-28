@@ -1,5 +1,15 @@
+<script setup>
+defineProps({
+  title: String,
+  description: String,
+  imageUrl: String,
+});
+</script>
+
 <template>
-  <img src="" alt="" />
-  <h2></h2>
-  <p></p>
+  <div class="flex flex-col items-center text-center w-72 mx-auto">
+    <img height="70" width="70" :src="imageUrl" alt="info image" />
+    <h2 class="mt-4 text-1.5xl font-bold">{{ title }}</h2>
+    <p class="text-gray-400 mt-2">{{ description }}</p>
+  </div>
 </template>

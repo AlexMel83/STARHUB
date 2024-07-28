@@ -146,8 +146,8 @@ const addToCart = (item: Item) => {
 };
 
 const removeFromCart = (item: Item) => {
-  item.isAdded = false;
   cart.value.splice(cart.value.indexOf(item), 1);
+  item.isAdded = false;
 };
 const onClickAddCart = (item: Item) => {
   if (!item.isAdded) {
@@ -181,8 +181,13 @@ const fetchItems = async () => {
 };
 
 onMounted(async () => {
+  cart.value = JSON.parse(localStorage.getItem("cart") || "[]");
   await fetchItems();
   await fetchFavorites();
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cart.value.some((cartItem) => cartItem.id === item.id),
+  }));
 });
 
 watch(filters, fetchItems);
@@ -191,6 +196,9 @@ watch(cart, () => {
     ...item,
     isAdded: false,
   }));
+});
+watch(cart, () => localStorage.setItem("cart", JSON.stringify(cart.value)), {
+  deep: true,
 });
 
 provide("addToFavorites", addToFavorites);
