@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import type { Favorite } from "~/types/sneakers.types.js";
+import debounce from "lodash.debounce";
 import axios from "axios";
 
 useSeoMeta({
@@ -76,10 +77,10 @@ const onChangeSelect = (event: Event) => {
   filters.sortBy = target.value;
 };
 
-const onChangeSearchInput = (event: Event) => {
+const onChangeSearchInput = debounce((event: Event) => {
   const target = event.target as HTMLInputElement;
   filters.searchQuery = target.value;
-};
+}, 500);
 
 const fetchFavorites = async () => {
   try {
