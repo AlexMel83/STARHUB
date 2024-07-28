@@ -1,12 +1,13 @@
 <script setup>
-const { $api, $load } = useNuxtApp();
+const { $api } = useNuxtApp();
 const props = defineProps({
   totalPrice: Number,
   tax: Number,
 });
 
-const { cart, closeDrawer } = inject("cart");
+const { cart } = inject("cart");
 const isCreating = ref(false);
+const orderId = ref(null);
 
 const createOrder = async () => {
   try {
@@ -15,6 +16,7 @@ const createOrder = async () => {
       sneakers: cart.value,
     });
     cart.value = [];
+    orderId.value = data.order_id.id;
     isCreating.value = false;
     return data;
   } catch (error) {
@@ -38,13 +40,21 @@ const buttonDisabled = computed(() => {
     <div class="bg-white w-96 h-full fixed top-0 right-0 z-20 p-8">
       <DrawerHead />
 
-      <div v-if="!props.totalPrice" class="flex h-full items-center">
+      <div v-if="!props.totalPrice || orderId" class="flex h-full items-center">
         <InfoBlock
+          v-if="!props.totalPrice && !orderId"
           title="Your cart is empty"
           description="Please add some shoes to your cart"
           image-url="/package-icon.png"
         />
+        <InfoBlock
+          v-if="orderId"
+          title="Order placed"
+          :description="`Order number is ${orderId} will send you by curier in 3 days`"
+          image-url="/order-success-icon.png"
+        />
       </div>
+
       <div v-else>
         <CartItemList />
         <div class="flex flex-col gap-4 mt-7">
