@@ -13,7 +13,7 @@ export const MENU_DATA: IMenuItem[] = [
   {
     icon: "ep:goods",
     name: "Products",
-    url: "/products",
+    url: "/sneakers/home",
   },
   {
     icon: "ph:contactless-payment",

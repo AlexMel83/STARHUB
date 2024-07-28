@@ -21,7 +21,7 @@ const addToFavorites = inject("addToFavorites");
   >
     <img
       @click="addToFavorites(item)"
-      :src="isFavorite ? '_nuxt/public/like-2.svg' : '_nuxt/public/like-1.svg'"
+      :src="isFavorite ? '/like-2.svg' : '/like-1.svg'"
       alt="like-2"
       class="absolute top-8 left-8"
     />
@@ -34,7 +34,7 @@ const addToFavorites = inject("addToFavorites");
       </div>
       <img
         @click="onClickAdd"
-        :src="isAdded ? '_nuxt/public/checked.svg' : '_nuxt/public/plus.svg'"
+        :src="isAdded ? '/checked.svg' : '/plus.svg'"
         alt="plus"
       />
     </div>
