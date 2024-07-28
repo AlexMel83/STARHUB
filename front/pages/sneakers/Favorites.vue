@@ -37,12 +37,22 @@ provide("addToFavorites", addToFavorites);
 </script>
 
 <template>
-  <div>
-    <h1>My Favorites</h1>
+  <div
+    class="overflow-auto h-full bg-white w-4/5 m-auto mx-8 rounded-xl shadow-xl mt-14 text-black"
+  >
+    <NuxtLink to="/sneakers/home">
+      <h1 class="text-1.5xl font-bold px-4">My Favorites</h1>
+    </NuxtLink>
     <CardList
       v-if="renderFavorites.length"
       :items="renderFavorites"
+      is-favorites
       class="mt-10"
     />
   </div>
 </template>
+<style scoped>
+body {
+  background-color: rgb(247 254 231);
+}
+</style>

@@ -1,10 +1,33 @@
-<script setup lang="ts">
-defineProps({
+<script setup>
+const { $api, $load } = useNuxtApp();
+const props = defineProps({
   totalPrice: Number,
   tax: Number,
 });
 
-const emit = defineEmits(["createOrder"]);
+const { cart, closeDrawer } = inject("cart");
+const isCreating = ref(false);
+
+const createOrder = async () => {
+  try {
+    isCreating.value = true;
+    const { data } = await $api.sneakers.createOrder({
+      sneakers: cart.value,
+    });
+    cart.value = [];
+    isCreating.value = false;
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const cartIsEmpty = computed(() => {
+  return cart.value.length === 0;
+});
+const buttonDisabled = computed(() => {
+  return isCreating.value || cartIsEmpty.value;
+});
 </script>
 
 <template>
@@ -15,7 +38,7 @@ const emit = defineEmits(["createOrder"]);
     <div class="bg-white w-96 h-full fixed top-0 right-0 z-20 p-8">
       <DrawerHead />
 
-      <div v-if="!totalPrice" class="flex h-full items-center">
+      <div v-if="!props.totalPrice" class="flex h-full items-center">
         <InfoBlock
           title="Your cart is empty"
           description="Please add some shoes to your cart"
@@ -28,16 +51,16 @@ const emit = defineEmits(["createOrder"]);
           <div class="flex gap-2">
             <span>Summ:</span>
             <div class="flex-1 border-b border-dashed"></div>
-            <b>{{ totalPrice }} uah</b>
+            <b>{{ props.totalPrice }} uah</b>
           </div>
           <div class="flex gap-2">
             <span>Tax 20%:</span>
             <div class="flex-1 border-b border-dashed"></div>
-            <b>{{ tax }} uah</b>
+            <b>{{ props.tax }} uah</b>
           </div>
           <button
-            :disabled="totalPrice ? false : true"
-            @click="() => emit('createOrder')"
+            :disabled="buttonDisabled"
+            @click="createOrder"
             class="mt-4 bg-lime-500 w-full text-white disabled:bg-slate-300 cursor-pointer rounded-xl py-3 hover:bg-lime-600 active:bg-lime-700 transition"
           >
             Checkout Order

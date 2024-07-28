@@ -1,11 +1,7 @@
-<script setup lang="ts">
-import type { Item } from "@/types/sneakers.types.js";
-
+<script setup>
 const props = defineProps({
-  items: {
-    type: Array as () => Item[],
-    required: true,
-  },
+  items: Array,
+  isFavorites: Boolean,
 });
 const emit = defineEmits(["addToCart"]);
 </script>
@@ -18,7 +14,7 @@ const emit = defineEmits(["addToCart"]);
       :title="item.title"
       :imageUrl="item.imageUrl"
       :price="item.price"
-      :onClickAdd="() => emit('addToCart', item)"
+      :onClickAdd="isFavorites ? null : () => emit('addToCart', item)"
       :item="item"
       :isAdded="item.isAdded"
       :isFavorite="item.isFavorite"

@@ -9,8 +9,10 @@ const props = defineProps({
   price: Number,
   isFavorite: Boolean,
   isAdded: Boolean,
-  onClickAdd: Function,
+  onClickAdd: Function || null,
 });
+
+const visibleFavoriteButton = Boolean(props.onClickAdd);
 
 const addToFavorites = inject("addToFavorites");
 </script>
@@ -20,6 +22,7 @@ const addToFavorites = inject("addToFavorites");
     class="relative bg-white border border-slate-100 rounded-3xl p-8 cursor-pointer hover:-translate-y-2 transition hover:shadow-xl"
   >
     <img
+      v-if="visibleFavoriteButton"
       @click="addToFavorites(item)"
       :src="isFavorite ? '/like-2.svg' : '/like-1.svg'"
       alt="like-2"
@@ -33,6 +36,7 @@ const addToFavorites = inject("addToFavorites");
         <b class="font-bold text-black">{{ price }} uah</b>
       </div>
       <img
+        v-if="visibleFavoriteButton"
         @click="onClickAdd"
         :src="isAdded ? '/checked.svg' : '/plus.svg'"
         alt="plus"
