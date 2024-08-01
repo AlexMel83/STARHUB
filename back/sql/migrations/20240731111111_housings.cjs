@@ -7,7 +7,6 @@ exports.up = async function (knex) {
   try {
     await trx.schema.createTable("housings", function (table) {
       table.increments("id").primary().notNullable().unique();
-      table.string("housing_name");
       table.string("address").notNullable();
       table.string("formatted_address");
       table.specificType("location", "geography(POINT, 4326)").nullable();
