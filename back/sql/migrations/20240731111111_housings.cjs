@@ -27,6 +27,7 @@ exports.up = async function (knex) {
       table
         .enu("status", [
           "здається",
+          "продається",
           "забраньовано",
           "здано",
           "не опубліковано",
@@ -59,6 +60,7 @@ exports.up = async function (knex) {
       table.boolean("building_number_show");
       table.string("appartment_number");
       table.boolean("appartment_number_show");
+      table.unique(["id", "housing_id"]);
     });
 
     await knex.schema.createTable("housing_details", function (table) {
@@ -70,22 +72,22 @@ exports.up = async function (knex) {
         .references("id")
         .inTable("housings")
         .onDelete("CASCADE");
-      table.integer("year_built");
+      table.string("year_built");
       table.enu("wall_type", [
-        "цегла",
-        "силікатна цегла",
-        "панель",
-        "піноблок",
+        "з цегли",
+        "з силікатної цегли",
+        "з панелей",
+        "з піноблоку",
         "моноліт",
-        "ракушняк",
+        "з ракушняку",
         "монолітно-цегяний",
         "монолітно-блоковий",
-        "дерево та цегла",
-        "газобетон",
-        "газоблок",
-        "СІП",
-        "залізобетон",
-        "натуральний брус",
+        "з дерева та цегли",
+        "з газобетону",
+        "з газоблоку",
+        "з СІП",
+        "з залізобетону",
+        "з натурального брусу",
       ]);
       table.enu("repair", [
         "дизайнерський ремонт",
@@ -125,19 +127,24 @@ exports.up = async function (knex) {
       ]);
       table.integer("ceiling_height");
       table.boolean("elevator");
+      table.boolean("bomb_shelter");
       table.boolean("furnished");
+      table.boolean("refrigerator");
+      table.boolean("washer");
+      table.boolean("microwave");
+      table.boolean("gas");
       table.boolean("internet");
       table.boolean("tv");
       table.boolean("air_conditioning");
-      table.boolean("gas");
-      table.boolean("washing_machine");
+      table.boolean("dishwasher");
+      table.boolean("bath");
       table.boolean("garage");
-      table.boolean("security");
       table.string("utilities");
       table.string("view");
       table.string("description");
       table.string("offer_type");
       table.string("lease_conditions");
+      table.unique(["id", "housing_id"]);
     });
 
     await knex.schema.createTable("housing_conditions", function (table) {
@@ -155,6 +162,7 @@ exports.up = async function (knex) {
       table.boolean("no_pets");
       table.boolean("with_pets");
       table.boolean("maybe_one_month");
+      table.unique(["id", "housing_id"]);
     });
 
     await knex.schema.createTable(
@@ -168,12 +176,13 @@ exports.up = async function (knex) {
           .references("id")
           .inTable("housings")
           .onDelete("CASCADE");
-        table.boolean("gas");
+        table.boolean("gas_works");
         table.boolean("backup_power");
         table.boolean("heating_works");
         table.boolean("water_supply");
         table.boolean("elevator_works");
-        table.boolean("internet_work");
+        table.boolean("internet_works");
+        table.unique(["id", "housing_id"]);
       },
     );
 
@@ -188,7 +197,13 @@ exports.up = async function (knex) {
           .references("id")
           .inTable("housings")
           .onDelete("CASCADE");
-        table.enu("bathroom", ["роздільний", "суміжний", "2", "3", "3+"]);
+        table.enu("bathroom", [
+          "роздільний санвузол",
+          "суміжний санвузол",
+          "2 санвузли",
+          "3 санвузли",
+          "більше 3 санвузлів",
+        ]);
         table.boolean("panoramic_windows");
         table.boolean("with_terrace");
         table.boolean("floor_heating");
@@ -197,6 +212,7 @@ exports.up = async function (knex) {
         table.boolean("with_mansard");
         table.boolean("balcony_loggia");
         table.boolean("penthouse");
+        table.unique(["id", "housing_id"]);
       },
     );
 
@@ -216,6 +232,7 @@ exports.up = async function (knex) {
       table.string("store");
       table.string("recreation");
       table.string("other");
+      table.unique(["id", "housing_id"]);
     });
 
     await knex.schema.createTable("housing_security", function (table) {
@@ -240,6 +257,7 @@ exports.up = async function (knex) {
       table.boolean("armored_door");
       table.boolean("guard");
       table.boolean("concierge");
+      table.unique(["id", "housing_id"]);
     });
 
     await knex.schema.createTable("housing_photos", function (table) {
@@ -350,6 +368,8 @@ exports.up = async function (knex) {
         .inTable("housings")
         .onDelete("CASCADE");
       table.decimal("rental_price", 10, 2).notNullable();
+      table.enu("currency", ["UAH", "USD", "EUR"]).notNullable();
+      table.string("comment");
       table.timestamp("changed_at").defaultTo(knex.fn.now()).notNullable();
     });
 
@@ -411,6 +431,21 @@ exports.up = async function (knex) {
         .inTable("users")
         .onDelete("CASCADE");
       table.integer("rating").notNullable();
+      table.text("comment").notNullable();
+      table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
+    });
+
+    await knex.schema.createTable("housing_advertisements", function (table) {
+      table.increments("id").primary().notNullable();
+      table
+        .integer("housing_id")
+        .unsigned()
+        .notNullable()
+        .references("id")
+        .inTable("housings")
+        .onDelete("CASCADE");
+      table.string("platform").notNullable();
+      table.string("url").notNullable();
       table.text("comment").notNullable();
       table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
     });
