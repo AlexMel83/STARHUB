@@ -220,7 +220,331 @@ const housing_detailsData = [
   },
 ];
 
-const housing_when_no_electricityData = [{}];
+const housing_when_no_electricityData = [
+  {
+    id: 1,
+    housing_id: 4,
+    heating_works: true,
+    water_supply: true,
+  },
+];
+
+const housing_planning_featuresData = [
+  {
+    id: 1,
+    housing_id: 1,
+    bathroom: "роздільний санвузол",
+    balcony_loggia: true,
+  },
+  {
+    id: 2,
+    housing_id: 4,
+    bathroom: "роздільний санвузол",
+    balcony_loggia: true,
+  },
+  {
+    id: 3,
+    housing_id: 5,
+    bathroom: "роздільний санвузол",
+    balcony_loggia: true,
+  },
+];
+
+const housing_infrastructuresData = [
+  {
+    id: 1,
+    housing_id: 2,
+    parking: true,
+  },
+  {
+    id: 2,
+    housing_id: 4,
+    transport: "Зупинка транспорту",
+    school: "Школа, Дитячий садок",
+    parking: true,
+    store: "Аптека, Супермаркет, ТРЦ, Відділення пошти, Магазин, кіоск",
+    recreation: "Ресторан, кафе, Парк, зелена зона",
+    other: "Дитячий майданчик",
+  },
+  {
+    id: 3,
+    housing_id: 6,
+    parking: true,
+  },
+];
+
+const housing_securityData = [
+  {
+    id: 1,
+    housing_id: 1,
+    intercom: true,
+  },
+];
+
+const housing_owners_representativesData = [
+  {
+    id: 1,
+    housing_id: 1,
+    user_id: 1,
+  },
+  {
+    id: 2,
+    housing_id: 2,
+    user_id: 1,
+  },
+  {
+    id: 3,
+    housing_id: 3,
+    user_id: 1,
+  },
+  {
+    id: 4,
+    housing_id: 4,
+    user_id: 1,
+  },
+  {
+    id: 5,
+    housing_id: 5,
+    user_id: 1,
+  },
+  {
+    id: 6,
+    housing_id: 6,
+    user_id: 1,
+  },
+];
+
+const housing_price_historyData = [
+  {
+    id: 1,
+    housing_id: 1,
+    price: 10000,
+    currency: "UAH",
+  },
+  {
+    id: 2,
+    housing_id: 2,
+    price: 100,
+    currency: "UAH",
+  },
+  {
+    id: 3,
+    housing_id: 3,
+    price: 3720,
+    currency: "UAH",
+    comment: "Додатково плата по лічильникам і за опалення",
+  },
+  {
+    id: 4,
+    housing_id: 4,
+    price: 6000,
+    currency: "UAH",
+  },
+  {
+    id: 5,
+    housing_id: 5,
+    price: 34500,
+    currency: "USD",
+  },
+  {
+    id: 6,
+    housing_id: 6,
+    price: 25500,
+    currency: "USD",
+  },
+];
+
+const housing_advertisementsData = [
+  {
+    id: 1,
+    housing_id: 1,
+    platform: "dom.ria",
+    url: "https://dom.ria.com/uk/realty-dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa-32048596.html",
+  },
+  {
+    id: 2,
+    housing_id: 2,
+    platform: "dom.ria",
+    url: "https://dom.ria.com/uk/realty-dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa-32050760.html",
+  },
+  {
+    id: 3,
+    housing_id: 3,
+    platform: "dom.ria",
+    url: "https://dom.ria.com/uk/realty-dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-starokonstantinov-grushevskogo-ulitsa-30741548.html",
+  },
+  {
+    id: 4,
+    housing_id: 4,
+    platform: "olx",
+    url: "https://www.olx.ua/d/uk/obyavlenie/zdam-kvartiru-v-orendu-IDWrk0G.html",
+  },
+  {
+    id: 5,
+    housing_id: 5,
+    platform: "dom.ria",
+    url: "https://dom.ria.com/uk/realty-prodaja-kvartira-starokonstantinov-franka-ulitsa-32019338.html",
+  },
+  {
+    id: 6,
+    housing_id: 6,
+    platform: "dom.ria",
+    url: "https://dom.ria.com/uk/realty-prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa-31635420.html",
+  },
+];
+
+const housing_photosData = [
+  {
+    id: 1,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895835xg.webp",
+  },
+  {
+    id: 2,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895834xg.webp",
+  },
+  {
+    id: 3,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895836xg.webp",
+  },
+  {
+    id: 4,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895837xg.webp",
+  },
+  {
+    id: 5,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895839xg.webp",
+  },
+  {
+    id: 6,
+    housing_id: 1,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kvartira-starokonstantinov-sofiyskaya-ulitsa__303895840xg.webp",
+  },
+  {
+    id: 7,
+    housing_id: 2,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa__303925251fx.jpg",
+  },
+  {
+    id: 8,
+    housing_id: 2,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa__303925286xg.webp",
+  },
+  {
+    id: 9,
+    housing_id: 2,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa__303925299xg.webp",
+  },
+  {
+    id: 10,
+    housing_id: 2,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa__303925315xg.webp",
+  },
+  {
+    id: 11,
+    housing_id: 2,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-geroev-nebesnoy-sotni-ulitsa__303925328xg.webp",
+  },
+  {
+    id: 12,
+    housing_id: 3,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-starokonstantinov-grushevskogo-ulitsa__284657386fx.jpg",
+  },
+  {
+    id: 13,
+    housing_id: 3,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-starokonstantinov-grushevskogo-ulitsa__295588812xg.webp",
+  },
+  {
+    id: 14,
+    housing_id: 3,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-starokonstantinov-grushevskogo-ulitsa__295588813xg.webp",
+  },
+  {
+    id: 15,
+    housing_id: 3,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/dolgosrochnaya-arenda-kommercheskoe-pomeschenie-starokonstantinov-starokonstantinov-grushevskogo-ulitsa__295588815xg.webp",
+  },
+  {
+    id: 16,
+    housing_id: 4,
+    url: "https://ireland.apollo.olxcdn.com/v1/files/ivx4jivvsc431-UA/image;s=1000x700",
+  },
+  {
+    id: 17,
+    housing_id: 4,
+    url: "https://ireland.apollo.olxcdn.com/v1/files/067z7g2orf6g-UA/image;s=1000x700",
+  },
+  {
+    id: 18,
+    housing_id: 4,
+    url: "https://ireland.apollo.olxcdn.com/v1/files/jgxmkdpi2vtm1-UA/image;s=1000x700",
+  },
+  {
+    id: 19,
+    housing_id: 4,
+    url: "https://ireland.apollo.olxcdn.com/v1/files/rdnchemo16hl2-UA/image;s=1000x700",
+  },
+  {
+    id: 20,
+    housing_id: 4,
+    url: "https://ireland.apollo.olxcdn.com/v1/files/518l9a1xqwpc1-UA/image;s=1000x700",
+  },
+  {
+    id: 21,
+    housing_id: 5,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-franka-ulitsa__303505649fl.webp",
+  },
+  {
+    id: 22,
+    housing_id: 5,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-franka-ulitsa__303505651fl.webp",
+  },
+  {
+    id: 23,
+    housing_id: 5,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-franka-ulitsa__303505652fl.webp",
+  },
+  {
+    id: 24,
+    housing_id: 5,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-franka-ulitsa__303505653fl.webp",
+  },
+  {
+    id: 25,
+    housing_id: 5,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-franka-ulitsa__303505654fl.webp",
+  },
+  {
+    id: 26,
+    housing_id: 6,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa__298090316fx.jpg",
+  },
+  {
+    id: 27,
+    housing_id: 6,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa__298090315xg.webp",
+  },
+  {
+    id: 28,
+    housing_id: 6,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa__301014665xg.webp",
+  },
+  {
+    id: 29,
+    housing_id: 6,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa__301014667xg.webp",
+  },
+  {
+    id: 30,
+    housing_id: 6,
+    url: "https://cdn.riastatic.com/photosnew/dom/photo/prodaja-kvartira-starokonstantinov-starokonstantinov-sofievskaya-ulitsa__298090357xg.webp",
+  },
+];
 
 exports.seed = async function (knex) {
   const seedExist = await knex("sneakers").select("*").where({ id: 1 });

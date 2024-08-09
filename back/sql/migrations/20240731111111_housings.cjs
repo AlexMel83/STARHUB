@@ -269,7 +269,7 @@ exports.up = async function (knex) {
         .references("id")
         .inTable("housings")
         .onDelete("CASCADE");
-      table.text("photo_url").notNullable();
+      table.text("url").notNullable();
       table.string("description");
     });
 
@@ -367,7 +367,7 @@ exports.up = async function (knex) {
         .references("id")
         .inTable("housings")
         .onDelete("CASCADE");
-      table.decimal("rental_price", 10, 2).notNullable();
+      table.decimal("price", 10, 2).notNullable();
       table.enu("currency", ["UAH", "USD", "EUR"]).notNullable();
       table.string("comment");
       table.timestamp("changed_at").defaultTo(knex.fn.now()).notNullable();
